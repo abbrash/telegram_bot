@@ -68,7 +68,7 @@ Tk = config('token')
 # Stages
 START_ROUTES, END_ROUTES, MESS_HANDL = range(3)
 # Callback data
-SUBMIT_EMAIL, TWO, THREE, FOUR = range(4)
+SUBMIT_EMAIL, LOC_EX, GLOB_EX, FOUR = range(4)
 
 TEN, TWENTY, THIRTY = range(10, 40, 10)
 
@@ -82,14 +82,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     tel_user_id = update.effective_user.id
 
     if tel_user_id in data_base['tel_user_id'].values:
-        tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['name'].values[0]
+        tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
         print_txt = f"Hello my Fren, {tel_user_name}"
 
         keyboard = [
             [
-                InlineKeyboardButton("Start1", callback_data=str(SUBMIT_EMAIL)),
-                InlineKeyboardButton("Start2", callback_data=str(TWO)),
-                InlineKeyboardButton("Start3", callback_data=str(THREE)),
+                InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))
+            ],
+            [
+                InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX)),
+                InlineKeyboardButton("Start3", callback_data=str(GLOB_EX))
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -98,9 +100,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         keyboard = [
             [
-                InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL)),
-                InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
-                InlineKeyboardButton("Start3", callback_data=str(THIRTY)),
+                [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
+                [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
+                InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -121,7 +123,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard = [
         [
             InlineKeyboardButton("1", callback_data=str(SUBMIT_EMAIL)),
-            InlineKeyboardButton("2", callback_data=str(TWO)),
+            InlineKeyboardButton("2", callback_data=str(LOC_EX)),
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -136,26 +138,25 @@ async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     global data_base
 
-    if update.effective_user.name != None:
-        tel_user_name = update.effective_user.name
-        print(tel_user_name)
-    else:
-        tel_user_name = 'No name'
-
-    print('email confirming is executed')
-
     tel_user_id = update.effective_user.id
     message_text = update.effective_message.text.lower()
 
-    
+    if update.effective_user.name:
+        tel_user_name = update.effective_user.name
+    else:
+        tel_user_name = "no_tel_user_name"
+
+    print('email confirming is executed')
+
     if is_email(message_text):
          
          if message_text in data_base['email_id']:
              context.bot.send_message(chat_id=update.effective_chat.id, text="Email address already exists on our database.")
          else:
+            ch_user_id = gen_uniq_channel_id(data_base['ch_user_id'].values)
             new_user = {
-                        'ch_user_id': 'ch_user_id',
-                        'name': tel_user_name,
+                        'ch_user_id': ch_user_id,
+                        'tel_user_name': tel_user_name,
                         'tel_user_id': tel_user_id,
                         'email_id': message_text,
                         'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -179,6 +180,31 @@ async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     return EMAIL
 
 
+async def local_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    keyboard = [[InlineKeyboardButton('Nobitex', url='https://nobitex.ir/signup/?refcode=1557073')],
+                [InlineKeyboardButton('BitPin', url='https://bitpin.ir/signup/?ref=aP0DtoVG')]]
+    
+    key_markup = InlineKeyboardMarkup(keyboard)
+    
+    await context.bot.send_message(chat_id=update.effective_chat.id, 
+                                   text='Please use the links below to join the exchange',
+                                   reply_markup=key_markup)
+    return LOC_EX
+
+
+async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+
+    keyboard = [[InlineKeyboardButton('BingX', url='https://bingx.com/invite/NLQIKZI2')],
+                [InlineKeyboardButton('CoinEx', url='https://www.coinex.com/register?refer_code=s95m7')]]
+
+    key_markup = InlineKeyboardMarkup(keyboard)
+
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text='Please use the links below to join the exchange',
+                                   reply_markup=key_markup)
+    return GLOB_EX
+
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -188,7 +214,9 @@ def main() -> None:
         entry_points=[CommandHandler("start", start)],
         states={
             START_ROUTES: [
-                CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$")],
+                CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$"),
+                CallbackQueryHandler(local_exchange, pattern="^" + str(LOC_EX) + "$"),
+                CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$")],
 
             END_ROUTES: [
                 CallbackQueryHandler(start_over, pattern="^" + str(SUBMIT_EMAIL) + "$")],
