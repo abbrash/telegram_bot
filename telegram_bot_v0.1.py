@@ -5,12 +5,11 @@ import pandas as pd
 import numpy as np
 from decouple import config
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
-from telegram.ext import MessageHandler, filters, Updater
+from telegram.ext import MessageHandler, filters
 
 # Define the path to the JSON and CSV files
-# EMAIL_IDS_FILE = 'email_ids.json'
 data_file_add = 'data_base.csv'
 
 # Function to save email data to CSV
@@ -24,7 +23,7 @@ def load_data_base():
     else:
         return pd.DataFrame(columns=['ch_user_id', 'tel_user_name', 'tel_user_id', 'email_id', 'date'])
 
-# Ckeck if the email is already registered
+# Check if the email is already registered
 def is_email(input_str):
     # Regular expression pattern for email validation
     email_pattern = r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$'
@@ -47,8 +46,6 @@ def gen_uniq_channel_id(existing_ids):
         # Check if this ID is unique
         if channel_id not in existing_ids:
             return channel_id
-        
-
 
 # Log errors
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -59,25 +56,54 @@ data_base = load_data_base()
 
 print('Starting up bot...')
 
-
 Tk = config('token')
-# BOT_USERNAME: Final = '@CrypticChannelBot'
-
-# print(Tk)
 
 # Stages
 START_ROUTES, END_ROUTES, MESS_HANDL = range(3)
 # Callback data
-SUBMIT_EMAIL, LOC_EX, GLOB_EX, FOUR = range(4)
+SUBMIT_EMAIL, LOC_EX, GLOB_EX, MAIN_MENU = range(4)
 
 TEN, TWENTY, THIRTY = range(10, 40, 10)
 
 # EMAIL_CONF = int(100)
 EMAIL = 100
 
-
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    tel_user_id = update.effective_user.id
+
+    if tel_user_id in data_base['tel_user_id'].values:
+        tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
+        print_txt = f"Hello my Fren, {tel_user_name}"
+
+        keyboard = [
+            [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
+            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
+            [InlineKeyboardButton("Air Drops", callback_data=str(GLOB_EX))],
+            [InlineKeyboardButton("My Progress", callback_data=str(GLOB_EX))]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+    else:
+        keyboard = [
+            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
+            [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
+             InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        print_txt = 'Welcome to Crypto Channel'
+
+    if update.message:
+        await update.message.reply_text(text=print_txt, reply_markup=reply_markup)
+    elif update.callback_query:
+        query = update.callback_query
+        await query.answer()
+        await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
+
+    return START_ROUTES
+
+async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Prompt same text & keyboard as `start` does but not as new message"""
+    query = update.callback_query
+    await query.answer()
 
     tel_user_id = update.effective_user.id
 
@@ -86,56 +112,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = f"Hello my Fren, {tel_user_name}"
 
         keyboard = [
-            [
-                InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))
-            ],
-            [
-                InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX)),
-                InlineKeyboardButton("Start3", callback_data=str(GLOB_EX))
-            ]
+            [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
+            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX)),
+             InlineKeyboardButton("Start3", callback_data=str(GLOB_EX))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-
     else:
-
         keyboard = [
-            [
-                [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
-                [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
-                InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
-            ]
+            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
+            [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
+             InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
+        print_txt = 'Welcome to Crypto Channel'
 
-        print_txt = 'Welcome to Crypto Channel' 
-
-    await update.message.reply_text(text=print_txt, reply_markup=reply_markup)
+    await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
     return START_ROUTES
-
-
-async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Prompt same text & keyboard as `start` does but not as new message"""
-    # Get CallbackQuery from Update
-    query = update.callback_query
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
-    await query.answer()
-    keyboard = [
-        [
-            InlineKeyboardButton("1", callback_data=str(SUBMIT_EMAIL)),
-            InlineKeyboardButton("2", callback_data=str(LOC_EX)),
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    # Instead of sending a new message, edit the message that
-    # originated the CallbackQuery. This gives the feeling of an
-    # interactive menu.
-    await query.edit_message_text(text="Start handler, Choose a route", reply_markup=reply_markup)
-    return START_ROUTES
-
 
 async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
     global data_base
 
     tel_user_id = update.effective_user.id
@@ -149,22 +143,21 @@ async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     print('email confirming is executed')
 
     if is_email(message_text):
-         
-         if message_text in data_base['email_id']:
-             context.bot.send_message(chat_id=update.effective_chat.id, text="Email address already exists on our database.")
-         else:
+        if message_text in data_base['email_id'].values:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Email address already exists in our database.")
+        else:
             ch_user_id = gen_uniq_channel_id(data_base['ch_user_id'].values)
             new_user = {
-                        'ch_user_id': ch_user_id,
-                        'tel_user_name': tel_user_name,
-                        'tel_user_id': tel_user_id,
-                        'email_id': message_text,
-                        'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        }
+                'ch_user_id': ch_user_id,
+                'tel_user_name': tel_user_name,
+                'tel_user_id': tel_user_id,
+                'email_id': message_text,
+                'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
 
             new_user = pd.DataFrame([new_user])
 
-                    # Update email data DataFrame
+            # Update email data DataFrame
             data_base = pd.concat([data_base, new_user], ignore_index=True)
             save_email_data(data_base)
 
@@ -172,38 +165,51 @@ async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid email address. Please try again.")
 
-
-
 async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Please send your email address:')
+    await query.edit_message_text(text='Please send your email address:')
     return EMAIL
 
-
 async def local_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
 
-    keyboard = [[InlineKeyboardButton('Nobitex', url='https://nobitex.ir/signup/?refcode=1557073')],
-                [InlineKeyboardButton('BitPin', url='https://bitpin.ir/signup/?ref=aP0DtoVG')]]
-    
+    keyboard = [
+        [InlineKeyboardButton('Nobitex', url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton('BitPin', url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
+        [InlineKeyboardButton('Back', callback_data=str(MAIN_MENU))]
+    ]
     key_markup = InlineKeyboardMarkup(keyboard)
-    
-    await context.bot.send_message(chat_id=update.effective_chat.id, 
-                                   text='Please use the links below to join the exchange',
-                                   reply_markup=key_markup)
-    return LOC_EX
 
+    await query.edit_message_text(
+        text='Please use the links below to join the exchange',
+        reply_markup=key_markup
+    )
+    return START_ROUTES
 
 async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
 
-    keyboard = [[InlineKeyboardButton('BingX', url='https://bingx.com/invite/NLQIKZI2')],
-                [InlineKeyboardButton('CoinEx', url='https://www.coinex.com/register?refer_code=s95m7')]]
-
+    keyboard = [
+        [InlineKeyboardButton('BingX', url='https://bingx.com/invite/NLQIKZI2')],
+        [InlineKeyboardButton('CoinEx', url='https://www.coinex.com/register?refer_code=s95m7')],
+        [InlineKeyboardButton('Back', callback_data=str(MAIN_MENU))]
+    ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text='Please use the links below to join the exchange',
-                                   reply_markup=key_markup)
-    return GLOB_EX
+    await query.edit_message_text(
+        text='Please use the links below to join the exchange',
+        reply_markup=key_markup
+    )
+    return START_ROUTES
+
+async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    return await start_over(update, context)
 
 def main() -> None:
     """Run the bot."""
@@ -216,12 +222,15 @@ def main() -> None:
             START_ROUTES: [
                 CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$"),
                 CallbackQueryHandler(local_exchange, pattern="^" + str(LOC_EX) + "$"),
-                CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$")],
-
+                CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$"),
+                CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$")
+            ],
             END_ROUTES: [
-                CallbackQueryHandler(start_over, pattern="^" + str(SUBMIT_EMAIL) + "$")],
-
-            EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email_confirming)]
+                CallbackQueryHandler(start_over, pattern="^" + str(MAIN_MENU) + "$")
+            ],
+            EMAIL: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, email_confirming)
+            ]
         },
         fallbacks=[CommandHandler("start", start)],
     )
@@ -231,9 +240,8 @@ def main() -> None:
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(
-        allowed_updates=Update.ALL_TYPES, poll_interval=3, timeout=60)
-
-
+        allowed_updates=Update.ALL_TYPES, poll_interval=3, timeout=60
+    )
 
 if __name__ == "__main__":
     main()
