@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from decouple import config
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, filters
 
@@ -61,7 +61,7 @@ Tk = config('token')
 # Stages
 START_ROUTES, END_ROUTES, MESS_HANDL = range(3)
 # Callback data
-SUBMIT_EMAIL, LOC_EX, GLOB_EX, MAIN_MENU = range(4)
+SUBMIT_EMAIL, LOC_EX, GLOB_EX, MAIN_MENU, AIR_DROPS, MY_PROGRESS = range(6)
 
 TEN, TWENTY, THIRTY = range(10, 40, 10)
 
@@ -78,15 +78,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         keyboard = [
             [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
             [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
-            [InlineKeyboardButton("Air Drops", callback_data=str(GLOB_EX))],
-            [InlineKeyboardButton("My Progress", callback_data=str(GLOB_EX))]
+            [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
+            [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
-            [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
-             InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
+            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         print_txt = 'Welcome to Crypto Channel'
@@ -113,15 +111,14 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         keyboard = [
             [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
-            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX)),
-             InlineKeyboardButton("Start3", callback_data=str(GLOB_EX))]
+            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
+            [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
+            [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))],
-            [InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
-             InlineKeyboardButton("Start3", callback_data=str(THIRTY))]
+            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         print_txt = 'Welcome to Crypto Channel'
@@ -211,6 +208,172 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await query.answer()
     return await start_over(update, context)
 
+
+# async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     # List of photo file_ids or URLs
+#     photo_list = [
+#         'https://example.com/photo1.jpg',
+#         'https://example.com/photo2.jpg',
+#         'https://example.com/photo3.jpg'
+#     ]
+
+#     # Send the album to the user
+#     await context.bot.send_media_group(
+#         chat_id=update.effective_chat.id,
+#         media=[InputMediaPhoto(media=photo) for photo in photo_list]
+#     )
+
+#     return START_ROUTES
+
+
+# async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+    
+#     print('---')
+#     print(update.callback_query.data)
+#     print('---')
+
+#     print('***')
+#     print(update.callback_query)
+#     print('***')
+
+#     if update.callback_query and update.callback_query.data:
+#         print('exeasagsg')
+#         print(update.callback_query.data.split("_")[-1])
+
+#     # List of photo file_ids or URLs
+#     photo_list = [
+#         'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
+#     ]
+
+#     # Determine the current index
+#     if update.callback_query and update.callback_query.data:
+#         current_index = int(update.callback_query.data.split("_")[-1])
+#     else:
+#         current_index = 0
+
+#     # Ensure current_index stays within the bounds of photo_list
+#     current_index = max(0, min(current_index, len(photo_list) - 1))
+
+#     # If "Finish" button is clicked, show the main menu
+#     if update.callback_query and update.callback_query.data == "FINISH":
+#         await main_menu(update, context)
+#         return START_ROUTES
+
+#     # Construct caption with current index and total number of photos
+#     caption = f"{current_index + 1} out of {len(photo_list)}"
+
+#     # Construct InlineKeyboardMarkup based on current message index
+#     buttons = []
+#     if current_index == 0:
+#         buttons.append([InlineKeyboardButton("Next", callback_data=f"NEXT_{current_index + 1}"),
+#                         InlineKeyboardButton("Back to Main Menu", callback_data=str(MAIN_MENU))])
+#     elif current_index == len(photo_list) - 1:
+#         buttons.append([InlineKeyboardButton("Finish", callback_data="FINISH"),
+#                         InlineKeyboardButton("Previous", callback_data=f"PREVIOUS_{current_index - 1}")])
+#     else:
+#         buttons.append([InlineKeyboardButton("Next", callback_data=f"NEXT_{current_index + 1}"),
+#                         InlineKeyboardButton("Previous", callback_data=f"PREVIOUS_{current_index - 1}")])
+
+#     reply_markup = InlineKeyboardMarkup(buttons)
+
+#     # Send the current photo with caption and navigation buttons
+#     await context.bot.send_photo(
+#         chat_id=update.effective_chat.id,
+#         photo=photo_list[current_index],
+#         caption=caption,
+#         reply_markup=reply_markup
+#     )
+
+#     return START_ROUTES
+
+
+async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    
+    print('---')
+    print(update.callback_query.data)
+    print('---')
+
+    print('***')
+    print(update.callback_query)
+    print('***')
+
+    if update.callback_query and update.callback_query.data:
+        print('Callback Data:')
+        print(update.callback_query.data)
+        print('Split Result:')
+        print(update.callback_query.data.split("_")[-1])
+
+    # List of photo file_ids or URLs
+    photo_list = [
+        'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
+        'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
+        'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
+        'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
+    ]
+
+    # Determine the current index
+    if update.callback_query and update.callback_query.data:
+        current_index = int(update.callback_query.data.split("_")[-1])
+    else:
+        current_index = 0
+
+    print('Current Index:')
+    print(current_index)
+
+    # Ensure current_index stays within the bounds of photo_list
+    current_index = max(0, min(current_index, len(photo_list) - 1))
+
+    print('Adjusted Current Index:')
+    print(current_index)
+
+    # If "Finish" button is clicked, show the main menu
+    if update.callback_query and update.callback_query.data == "FINISH":
+        print('Finish Button Clicked')
+        await main_menu(update, context)
+        return START_ROUTES
+
+    # Construct caption with current index and total number of photos
+    caption = f"{current_index + 1} out of {len(photo_list)}"
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if current_index == 0:
+        buttons.append([InlineKeyboardButton("Next", callback_data=f"NEXT_{current_index + 1}"),
+                        InlineKeyboardButton("Back to Main Menu", callback_data=str(MAIN_MENU))])
+    elif current_index == len(photo_list) - 1:
+        buttons.append([InlineKeyboardButton("Finish", callback_data="FINISH"),
+                        InlineKeyboardButton("Previous", callback_data=f"PREVIOUS_{current_index - 1}")])
+    else:
+        buttons.append([InlineKeyboardButton("Next", callback_data=f"NEXT_{current_index + 1}"),
+                        InlineKeyboardButton("Previous", callback_data=f"PREVIOUS_{current_index - 1}")])
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=photo_list[current_index],
+        caption=caption,
+        reply_markup=reply_markup
+    )
+
+    return START_ROUTES
+
+
+
+
+
+
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -223,7 +386,8 @@ def main() -> None:
                 CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$"),
                 CallbackQueryHandler(local_exchange, pattern="^" + str(LOC_EX) + "$"),
                 CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$"),
-                CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$")
+                CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$"),
+                CallbackQueryHandler(send_airdrops_album, pattern="^" + str(AIR_DROPS) + "$")
             ],
             END_ROUTES: [
                 CallbackQueryHandler(start_over, pattern="^" + str(MAIN_MENU) + "$")
