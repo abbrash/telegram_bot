@@ -1,7 +1,4 @@
-import re
-import random
-import os
-import json
+import re, random, string, os, json
 from datetime import datetime
 from typing import Final
 import pandas as pd
@@ -9,38 +6,23 @@ import numpy as np
 from decouple import config
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-
 from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, filters, Updater
 
 # Define the path to the JSON and CSV files
-EMAIL_IDS_FILE = 'email_ids.json'
-DATA_FILE = 'email_data.csv'
-
-# Function to save the email_ids dictionary to a JSON file
-def save_email_ids(email_ids):
-    with open(EMAIL_IDS_FILE, 'w') as f:
-        json.dump(email_ids, f)
-
-# Function to load the email_ids dictionary from a JSON file
-def load_email_ids():
-    if os.path.exists(EMAIL_IDS_FILE):
-        with open(EMAIL_IDS_FILE, 'r') as f:
-            return json.load(f)
-    else:
-        return {}
+# EMAIL_IDS_FILE = 'email_ids.json'
+data_file_add = 'data_base.csv'
 
 # Function to save email data to CSV
 def save_email_data(df):
-    df.to_csv(DATA_FILE, index=False)
+    df.to_csv(data_file_add, index=False)
 
 # Function to load email data from CSV
-def load_email_data():
-    if os.path.exists(DATA_FILE):
-        return pd.read_csv(DATA_FILE)
+def load_data_base():
+    if os.path.exists(data_file_add):
+        return pd.read_csv(data_file_add)
     else:
-        # return pd.DataFrame(columns=['Email', 'ID', 'Time Added'])
-        return pd.DataFrame(columns=['user_id', 'name', 'tel_user_id', 'email_id', 'date'])
+        return pd.DataFrame(columns=['ch_user_id', 'tel_user_name', 'tel_user_id', 'email_id', 'date'])
 
 # Ckeck if the email is already registered
 def is_email(input_str):
@@ -52,30 +34,41 @@ def is_email(input_str):
     else:
         return False
 
+def gen_uniq_channel_id(existing_ids):
+    """
+    Generate a unique 10-digit channel ID.
+    
+    :param existing_ids: A set of existing channel IDs
+    :return: A unique 10-digit channel ID
+    """
+    while True:
+        # Generate a random 10-digit ID
+        channel_id = ''.join(random.choices(string.digits, k=10))
+        # Check if this ID is unique
+        if channel_id not in existing_ids:
+            return channel_id
+        
+
+
 # Log errors
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
 # Load the email_ids dictionary when the bot starts
-email_ids = load_email_ids()
-email_data = load_email_data()
+data_base = load_data_base()
 
-
-
-# print(email_data)
-# print()
 print('Starting up bot...')
 
 
 Tk = config('token')
-BOT_USERNAME: Final = '@CrypticChannelBot'
+# BOT_USERNAME: Final = '@CrypticChannelBot'
 
 # print(Tk)
 
 # Stages
 START_ROUTES, END_ROUTES, MESS_HANDL = range(3)
 # Callback data
-ONE, TWO, THREE, FOUR = range(4)
+SUBMIT_EMAIL, TWO, THREE, FOUR = range(4)
 
 TEN, TWENTY, THIRTY = range(10, 40, 10)
 
@@ -84,17 +77,17 @@ EMAIL = 100
 
 
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    user_id = update.effective_user.id
-    if user_id in email_data['tel_user_id'].values:
-        user_name = email_data[email_data['tel_user_id'] == user_id]['name'].values[0]
-        print_txt = f"Hello my Fren, {user_name}"
+    tel_user_id = update.effective_user.id
+
+    if tel_user_id in data_base['tel_user_id'].values:
+        tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['name'].values[0]
+        print_txt = f"Hello my Fren, {tel_user_name}"
 
         keyboard = [
             [
-                InlineKeyboardButton("Start1", callback_data=str(ONE)),
+                InlineKeyboardButton("Start1", callback_data=str(SUBMIT_EMAIL)),
                 InlineKeyboardButton("Start2", callback_data=str(TWO)),
                 InlineKeyboardButton("Start3", callback_data=str(THREE)),
             ]
@@ -105,7 +98,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         keyboard = [
             [
-                InlineKeyboardButton("Join Now!", callback_data=str(ONE)),
+                InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL)),
                 InlineKeyboardButton("Start2", callback_data=str(TWENTY)),
                 InlineKeyboardButton("Start3", callback_data=str(THIRTY)),
             ]
@@ -115,11 +108,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = 'Welcome to Crypto Channel' 
 
     await update.message.reply_text(text=print_txt, reply_markup=reply_markup)
-
-    
-    # Send message with text and appended InlineKeyboard
-    # await update.message.reply_text("Start handler, Choose a route", reply_markup=reply_markup)
-    # Tell ConversationHandler that we're in state `FIRST` now
     return START_ROUTES
 
 
@@ -132,7 +120,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await query.answer()
     keyboard = [
         [
-            InlineKeyboardButton("1", callback_data=str(ONE)),
+            InlineKeyboardButton("1", callback_data=str(SUBMIT_EMAIL)),
             InlineKeyboardButton("2", callback_data=str(TWO)),
         ]
     ]
@@ -146,22 +134,29 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
-    global email_data
+    global data_base
+
+    if update.effective_user.name != None:
+        tel_user_name = update.effective_user.name
+        print(tel_user_name)
+    else:
+        tel_user_name = 'No name'
 
     print('email confirming is executed')
 
-    user_id = update.effective_user.id
+    tel_user_id = update.effective_user.id
     message_text = update.effective_message.text.lower()
 
+    
     if is_email(message_text):
          
-         if message_text in email_ids:
+         if message_text in data_base['email_id']:
              context.bot.send_message(chat_id=update.effective_chat.id, text="Email address already exists on our database.")
          else:
             new_user = {
-                        'user_id': 'user_id',
-                        'name': 'new_user',
-                        'tel_user_id': user_id,
+                        'ch_user_id': 'ch_user_id',
+                        'name': tel_user_name,
+                        'tel_user_id': tel_user_id,
                         'email_id': message_text,
                         'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         }
@@ -169,17 +164,16 @@ async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             new_user = pd.DataFrame([new_user])
 
                     # Update email data DataFrame
-            email_data = pd.concat(
-                        [email_data, new_user], ignore_index=True)
-            save_email_data(email_data)
+            data_base = pd.concat([data_base, new_user], ignore_index=True)
+            save_email_data(data_base)
 
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"New email address added with ID: {user_id}")
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"New email address added with ID: {tel_user_id}")
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid email address. Please try again.")
 
 
 
-async def one(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await context.bot.send_message(chat_id=update.effective_chat.id, text='Please send your email address:')
     return EMAIL
@@ -188,17 +182,16 @@ async def one(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(
-        "7029020592:AAGYmkIiqRPL99oGfIW0vvyTIhSJYKDbl9U").build()
+    application = Application.builder().token(Tk).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
             START_ROUTES: [
-                CallbackQueryHandler(one, pattern="^" + str(ONE) + "$")],
+                CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$")],
 
             END_ROUTES: [
-                CallbackQueryHandler(start_over, pattern="^" + str(ONE) + "$")],
+                CallbackQueryHandler(start_over, pattern="^" + str(SUBMIT_EMAIL) + "$")],
 
             EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email_confirming)]
         },
