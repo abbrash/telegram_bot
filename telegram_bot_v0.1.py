@@ -8,6 +8,7 @@ from decouple import config
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, filters
+from telegram.error import BadRequest
 
 # Define the path to the JSON and CSV files
 data_file_add = 'data_base.csv'
@@ -117,6 +118,36 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return START_ROUTES
 
+# async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     """Prompt same text & keyboard as `start` does but not as new message"""
+#     query = update.callback_query
+#     await query.answer()
+
+#     air_drop_counter = 0
+#     tel_user_id = update.effective_user.id
+
+#     if tel_user_id in data_base['tel_user_id'].values:
+#         tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
+#         print_txt = f"Hello my Fren, {tel_user_name}"
+
+#         keyboard = [
+#             [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
+#             [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
+#             [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
+#             [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
+#         ]
+#         reply_markup = InlineKeyboardMarkup(keyboard)
+#     else:
+#         keyboard = [
+#             [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
+#         ]
+#         reply_markup = InlineKeyboardMarkup(keyboard)
+#         print_txt = 'Welcome to Crypto Channel'
+
+#     await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
+#     return START_ROUTES
+
+
 async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Prompt same text & keyboard as `start` does but not as new message"""
     query = update.callback_query
@@ -143,8 +174,17 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         reply_markup = InlineKeyboardMarkup(keyboard)
         print_txt = 'Welcome to Crypto Channel'
 
-    await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
+    try:
+        # Try to edit the message text
+        await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
+    except BadRequest:
+        # If the message doesn't have text content, send a new message
+        await query.message.reply_text(text=print_txt, reply_markup=reply_markup)
+
     return START_ROUTES
+
+
+
 
 async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     global data_base
@@ -355,9 +395,9 @@ async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE
     buttons = []
     if current_index == 0:
         buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
-                        InlineKeyboardButton("Back to Main Menu", callback_data=str(MAIN_MENU))])
+                        InlineKeyboardButton("Back to Main Menu", callback_data="main_menu")])
     elif current_index == len(photo_list) - 1:
-        buttons.append([InlineKeyboardButton("Finish", callback_data=str(MAIN_MENU)),
+        buttons.append([InlineKeyboardButton("Finish", callback_data="main_menu"),
                         InlineKeyboardButton("Previous", callback_data=str(current_index - 1))])
     else:
         buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
@@ -397,7 +437,7 @@ def main() -> None:
             ],
             SEND_IMG: [
                 CallbackQueryHandler(send_airdrops_album, pattern="^(\d+)$"),
-                CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$")
+                CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
             EMAIL: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, email_confirming)
