@@ -10,7 +10,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQuer
 from telegram.ext import MessageHandler, filters
 from telegram.error import BadRequest
 
-# Define the path to the JSON and CSV files
+# Define the path to save CSV file
 data_file_add = 'data_base.csv'
 
 # Function to save email data to CSV
@@ -66,12 +66,11 @@ SUBMIT_EMAIL, LOC_EX, GLOB_EX, MAIN_MENU, AIR_DROPS, MY_PROGRESS = range(6)
 
 TEN, TWENTY, THIRTY = range(10, 40, 10)
 
-# EMAIL_CONF = int(100)
 EMAIL = 100
 
-execution_counter = 0
 IMG_IDX_COUNTER = 0
-# current_index = 0 
+
+global first_time_loop
 first_time_loop = True
 
 
@@ -110,42 +109,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await query.answer()
         await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
 
-    
-    # Reset the execution_counter when send_airdrops_album is called from start
-    if update.callback_query and update.callback_query.data == str(AIR_DROPS):
-        global execution_counter
-        execution_counter = 0
-
     return START_ROUTES
-
-# async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     """Prompt same text & keyboard as `start` does but not as new message"""
-#     query = update.callback_query
-#     await query.answer()
-
-#     air_drop_counter = 0
-#     tel_user_id = update.effective_user.id
-
-#     if tel_user_id in data_base['tel_user_id'].values:
-#         tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
-#         print_txt = f"Hello my Fren, {tel_user_name}"
-
-#         keyboard = [
-#             [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
-#             [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
-#             [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
-#             [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
-#         ]
-#         reply_markup = InlineKeyboardMarkup(keyboard)
-#     else:
-#         keyboard = [
-#             [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
-#         ]
-#         reply_markup = InlineKeyboardMarkup(keyboard)
-#         print_txt = 'Welcome to Crypto Channel'
-
-#     await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
-#     return START_ROUTES
 
 
 async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -153,12 +117,11 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
 
-    air_drop_counter = 0
     tel_user_id = update.effective_user.id
 
     if tel_user_id in data_base['tel_user_id'].values:
         tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
-        print_txt = f"Hello my Fren, {tel_user_name}"
+        print_txt = f"Stay with us, {tel_user_name}"
 
         keyboard = [
             [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
@@ -185,8 +148,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 
-
-async def email_confirming(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     global data_base
 
     tel_user_id = update.effective_user.id
@@ -275,86 +237,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return await start_over(update, context)
 
 
-###############################################################################
-
-# async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-    
-#     global current_index
-
-#     # Get the index from the callback data
-#     if query.data.isdigit():
-#         current_index = int(query.data)
-#     else:
-#         current_index = 0
-
-
-
-#     print('---')
-#     print(update.callback_query.data)
-#     print('---')
-
-#     print('***')
-#     print(update.callback_query)
-#     print('***')
-
-#     if update.callback_query and update.callback_query.data:
-#         print('exeasagsg')
-#         print(update.callback_query.data)
-#         print(update.callback_query.data.split("_")[-1])
-
-#     # List of photo file_ids or URLs
-#     photo_list = [
-#         'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
-#     ]
-
-#     # # Determine the current index
-#     # if update.callback_query and update.callback_query.data:
-#     #     current_index = int(update.callback_query.data.split("_")[-1])
-#     # else:
-#     #     current_index = 0
-
-#     # Ensure current_index stays within the bounds of photo_list
-#     current_index = max(0, min(current_index, len(photo_list) - 1))
-
-#     # # If "Finish" button is clicked, show the main menu
-#     # if update.callback_query and update.callback_query.data == "FINISH":
-#     #     await main_menu(update, context)
-#     #     return START_ROUTES
-
-#     # Construct caption with current index and total number of photos
-#     caption = f"{current_index + 1} out of {len(photo_list)}"
-
-#     # Construct InlineKeyboardMarkup based on current message index
-#     buttons = []
-#     if current_index == 0:
-#         buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
-#                         InlineKeyboardButton("Back to Main Menu", callback_data=str(MAIN_MENU))])
-#     elif current_index == len(photo_list) - 1:
-#         buttons.append([InlineKeyboardButton("Finish", callback_data=str(MAIN_MENU)),
-#                         InlineKeyboardButton("Previous", callback_data=str(current_index - 1))])
-#     else:
-#         buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
-#                         InlineKeyboardButton("Previous", callback_data=str(current_index - 1))])
-
-#     reply_markup = InlineKeyboardMarkup(buttons)
-#     print(current_index)
-#     # Send the current photo with caption and navigation buttons
-#     await context.bot.send_photo(
-#         chat_id=update.effective_chat.id,
-#         photo=photo_list[current_index],
-#         caption=caption,
-#         reply_markup=reply_markup
-#     )
-
-#     return SEND_IMG
-
-###############################################################################
-async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
 
@@ -363,19 +246,25 @@ async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE
     print(f"it is digit: {current_index}")
 
     # # Get the index from the callback data
-    # if query.data.isdigit():
+    # if query.data.isdigit() and first_time_loop:
+    #     current_index = 0
+    #     first_time_loop = False
+    #     print(f"it is first time: {current_index}")
+    # else: 
     #     current_index = int(query.data)
-    #     print(f"it is digit: {current_index}")
+    #     print(f"it is not first time: {current_index}")
 
-
-    # Get the index from the callback data
-    if query.data.isdigit() and first_time_loop:
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if first_time_loop:
+            current_index = 0
+            first_time_loop = False
+        else:
+            current_index = int(query.data)
+    elif query.data == "air_drop_01":
+        # Reset current_index when "air_drop_01" is clicked
         current_index = 0
         first_time_loop = False
-        print(f"it is first time: {current_index}")
-    else: 
-        current_index = int(query.data)
-        print(f"it is not first time: {current_index}")
 
     # List of photo file_ids or URLs
     photo_list = [
@@ -394,14 +283,14 @@ async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
     if current_index == 0:
-        buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
-                        InlineKeyboardButton("Back to Main Menu", callback_data="main_menu")])
+        buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
+                        InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
     elif current_index == len(photo_list) - 1:
-        buttons.append([InlineKeyboardButton("Finish", callback_data="main_menu"),
-                        InlineKeyboardButton("Previous", callback_data=str(current_index - 1))])
+        buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
+                        InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
     else:
-        buttons.append([InlineKeyboardButton("Next", callback_data=str(current_index + 1)),
-                        InlineKeyboardButton("Previous", callback_data=str(current_index - 1))])
+        buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
+                        InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
 
     reply_markup = InlineKeyboardMarkup(buttons)
 
@@ -417,6 +306,30 @@ async def send_airdrops_album(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 
+async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    keyboard = [
+        [InlineKeyboardButton('Air Drop 01', callback_data="air_drop_01"),
+         InlineKeyboardButton('Air Drop 02', callback_data="air_drop_02")],
+        [InlineKeyboardButton('Back to Main Menu', callback_data=str(AIR_DROPS))]
+    ]
+    key_markup = InlineKeyboardMarkup(keyboard)
+
+    text = 'Please choose any airdrop you wish to participate in:'
+
+    if query.message and query.message.text:
+        try:
+            await query.edit_message_text(text=text, reply_markup=key_markup)
+        except BadRequest:
+            await query.message.reply_text(text=text, reply_markup=key_markup)
+    else:
+        await query.message.reply_text(text=text, reply_markup=key_markup)
+
+    return START_ROUTES
+
+
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -430,17 +343,19 @@ def main() -> None:
                 CallbackQueryHandler(local_exchange, pattern="^" + str(LOC_EX) + "$"),
                 CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$"),
-                CallbackQueryHandler(send_airdrops_album, pattern="^" + str(AIR_DROPS) + "$")
+                CallbackQueryHandler(air_drop_menu, pattern="^" + str(AIR_DROPS) + "$"),
+                CallbackQueryHandler(send_airdrops_album_01, pattern="^" + "air_drop_01" + "$")
             ],
             END_ROUTES: [
                 CallbackQueryHandler(start_over, pattern="^" + str(MAIN_MENU) + "$")
             ],
             SEND_IMG: [
-                CallbackQueryHandler(send_airdrops_album, pattern="^(\d+)$"),
-                CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
+                CallbackQueryHandler(send_airdrops_album_01, pattern="^(\d+)$"),
+                # CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$"),
+                CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
             ],
             EMAIL: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, email_confirming)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_email)
             ]
         },
         fallbacks=[CommandHandler("start", start)],
