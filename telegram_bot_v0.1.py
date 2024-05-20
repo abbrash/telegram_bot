@@ -180,9 +180,13 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             data_base = pd.concat([data_base, new_user], ignore_index=True)
             save_email_data(data_base)
 
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=f"New email address added with ID: {tel_user_id}")
+            # await context.bot.send_message(chat_id=update.effective_chat.id, text=f"New email address added with ID: {tel_user_id}")
+            # Show the main menu instead of sending a message
+            return await main_menu(update, context)
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid email address. Please try again.")
+
+
 
 async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -225,16 +229,35 @@ async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     )
     return START_ROUTES
 
-async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    query = update.callback_query
-    await query.answer()
+# async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
 
+#     # Reset current_index when main_menu is called
+#     global current_index, first_time_loop
+#     current_index = 0
+#     first_time_loop = True
+
+#     return await start_over(update, context)
+
+
+async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Reset current_index when main_menu is called
     global current_index, first_time_loop
     current_index = 0
     first_time_loop = True
 
-    return await start_over(update, context)
+    if update.message:
+        # Handle text messages
+        return await start(update, context)
+    elif update.callback_query:
+        # Handle callback queries
+        query = update.callback_query
+        await query.answer()
+        return await start_over(update, context)
+    else:
+        # Handle other update types (not expected)
+        return END_ROUTES
 
 
 async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -244,15 +267,6 @@ async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_T
     global current_index, first_time_loop
 
     print(f"it is digit: {current_index}")
-
-    # # Get the index from the callback data
-    # if query.data.isdigit() and first_time_loop:
-    #     current_index = 0
-    #     first_time_loop = False
-    #     print(f"it is first time: {current_index}")
-    # else: 
-    #     current_index = int(query.data)
-    #     print(f"it is not first time: {current_index}")
 
     # Check if query.data is a digit
     if query.data.isdigit():
