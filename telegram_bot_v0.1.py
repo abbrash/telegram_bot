@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from decouple import config
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, filters
 from telegram.error import BadRequest
@@ -229,17 +229,6 @@ async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     )
     return START_ROUTES
 
-# async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-
-#     # Reset current_index when main_menu is called
-#     global current_index, first_time_loop
-#     current_index = 0
-#     first_time_loop = True
-
-#     return await start_over(update, context)
-
 
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Reset current_index when main_menu is called
@@ -317,7 +306,6 @@ async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_T
     )
 
     return SEND_IMG
-
 
 
 async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):

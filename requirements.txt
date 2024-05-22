@@ -1,0 +1,21 @@
+# Requirements for the Telegram bot script to run on a server
+
+# Main library for interacting with the Telegram API
+python-telegram-bot==20.3
+
+# For managing environment variables
+python-decouple==3.8
+
+# Libraries for data manipulation and analysis
+pandas==1.5.3
+numpy==1.24.2
+
+# For making HTTP requests (often used by python-telegram-bot)
+requests==2.31.0
+
+# Enhanced regular expression operations
+regex==2023.5.2
+
+# Note: Standard library modules (re, os, json, datetime, typing) are not included
+# here because they are part of Python's standard library and do not need to be
+# installed separately.
