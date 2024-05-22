@@ -13,9 +13,9 @@ from telegram.error import BadRequest
 # Define the path to save CSV file
 data_file_add = 'data_base.csv'
 
-# Function to save email data to CSV
-def save_email_data(df):
-    df.to_csv(data_file_add, index=False)
+# # Function to save email data to CSV
+# def save_email_data(df):
+#     df.to_csv(data_file_add, index=False)
 
 # Function to load email data from CSV
 def load_data_base():
@@ -249,13 +249,72 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return END_ROUTES
 
 
+# async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     global current_index, first_time_loop
+
+#     print(f"it is digit: {current_index}")
+
+#     # Check if query.data is a digit
+#     if query.data.isdigit():
+#         if first_time_loop:
+#             current_index = 0
+#             first_time_loop = False
+#         else:
+#             current_index = int(query.data)
+#     elif query.data == "air_drop_01":
+#         # Reset current_index when "air_drop_01" is clicked
+#         current_index = 0
+#         first_time_loop = False
+
+#     # List of photo file_ids or URLs
+#     photo_list = [
+#         'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
+#         'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
+#     ]
+
+#     # Ensure current_index stays within the bounds of photo_list
+#     current_index = max(0, min(current_index, len(photo_list) - 1))
+
+#     # Construct caption with current index and total number of photos
+#     caption = f"{current_index + 1} out of {len(photo_list)}"
+
+#     # Construct InlineKeyboardMarkup based on current message index
+#     buttons = []
+#     if current_index == 0:
+#         buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
+#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
+#     elif current_index == len(photo_list) - 1:
+#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
+#                         InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
+#     else:
+#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
+#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
+
+#     reply_markup = InlineKeyboardMarkup(buttons)
+
+#     # Send the current photo with caption and navigation buttons
+#     await context.bot.send_photo(
+#         chat_id=update.effective_chat.id,
+#         photo=photo_list[current_index],
+#         caption=caption,
+#         reply_markup=reply_markup
+#     )
+
+#     return SEND_IMG
+
+
 async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
 
     global current_index, first_time_loop
 
-    print(f"it is digit: {current_index}")
+    print(f"Current index: {current_index}")
 
     # Check if query.data is a digit
     if query.data.isdigit():
@@ -269,26 +328,27 @@ async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_T
         current_index = 0
         first_time_loop = False
 
-    # List of photo file_ids or URLs
-    photo_list = [
-        'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
-        'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
-        'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
-        'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
-    ]
+    # Directory where images are stored
+    # Update this path to match your actual directory
+    image_directory = 'img/'
 
-    # Ensure current_index stays within the bounds of photo_list
-    current_index = max(0, min(current_index, len(photo_list) - 1))
+    # Dynamically generate the image filename based on the current index
+    # zfill adds leading zeros
+    image_filename = f'{image_directory}/{str(current_index + 1).zfill(2)}.jpg'
+
+    # Ensure current_index stays within the bounds of available images
+    current_index = max(
+        0, min(current_index, len(os.listdir(image_directory)) - 1))
 
     # Construct caption with current index and total number of photos
-    caption = f"{current_index + 1} out of {len(photo_list)}"
+    caption = f"{current_index + 1} out of {len(os.listdir(image_directory))}"
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
     if current_index == 0:
         buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
-    elif current_index == len(photo_list) - 1:
+    elif current_index == len(os.listdir(image_directory)) - 1:
         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
                         InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
     else:
@@ -300,7 +360,7 @@ async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_T
     # Send the current photo with caption and navigation buttons
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=photo_list[current_index],
+        photo=open(image_filename, 'rb'),
         caption=caption,
         reply_markup=reply_markup
     )
