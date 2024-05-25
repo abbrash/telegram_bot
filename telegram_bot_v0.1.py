@@ -1,14 +1,34 @@
+### <<<--------------------------------------------------------------------------------------------------->>> ###
+### <<<-------------------------------------------- Libraries -------------------------------------------->>> ###
+### <<<--------------------------------------------------------------------------------------------------->>> ###
+
 import re, random, string, os, json
 from datetime import datetime
 from typing import Final
 import pandas as pd
 import numpy as np
 from decouple import config
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler
-from telegram.ext import MessageHandler, filters
+from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
 from telegram.error import BadRequest
+
+
+### <<<----------------------------------------------------------------------------------------------------------------->>> ###
+### <<<-------------------------------------------- Constants and Variables -------------------------------------------->>> ###
+### <<<----------------------------------------------------------------------------------------------------------------->>> ###
+
+# Stages
+START_ROUTES, END_ROUTES, SEND_IMG, PH_AIRDROP, EMAIL, MESS_HANDL = range(6)
+
+global first_time_loop_ph_swap, current_index_ph_swap
+first_time_loop_ph_swap = True
+current_index_ph_swap = 0
+
+
+### <<<-------------------------------------------------------------------------------------------------------->>> ###
+### <<<-------------------------------------------- Sync Functions -------------------------------------------->>> ### 
+### <<<-------------------------------------------------------------------------------------------------------->>> ###
+
 
 # Define the path to save CSV file
 data_file_add = 'data_base.csv'
@@ -19,7 +39,6 @@ data_file_path = os.path.join(os.getcwd(), 'data_base.csv')
 # Function to save email data to CSV
 def save_email_data(df):
     df.to_csv(data_file_path, index=False)
-
 
 # Function to load email data from CSV
 def load_data_base():
@@ -52,31 +71,21 @@ def gen_uniq_channel_id(existing_ids):
         if channel_id not in existing_ids:
             return channel_id
 
+
+
+
+
+### <<<--------------------------------------------------------------------------------------------------------->>> ###
+### <<<--------------------------------------------------------------------------------------------------------->>> ###
+### <<<-------------------------------------------- Async Functions -------------------------------------------->>> ###
+### <<<--------------------------------------------------------------------------------------------------------->>> ###
+### <<<--------------------------------------------------------------------------------------------------------->>> ###
+
+
 # Log errors
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
-# Load the email_ids dictionary when the bot starts
-data_base = load_data_base()
-
-print('Starting up bot...')
-
-Tk = config('token')
-
-# Stages
-START_ROUTES, END_ROUTES, SEND_IMG, PH_AIRDROP, MESS_HANDL = range(5)
-# Callback data
-SUBMIT_EMAIL, LOC_EX, GLOB_EX, MAIN_MENU, AIR_DROPS, MY_PROGRESS = range(6)
-
-TEN, TWENTY, THIRTY = range(10, 40, 10)
-
-EMAIL = 100
-
-IMG_IDX_COUNTER = 0
-
-global first_time_loop_ph_swap, current_index_ph_swap
-first_time_loop_ph_swap = True
-current_index_ph_swap = 0
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     
@@ -93,15 +102,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = f"Hello my Fren, {tel_user_name}"
 
         keyboard = [
-            [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
-            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
-            [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
-            [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
+            [InlineKeyboardButton("Local Exchange Referral Links", callback_data="local_exchange")],
+            [InlineKeyboardButton("Global Exchange Referral Links", callback_data="global_exchange")],
+            [InlineKeyboardButton("Air Drops", callback_data="air_drops")],
+            [InlineKeyboardButton("My Progress", callback_data="my_progress")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
+            [InlineKeyboardButton("Join Now!", callback_data="submit_email")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         print_txt = 'Welcome to Crypto Channel'
@@ -133,15 +142,15 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = f"Stay with us, {tel_user_name}"
 
         keyboard = [
-            [InlineKeyboardButton("Local Exchange Referral Links", callback_data=str(LOC_EX))],
-            [InlineKeyboardButton("Global Exchange Referral Links", callback_data=str(GLOB_EX))],
-            [InlineKeyboardButton("Air Drops", callback_data=str(AIR_DROPS))],
-            [InlineKeyboardButton("My Progress", callback_data=str(MY_PROGRESS))]
+            [InlineKeyboardButton("Local Exchange Referral Links", callback_data="local_exchange")],
+            [InlineKeyboardButton("Global Exchange Referral Links", callback_data="global_exchange")],
+            [InlineKeyboardButton("Air Drops", callback_data="air_drops")],
+            [InlineKeyboardButton("My Progress", callback_data="my_progress")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data=str(SUBMIT_EMAIL))]
+            [InlineKeyboardButton("Join Now!", callback_data="submit_email")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         print_txt = 'Welcome to Crypto Channel'
@@ -210,7 +219,7 @@ async def local_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     keyboard = [
         [InlineKeyboardButton('Nobitex', url='https://nobitex.ir/signup/?refcode=1557073')],
         [InlineKeyboardButton('BitPin', url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
-        [InlineKeyboardButton('Back', callback_data=str(MAIN_MENU))]
+        [InlineKeyboardButton('Back', callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
@@ -227,7 +236,7 @@ async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     keyboard = [
         [InlineKeyboardButton('BingX', url='https://bingx.com/invite/NLQIKZI2')],
         [InlineKeyboardButton('CoinEx', url='https://www.coinex.com/register?refer_code=s95m7')],
-        [InlineKeyboardButton('Back', callback_data=str(MAIN_MENU))]
+        [InlineKeyboardButton('Back', callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
@@ -292,14 +301,14 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
     if current_index_ph_swap == 0:
-        buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
-                        InlineKeyboardButton("Next", callback_data=str(current_index_ph_swap + 1))])
+        buttons.append([InlineKeyboardButton("بازگشت به منوی ایردراپ‌ها 🏠⬅️ ", callback_data="back_to_air_drop_menu"),
+                        InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))])
     elif current_index_ph_swap == len(os.listdir(img_add)) - 1:
-        buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index_ph_swap - 1)),
-                        InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
+        buttons.append([InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1)),
+                        InlineKeyboardButton("🎉🥳 تامام!", callback_data="back_to_air_drop_menu")])
     else:
-        buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index_ph_swap - 1)),
-                        InlineKeyboardButton("Next", callback_data=str(current_index_ph_swap + 1))])
+        buttons.append([InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1)),
+                        InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))])
 
     reply_markup = InlineKeyboardMarkup(buttons)
 
@@ -325,7 +334,7 @@ async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton('Phantom Wallet Air Drop', callback_data="air_drop_phantom_menu"),
          InlineKeyboardButton('Air Drop 02', callback_data="air_drop_02")],
-        [InlineKeyboardButton('Back to Main Menu', callback_data=str(AIR_DROPS))]
+        [InlineKeyboardButton('Back to Main Menu', callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
@@ -341,6 +350,7 @@ async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return START_ROUTES
 
+
 async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -350,26 +360,52 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     first_time_loop_ph_swap = True
 
     keyboard = [
-        [InlineKeyboardButton('Swap', callback_data="phantom_swap")],
-        [InlineKeyboardButton('Stake', callback_data="phantom_stake")],
-        [InlineKeyboardButton('Unstake', callback_data="phantom_unstake")],
+        [InlineKeyboardButton('🔄 Swap', callback_data="phantom_swap")],
+        [InlineKeyboardButton('📌 Stake', callback_data="phantom_stake")],
+        [InlineKeyboardButton('⬆️ Unstake', callback_data="phantom_unstake")],
         [InlineKeyboardButton('Blank', callback_data="phantom_blank")],
-        [InlineKeyboardButton('Back', callback_data="back_to_air_drop_menu")]
+        [InlineKeyboardButton('⬅️ Back', callback_data="back_to_air_drop_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
-    text = 'برای شرکت در ایردراپ Phantom باید یکسری تسک انجام بدیم که در اینجا لیست شدن. به ترتیب شروع کنید.'
+    text = """
+<b>ایردراپ فانتوم (Phantom) </b>
 
-    if query.message and query.message.text:
-        try:
-            await query.edit_message_text(text=text, reply_markup=key_markup)
-        except BadRequest:
-            await query.message.reply_text(text=text, reply_markup=key_markup)
-    else:
-        await query.message.reply_text(text=text, reply_markup=key_markup)
+🔄 نحوه فعالیت: 
+هفتگی یا ماهیانه
+
+💵 موجودی مورد نیاز:
+30 تتر 
+
+📅 تاریخ توزیع: 
+نامشخص
+
+ توضیحات:
+برای شرکت در ایردراپ فانتوم، لطفاً موارد زیر را به ترتیب انجام دهید.
+"""
+
+    # Select an image to send
+    # Replace with the actual path to your image
+    # image_filename = 'phantom_wallet_img.jpg'
+    image_filename = os.path.join('img', 'phantom_wallet', 'phantom_wallet_img.jpg')
+
+
+    # Send the image along with the text and buttons
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=open(image_filename, 'rb'),
+        caption=text,
+        reply_markup=key_markup,
+        parse_mode="HTML"
+    )
 
     return PH_AIRDROP
 
+### <<<------------------------------------------------------------------------------------------------------->>> ###
+### <<<------------------------------------------------------------------------------------------------------->>> ###
+### <<<-------------------------------------------- Main Function -------------------------------------------->>> ###
+### <<<------------------------------------------------------------------------------------------------------->>> ###
+### <<<------------------------------------------------------------------------------------------------------->>> ###
 
 def main() -> None:
     """Run the bot."""
@@ -380,15 +416,15 @@ def main() -> None:
         entry_points=[CommandHandler("start", start)],
         states={
             START_ROUTES: [
-                CallbackQueryHandler(submit_email, pattern="^" + str(SUBMIT_EMAIL) + "$"),
-                CallbackQueryHandler(local_exchange, pattern="^" + str(LOC_EX) + "$"),
-                CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$"),
-                CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$"),
-                CallbackQueryHandler(air_drop_menu, pattern="^" + str(AIR_DROPS) + "$"),
+                CallbackQueryHandler(submit_email, pattern="^" + "submit_email" + "$"),
+                CallbackQueryHandler(local_exchange, pattern="^" + "local_exchange" + "$"),
+                CallbackQueryHandler(global_exchange, pattern="^" + "global_exchange" + "$"),
+                CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$"),
+                CallbackQueryHandler(air_drop_menu, pattern="^" + "air_drops" + "$"),
                 CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
             ],
             END_ROUTES: [
-                CallbackQueryHandler(start_over, pattern="^" + str(MAIN_MENU) + "$")
+                CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],
             SEND_IMG: [
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
@@ -413,6 +449,19 @@ def main() -> None:
     application.run_polling(
         allowed_updates=Update.ALL_TYPES, poll_interval=3, timeout=60
     )
+
+### <<<------------------------------------------------------------------------------------------------------------>>> ###
+### <<<------------------------------------------------------------------------------------------------------------>>> ###
+### <<<-------------------------------------------- Initiation The Bot -------------------------------------------->>> ###
+### <<<------------------------------------------------------------------------------------------------------------>>> ###
+### <<<------------------------------------------------------------------------------------------------------------>>> ###
+
+# Load the email_ids dictionary when the bot starts
+data_base = load_data_base()
+
+print('Starting up bot...')
+
+Tk = config('token')
 
 if __name__ == "__main__":
     main()
