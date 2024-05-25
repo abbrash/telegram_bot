@@ -18,11 +18,17 @@ from telegram.error import BadRequest
 ### <<<----------------------------------------------------------------------------------------------------------------->>> ###
 
 # Stages
-START_ROUTES, END_ROUTES, SEND_IMG, PH_AIRDROP, EMAIL, MESS_HANDL = range(6)
+START_ROUTES, END_ROUTES, SEND_IMG, PH_AIRDROP, PH_AIRDROP_SWAP, PH_AIRDROP_STAKE, PH_AIRDROP_UNSTAKE, EMAIL, MESS_HANDL = range(9)
 
-global first_time_loop_ph_swap, current_index_ph_swap
+global first_time_loop_ph_swap, first_time_loop_ph_stake, first_time_loop_ph_unstake 
+global current_index_ph_swap, current_index_ph_stake, current_index_ph_unstake
 first_time_loop_ph_swap = True
+first_time_loop_ph_stake = True
+first_time_loop_ph_unstake = True
 current_index_ph_swap = 0
+current_index_ph_stake = 0
+current_index_ph_unstake = 0
+
 
 
 ### <<<-------------------------------------------------------------------------------------------------------->>> ###
@@ -73,8 +79,6 @@ def gen_uniq_channel_id(existing_ids):
 
 
 
-
-
 ### <<<--------------------------------------------------------------------------------------------------------->>> ###
 ### <<<--------------------------------------------------------------------------------------------------------->>> ###
 ### <<<-------------------------------------------- Async Functions -------------------------------------------->>> ###
@@ -89,12 +93,6 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     
-    # global air_drop_counter
-    # air_drop_counter = 0
-    # global current_index_ph_swap, first_time_loop_ph_swap
-    # current_index_ph_swap = 0  # Reset current_index to 0
-    # first_time_loop_ph_swap = True
-
     tel_user_id = update.effective_user.id
 
     if tel_user_id in data_base['tel_user_id'].values:
@@ -102,18 +100,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = f"Hello my Fren, {tel_user_name}"
 
         keyboard = [
-            [InlineKeyboardButton("Local Exchange Referral Links", callback_data="local_exchange")],
-            [InlineKeyboardButton("Global Exchange Referral Links", callback_data="global_exchange")],
-            [InlineKeyboardButton("Air Drops", callback_data="air_drops")],
-            [InlineKeyboardButton("My Progress", callback_data="my_progress")]
+            [InlineKeyboardButton("صرافی‌های ایرانی  💱🇮🇷", callback_data="local_exchange")],
+            [InlineKeyboardButton("صرافی‌های خارجی 💱🌐", callback_data="global_exchange")],
+            [InlineKeyboardButton("ایردراپ 🚀🎁", callback_data="air_drops")]
+            # [InlineKeyboardButton("My Progress", callback_data="my_progress")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data="submit_email")]
+            [InlineKeyboardButton("ثبت نام", callback_data="submit_email")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        print_txt = 'Welcome to Crypto Channel'
+        print_txt = "به کانال کریپتیک خوش آمدید:"
 
     if update.message:
         await update.message.reply_text(text=print_txt, reply_markup=reply_markup)
@@ -142,18 +140,18 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         print_txt = f"Stay with us, {tel_user_name}"
 
         keyboard = [
-            [InlineKeyboardButton("Local Exchange Referral Links", callback_data="local_exchange")],
-            [InlineKeyboardButton("Global Exchange Referral Links", callback_data="global_exchange")],
-            [InlineKeyboardButton("Air Drops", callback_data="air_drops")],
-            [InlineKeyboardButton("My Progress", callback_data="my_progress")]
+            [InlineKeyboardButton("صرافی‌های ایرانی  💱🇮🇷", callback_data="local_exchange")],
+            [InlineKeyboardButton("صرافی‌های خارجی 💱🌐", callback_data="global_exchange")],
+            [InlineKeyboardButton("ایردراپ 🚀🎁", callback_data="air_drops")]
+            # [InlineKeyboardButton("My Progress", callback_data="my_progress")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
     else:
         keyboard = [
-            [InlineKeyboardButton("Join Now!", callback_data="submit_email")]
+            [InlineKeyboardButton("ثبت نام", callback_data="submit_email")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        print_txt = 'Welcome to Crypto Channel'
+        print_txt = "به کانال کریپتیک خوش آمدید:"
 
     try:
         # Try to edit the message text
@@ -180,7 +178,8 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
     if is_email(message_text):
         if message_text in data_base['email_id'].values:
-            await context.bot.send_message(chat_id=update.effective_chat.id, text="Email address already exists in our database.")
+            await context.bot.send_message(chat_id=update.effective_chat.id, 
+                                           text="آدرس ایمیل وارد شده توسط شخص دیگری ثبت شده است، لطفاً آدرس ایمیل خودتان را وارد کنید:")
         else:
             ch_user_id = gen_uniq_channel_id(data_base['ch_user_id'].values)
             new_user = {
@@ -201,15 +200,16 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             # Show the main menu instead of sending a message
             return await main_menu(update, context)
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid email address. Please try again.")
+        await context.bot.send_message(chat_id=update.effective_chat.id, 
+                                       text="آدرس ایمیل وارد شده نادرست است، لطفاً دوباره تلاش کنید:")
 
 
 
 async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
-
-    await query.edit_message_text(text='Please send your email address:')
+    text = """لطفاً آدرس ایمیل خود را وارد ارسال کنید:"""
+    await query.edit_message_text(text=text)
     return EMAIL
 
 async def local_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -217,14 +217,16 @@ async def local_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await query.answer()
 
     keyboard = [
-        [InlineKeyboardButton('Nobitex', url='https://nobitex.ir/signup/?refcode=1557073')],
-        [InlineKeyboardButton('BitPin', url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
-        [InlineKeyboardButton('Back', callback_data="main_menu")]
+        [InlineKeyboardButton("صرافی نوبیتکس (Nobitex) ", url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton("صرافی بیت‌پین (BitPin)", url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
+        [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
-
+    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
+آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+"""
     await query.edit_message_text(
-        text='Please use the links below to join the exchange',
+        text=text,
         reply_markup=key_markup
     )
     return START_ROUTES
@@ -234,24 +236,23 @@ async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await query.answer()
 
     keyboard = [
-        [InlineKeyboardButton('BingX', url='https://bingx.com/invite/NLQIKZI2')],
-        [InlineKeyboardButton('CoinEx', url='https://www.coinex.com/register?refer_code=s95m7')],
-        [InlineKeyboardButton('Back', callback_data="main_menu")]
+        [InlineKeyboardButton("صرافی بینک‌اکس (BingX)", url='https://bingx.com/invite/NLQIKZI2')],
+        [InlineKeyboardButton("صرافی کوینکس (CoinEx)", url='https://www.coinex.com/register?refer_code=s95m7')],
+        [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
+    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
+آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+"""
     await query.edit_message_text(
-        text='Please use the links below to join the exchange',
+        text=text,
         reply_markup=key_markup
     )
     return START_ROUTES
 
 
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    # Reset current_index when main_menu is called
-    # global current_index_ph_swap, first_time_loop_ph_swap
-    # current_index_ph_swap = 0
-    # first_time_loop_ph_swap = True
 
     if update.message:
         # Handle text messages
@@ -265,6 +266,9 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         # Handle other update types (not expected)
         return END_ROUTES
 
+
+### <<<-------------------------------------------- Phantom AirDrop -------------------------------------------->>> ###
+### << *** Phantom AirDrop - Swap *** >>> ###
 
 async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -301,14 +305,20 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
     if current_index_ph_swap == 0:
-        buttons.append([InlineKeyboardButton("بازگشت به منوی ایردراپ‌ها 🏠⬅️ ", callback_data="back_to_air_drop_menu"),
-                        InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))])
+        buttons = [
+                [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))],
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+    ]
     elif current_index_ph_swap == len(os.listdir(img_add)) - 1:
-        buttons.append([InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1)),
-                        InlineKeyboardButton("🎉🥳 تامام!", callback_data="back_to_air_drop_menu")])
+        buttons = [
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1))]
+    ]
     else:
-        buttons.append([InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1)),
-                        InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))])
+        buttons = [
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1)),
+                InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))]
+        ]
 
     reply_markup = InlineKeyboardMarkup(buttons)
 
@@ -320,7 +330,148 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
         reply_markup=reply_markup
     )
 
-    return PH_AIRDROP
+    return PH_AIRDROP_SWAP
+
+### << *** Phantom AirDrop - Stake *** >>> ###
+
+async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    global current_index_ph_stake, first_time_loop_ph_stake
+
+    print(f"Current index: {current_index_ph_stake}")
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if first_time_loop_ph_stake:
+            current_index_ph_stake = 0
+            first_time_loop_ph_stake = False
+        else:
+            current_index_ph_stake = int(query.data)
+    elif query.data == "phantom_stake":
+        # Reset current_index when "air_drop_01" is clicked
+        current_index_ph_stake = 0
+        first_time_loop_ph_stake = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/phantom_wallet/stake'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(current_index_ph_stake + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    current_index_ph_stake = max(
+        0, min(current_index_ph_stake, len(os.listdir(img_add)) - 1))
+
+    # Construct caption with current index and total number of photos
+    caption = f"{current_index_ph_stake + 1} out of {len(os.listdir(img_add))}"
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if current_index_ph_stake == 0:
+        buttons = [
+                [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_stake + 1))],
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+    ]
+    elif current_index_ph_stake == len(os.listdir(img_add)) - 1:
+        buttons = [
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_stake - 1))]
+    ]
+    else:
+        buttons = [
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_stake - 1)),
+                InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_stake + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=open(image_filename, 'rb'),
+        caption=caption,
+        reply_markup=reply_markup
+    )
+
+    return PH_AIRDROP_STAKE
+
+
+### << *** Phantom AirDrop - Unstake *** >>> ###
+
+async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    global current_index_ph_unstake, first_time_loop_ph_unstake
+
+    print(f"Current index: {current_index_ph_unstake}")
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if first_time_loop_ph_unstake:
+            current_index_ph_unstake = 0
+            first_time_loop_ph_unstake = False
+        else:
+            current_index_ph_unstake = int(query.data)
+    elif query.data == "phantom_unstake":
+        # Reset current_index when "air_drop_01" is clicked
+        current_index_ph_unstake = 0
+        first_time_loop_ph_unstake = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/phantom_wallet/unstake'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(current_index_ph_unstake + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    current_index_ph_unstake = max(
+        0, min(current_index_ph_unstake, len(os.listdir(img_add)) - 1))
+
+    # Construct caption with current index and total number of photos
+    caption = f"{current_index_ph_unstake + 1} out of {len(os.listdir(img_add))}"
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if current_index_ph_unstake == 0:
+        buttons = [
+                [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_unstake + 1))],
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+    ]
+    elif current_index_ph_unstake == len(os.listdir(img_add)) - 1:
+        buttons = [
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_unstake - 1))]
+    ]
+    else:
+        buttons = [
+                [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_unstake - 1)),
+                 InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_unstake + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=open(image_filename, 'rb'),
+        caption=caption,
+        reply_markup=reply_markup
+    )
+
+    return PH_AIRDROP_UNSTAKE
+
+### <<<-------------------------------------------- Linea Surge AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Scroll AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Blast AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Sound AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Phaver AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Lens AirDrop -------------------------------------------->>> ###
 
 
 async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -331,14 +482,25 @@ async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     current_index_ph_swap = 0
     first_time_loop_ph_swap = True
 
+    global current_index_ph_stake, first_time_loop_ph_stake
+    current_index_ph_stake = 0
+    first_time_loop_ph_stake = True
+
+    global current_index_ph_unstake, first_time_loop_ph_unstake
+    current_index_ph_unstake = 0
+    first_time_loop_ph_unstake = True
+
     keyboard = [
-        [InlineKeyboardButton('Phantom Wallet Air Drop', callback_data="air_drop_phantom_menu"),
-         InlineKeyboardButton('Air Drop 02', callback_data="air_drop_02")],
-        [InlineKeyboardButton('Back to Main Menu', callback_data="main_menu")]
+        [InlineKeyboardButton("ایردراپ فانتوم (Phantom)", callback_data="air_drop_phantom_menu"),
+         InlineKeyboardButton("ایردراپ لینیا سرج (Linea Surge)", callback_data="linea_surge")],
+        [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
-    text = 'Please choose any airdrop you wish to participate in:'
+    text = """
+لطفاً برای شرکت در هر ایردراپ، روی دکمه مورد نظر کلیک کنید.
+توضیحات مربوط به نحوه شرکت در هر یک از ایردراپ‌ها برای شما نمایش داده خواهد شد.
+"""
 
     if query.message and query.message.text:
         try:
@@ -359,12 +521,20 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     current_index_ph_swap = 0
     first_time_loop_ph_swap = True
 
+    global current_index_ph_stake, first_time_loop_ph_stake
+    current_index_ph_stake = 0
+    first_time_loop_ph_stake = True
+
+    global current_index_ph_unstake, first_time_loop_ph_unstake
+    current_index_ph_unstake = 0
+    first_time_loop_ph_unstake = True
+
     keyboard = [
-        [InlineKeyboardButton('🔄 Swap', callback_data="phantom_swap")],
-        [InlineKeyboardButton('📌 Stake', callback_data="phantom_stake")],
-        [InlineKeyboardButton('⬆️ Unstake', callback_data="phantom_unstake")],
-        [InlineKeyboardButton('Blank', callback_data="phantom_blank")],
-        [InlineKeyboardButton('⬅️ Back', callback_data="back_to_air_drop_menu")]
+        [InlineKeyboardButton("1. سواپ کردن (Swap) 💵🔄", callback_data="phantom_swap")],
+        [InlineKeyboardButton("2. استیک کردن (Stake) 💵💰", callback_data="phantom_stake")],
+        [InlineKeyboardButton("3. آن‌استیک کردن (Unstake) 💵🧾", callback_data="phantom_unstake")],
+        # [InlineKeyboardButton('Blank', callback_data="phantom_blank")],
+        [InlineKeyboardButton("بازگشت ⬅️", callback_data="back_to_air_drop_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
@@ -377,10 +547,13 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
 💵 موجودی مورد نیاز:
 30 تتر 
 
+📰 وضعیت ایردراپ:
+احتمالی
+
 📅 تاریخ توزیع: 
 نامشخص
 
- توضیحات:
+📖 توضیحات:
 برای شرکت در ایردراپ فانتوم، لطفاً موارد زیر را به ترتیب انجام دهید.
 """
 
@@ -431,8 +604,21 @@ def main() -> None:
             ],
             PH_AIRDROP: [ 
                 CallbackQueryHandler(air_drop_phantom_swap, pattern="^" + "phantom_swap" + "$"),
-                CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
+                CallbackQueryHandler(air_drop_phantom_stake, pattern="^" + "phantom_stake" + "$"),
+                CallbackQueryHandler(air_drop_phantom_unstake, pattern="^" + "phantom_unstake" + "$"),
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
+            ],
+            PH_AIRDROP_SWAP: [ 
+                CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
+                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
+            ],
+            PH_AIRDROP_STAKE: [ 
+                CallbackQueryHandler(air_drop_phantom_stake, pattern="^(\d+)$"),
+                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
+            ],
+            PH_AIRDROP_UNSTAKE: [ 
+                CallbackQueryHandler(air_drop_phantom_unstake, pattern="^(\d+)$"),
+                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
             ],
 
             EMAIL: [
