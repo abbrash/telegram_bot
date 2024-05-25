@@ -13,11 +13,6 @@ from telegram.error import BadRequest
 # Define the path to save CSV file
 data_file_add = 'data_base.csv'
 
-# # Function to save email data to CSV
-# def save_email_data(df):
-#     df.to_csv(data_file_add, index=False)
-
-
 # Define the path to save CSV file using os.getcwd() to get the current working directory
 data_file_path = os.path.join(os.getcwd(), 'data_base.csv')
 
@@ -79,17 +74,18 @@ EMAIL = 100
 
 IMG_IDX_COUNTER = 0
 
-global first_time_loop_ph_swap
+global first_time_loop_ph_swap, current_index_ph_swap
 first_time_loop_ph_swap = True
-
+current_index_ph_swap = 0
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     
     # global air_drop_counter
     # air_drop_counter = 0
-    global current_index, first_time_loop
-    current_index = 0  # Reset current_index to 0
-    first_time_loop = True
+    # global current_index_ph_swap, first_time_loop_ph_swap
+    # current_index_ph_swap = 0  # Reset current_index to 0
+    # first_time_loop_ph_swap = True
+
     tel_user_id = update.effective_user.id
 
     if tel_user_id in data_base['tel_user_id'].values:
@@ -114,7 +110,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await update.message.reply_text(text=print_txt, reply_markup=reply_markup)
     elif update.callback_query:
         query = update.callback_query
-        current_index = 0 
+        current_index_ph_swap = 0 
         await query.answer()
         await query.edit_message_text(text=print_txt, reply_markup=reply_markup)
 
@@ -125,7 +121,11 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Prompt same text & keyboard as `start` does but not as new message"""
     query = update.callback_query
     await query.answer()
-
+    
+    # global current_index_ph_swap, first_time_loop_ph_swap
+    # current_index_ph_swap = 0  # Reset current_index to 0
+    # first_time_loop_ph_swap = True
+    
     tel_user_id = update.effective_user.id
 
     if tel_user_id in data_base['tel_user_id'].values:
@@ -154,7 +154,6 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         await query.message.reply_text(text=print_txt, reply_markup=reply_markup)
 
     return START_ROUTES
-
 
 
 async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -241,9 +240,9 @@ async def global_exchange(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # Reset current_index when main_menu is called
-    global current_index, first_time_loop
-    current_index = 0
-    first_time_loop = True
+    # global current_index_ph_swap, first_time_loop_ph_swap
+    # current_index_ph_swap = 0
+    # first_time_loop_ph_swap = True
 
     if update.message:
         # Handle text messages
@@ -258,126 +257,7 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return END_ROUTES
 
 
-# async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-
-#     global current_index, first_time_loop
-
-#     print(f"it is digit: {current_index}")
-
-#     # Check if query.data is a digit
-#     if query.data.isdigit():
-#         if first_time_loop:
-#             current_index = 0
-#             first_time_loop = False
-#         else:
-#             current_index = int(query.data)
-#     elif query.data == "air_drop_01":
-#         # Reset current_index when "air_drop_01" is clicked
-#         current_index = 0
-#         first_time_loop = False
-
-#     # List of photo file_ids or URLs
-#     photo_list = [
-#         'https://th.bing.com/th/id/OIP.TzP2op3lkhlTh6oOHamacAHaHa?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.RH2gc-Oe1qSvCjD3IRYAyQHaE7?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.AW8VfeeCp9v_xzlVdciPpAHaEo?rs=1&pid=ImgDetMain',
-#         'https://th.bing.com/th/id/OIP.R3U06JEJvoROC7iFM1AnzAHaEK?rs=1&pid=ImgDetMain'
-#     ]
-
-#     # Ensure current_index stays within the bounds of photo_list
-#     current_index = max(0, min(current_index, len(photo_list) - 1))
-
-#     # Construct caption with current index and total number of photos
-#     caption = f"{current_index + 1} out of {len(photo_list)}"
-
-#     # Construct InlineKeyboardMarkup based on current message index
-#     buttons = []
-#     if current_index == 0:
-#         buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
-#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
-#     elif current_index == len(photo_list) - 1:
-#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
-#                         InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
-#     else:
-#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
-#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
-
-#     reply_markup = InlineKeyboardMarkup(buttons)
-
-#     # Send the current photo with caption and navigation buttons
-#     await context.bot.send_photo(
-#         chat_id=update.effective_chat.id,
-#         photo=photo_list[current_index],
-#         caption=caption,
-#         reply_markup=reply_markup
-#     )
-
-#     return SEND_IMG
-
-
-# async def send_airdrops_album_01(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-
-#     global current_index, first_time_loop
-
-#     print(f"Current index: {current_index}")
-
-#     # Check if query.data is a digit
-#     if query.data.isdigit():
-#         if first_time_loop:
-#             current_index = 0
-#             first_time_loop = False
-#         else:
-#             current_index = int(query.data)
-#     elif query.data == "air_drop_01":
-#         # Reset current_index when "air_drop_01" is clicked
-#         current_index = 0
-#         first_time_loop = False
-
-#     # Directory where images are stored
-#     # Update this path to match your actual directory
-#     image_directory = 'img/'
-
-#     # Dynamically generate the image filename based on the current index
-#     # zfill adds leading zeros
-#     image_filename = f'{image_directory}/{str(current_index + 1).zfill(2)}.jpg'
-
-#     # Ensure current_index stays within the bounds of available images
-#     current_index = max(
-#         0, min(current_index, len(os.listdir(image_directory)) - 1))
-
-#     # Construct caption with current index and total number of photos
-#     caption = f"{current_index + 1} out of {len(os.listdir(image_directory))}"
-
-#     # Construct InlineKeyboardMarkup based on current message index
-#     buttons = []
-#     if current_index == 0:
-#         buttons.append([InlineKeyboardButton("Back to Air Drop Menu", callback_data="back_to_air_drop_menu"),
-#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
-#     elif current_index == len(os.listdir(image_directory)) - 1:
-#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
-#                         InlineKeyboardButton("Finish", callback_data="back_to_air_drop_menu")])
-#     else:
-#         buttons.append([InlineKeyboardButton("Previous", callback_data=str(current_index - 1)),
-#                         InlineKeyboardButton("Next", callback_data=str(current_index + 1))])
-
-#     reply_markup = InlineKeyboardMarkup(buttons)
-
-#     # Send the current photo with caption and navigation buttons
-#     await context.bot.send_photo(
-#         chat_id=update.effective_chat.id,
-#         photo=open(image_filename, 'rb'),
-#         caption=caption,
-#         reply_markup=reply_markup
-#     )
-
-#     return SEND_IMG
-
-
-async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TYPE, img_add: 'img/phantom_wallet/swap') -> int:
+async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
 
@@ -392,14 +272,15 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
             first_time_loop_ph_swap = False
         else:
             current_index_ph_swap = int(query.data)
-    elif query.data == "air_drop_phantom":
+    elif query.data == "phantom_swap":
         # Reset current_index when "air_drop_01" is clicked
         current_index_ph_swap = 0
         first_time_loop_ph_swap = False
 
     # Use img_add to dynamically generate the image filename based on the current index
-    image_directory = img_add
-    image_filename = f'{image_directory}/{str(current_index_ph_swap + 1).zfill(2)}.jpg'
+    image_directory = 'img/phantom_wallet/swap'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(current_index_ph_swap + 1).zfill(2)}.png'
 
     # Ensure current_index stays within the bounds of available images
     current_index_ph_swap = max(
@@ -437,8 +318,12 @@ async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
+    global current_index_ph_swap, first_time_loop_ph_swap
+    current_index_ph_swap = 0
+    first_time_loop_ph_swap = True
+
     keyboard = [
-        [InlineKeyboardButton('Phantom Wallet Air Drop', callback_data="air_drop_phantom"),
+        [InlineKeyboardButton('Phantom Wallet Air Drop', callback_data="air_drop_phantom_menu"),
          InlineKeyboardButton('Air Drop 02', callback_data="air_drop_02")],
         [InlineKeyboardButton('Back to Main Menu', callback_data=str(AIR_DROPS))]
     ]
@@ -460,11 +345,15 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     await query.answer()
 
+    global current_index_ph_swap, first_time_loop_ph_swap
+    current_index_ph_swap = 0
+    first_time_loop_ph_swap = True
+
     keyboard = [
-        [InlineKeyboardButton('Swap', callback_data="phantom_swap"),
-         InlineKeyboardButton('Stake', callback_data="phantom_stake"),
-         InlineKeyboardButton('Unstake', callback_data="phantom_unstake"),
-         InlineKeyboardButton('Blank', callback_data="phantom_blank")],
+        [InlineKeyboardButton('Swap', callback_data="phantom_swap")],
+        [InlineKeyboardButton('Stake', callback_data="phantom_stake")],
+        [InlineKeyboardButton('Unstake', callback_data="phantom_unstake")],
+        [InlineKeyboardButton('Blank', callback_data="phantom_blank")],
         [InlineKeyboardButton('Back', callback_data="back_to_air_drop_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
@@ -496,23 +385,17 @@ def main() -> None:
                 CallbackQueryHandler(global_exchange, pattern="^" + str(GLOB_EX) + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + str(MAIN_MENU) + "$"),
                 CallbackQueryHandler(air_drop_menu, pattern="^" + str(AIR_DROPS) + "$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "phantom_menu" + "$"),
-                # CallbackQueryHandler(air_drop_phantom, pattern="^" + "air_drop_phantom" + "$")
+                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
             ],
             END_ROUTES: [
                 CallbackQueryHandler(start_over, pattern="^" + str(MAIN_MENU) + "$")
             ],
             SEND_IMG: [
-                # CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
-                # CallbackQueryHandler(air_drop_phantom_stake, pattern="^(\d+)$"),
-                # CallbackQueryHandler(air_drop_phantom_unstake, pattern="^(\d+)$"),
-                # CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$"),
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
             ],
             PH_AIRDROP: [ 
                 CallbackQueryHandler(air_drop_phantom_swap, pattern="^" + "phantom_swap" + "$"),
-                # CallbackQueryHandler(air_drop_phantom_stake, pattern="^" + "phantom_stake" + "$"),
-                # CallbackQueryHandler(air_drop_phantom_unstake, pattern="^" + "phantom_unstake" + "$"),
+                CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
             ],
 
