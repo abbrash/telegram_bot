@@ -16,8 +16,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     tel_user_id = update.effective_user.id
 
-    if tel_user_id in data_base['tel_user_id'].values:
-        tel_user_name = data_base[data_base['tel_user_id']
+    if tel_user_id in GlobalState.getInstance().data_base['tel_user_id'].values:
+        tel_user_name = GlobalState.getInstance().data_base[GlobalState.getInstance().data_base['tel_user_id']
                                   == tel_user_id]['tel_user_name'].values[0]
         print_txt = f"{tel_user_name} " + "👋🏻🥰 !سلام دوست من"
 
@@ -54,10 +54,10 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     tel_user_id = update.effective_user.id
 
-    if tel_user_id in data_base['tel_user_id'].values:
-        tel_user_name = data_base[data_base['tel_user_id']
+    if tel_user_id in GlobalState.getInstance().data_base['tel_user_id'].values:
+        tel_user_name = GlobalState.getInstance().data_base[GlobalState.getInstance().data_base['tel_user_id']
                                   == tel_user_id]['tel_user_name'].values[0]
-        print_txt = f"Stay with us, {tel_user_name}"
+        print_txt = f"{tel_user_name} " + "👋🏻🥰 !سلام دوست من"
 
         keyboard = [
             [InlineKeyboardButton("صرافی‌های ایرانی  💱🇮🇷",
@@ -85,7 +85,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    global data_base
+    # global data_base
 
     tel_user_id = update.effective_user.id
     message_text = update.effective_message.text.lower()
@@ -98,11 +98,12 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     print('email confirming is executed')
 
     if is_email(message_text):
-        if message_text in data_base['email_id'].values:
+        if message_text in GlobalState.getInstance().data_base['email_id'].values:
             await context.bot.send_message(chat_id=update.effective_chat.id,
                                            text="آدرس ایمیل وارد شده توسط شخص دیگری ثبت شده است، لطفاً آدرس ایمیل خودتان را وارد کنید:")
         else:
-            ch_user_id = gen_uniq_channel_id(data_base['ch_user_id'].values)
+            ch_user_id = gen_uniq_channel_id(
+                GlobalState.getInstance().data_base['ch_user_id'].values)
             new_user = {
                 'ch_user_id': ch_user_id,
                 'tel_user_name': tel_user_name,
@@ -114,8 +115,9 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             new_user = pd.DataFrame([new_user])
 
             # Update email data DataFrame
-            data_base = pd.concat([data_base, new_user], ignore_index=True)
-            save_email_data(data_base)
+            GlobalState.getInstance().data_base = pd.concat(
+                [GlobalState.getInstance().data_base, new_user], ignore_index=True)
+            save_email_data(GlobalState.getInstance().data_base)
 
             # Show the main menu instead of sending a message
             return await main_menu(update, context)

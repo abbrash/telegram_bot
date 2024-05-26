@@ -84,7 +84,7 @@ def main() -> None:
 
 
 # Load the email_ids dictionary when the bot starts
-data_base = load_data_base()
+GlobalState.getInstance().data_base = load_data_base()
 
 print('Starting up bot...')
 

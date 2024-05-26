@@ -403,6 +403,6 @@ async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAU
     # Use.get() method to avoid KeyError if chat_id not found
     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     return GlobalState.getInstance().PH_AIRDROP
