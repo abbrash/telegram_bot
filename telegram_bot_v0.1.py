@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 from decouple import config
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ContextTypes, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, ContextTypes, CallbackContext, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
 from telegram.error import BadRequest
 
 
@@ -28,6 +28,15 @@ first_time_loop_ph_unstake = True
 current_index_ph_swap = 0
 current_index_ph_stake = 0
 current_index_ph_unstake = 0
+
+
+
+# Assuming you have a global dictionary to store message IDs
+message_ids = {}
+
+global chat_id
+chat_id = None
+
 
 
 
@@ -270,11 +279,12 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 ### <<<-------------------------------------------- Phantom AirDrop -------------------------------------------->>> ###
 ### << *** Phantom AirDrop - Swap *** >>> ###
 
-async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def air_drop_phantom_swap(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()
 
-    global current_index_ph_swap, first_time_loop_ph_swap
+    global current_index_ph_swap, first_time_loop_ph_swap, message_ids
+    global chat_id
 
     print(f"Current index: {current_index_ph_swap}")
 
@@ -307,11 +317,11 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
     if current_index_ph_swap == 0:
         buttons = [
                 [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_swap + 1))],
-                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu_over")]
     ]
     elif current_index_ph_swap == len(os.listdir(img_add)) - 1:
         buttons = [
-                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu_over")],
                 [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_swap - 1))]
     ]
     else:
@@ -323,14 +333,28 @@ async def air_drop_phantom_swap(update: Update, context: ContextTypes.DEFAULT_TY
     reply_markup = InlineKeyboardMarkup(buttons)
 
     # Send the current photo with caption and navigation buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=caption,
-        reply_markup=reply_markup
-    )
+    chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup
+        )
+        
+        # Store the message ID
+        if chat_id not in message_ids:
+            message_ids[chat_id] = []           # initialize a list to store further information
+        message_ids[chat_id].append(sent_photo.message_id)
+        
+        # Delete the previous photo if it exists
+        if len(message_ids.get(chat_id, [])) > 1:  # Use.get() method to avoid KeyError if chat_id not found
+            await context.bot.delete_message(chat_id=chat_id, message_id=message_ids[chat_id][0])
+            message_ids[chat_id].pop(0)
 
     return PH_AIRDROP_SWAP
+
 
 ### << *** Phantom AirDrop - Stake *** >>> ###
 
@@ -339,6 +363,7 @@ async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_T
     await query.answer()
 
     global current_index_ph_stake, first_time_loop_ph_stake
+    global chat_id
 
     print(f"Current index: {current_index_ph_stake}")
 
@@ -371,11 +396,11 @@ async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_T
     if current_index_ph_stake == 0:
         buttons = [
                 [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_stake + 1))],
-                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu_over")]
     ]
     elif current_index_ph_stake == len(os.listdir(img_add)) - 1:
         buttons = [
-                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu_over")],
                 [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_stake - 1))]
     ]
     else:
@@ -387,12 +412,27 @@ async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_T
     reply_markup = InlineKeyboardMarkup(buttons)
 
     # Send the current photo with caption and navigation buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=caption,
-        reply_markup=reply_markup
-    )
+    chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup
+        )
+
+        # Store the message ID
+        if chat_id not in message_ids:
+            # initialize a list to store further information
+            message_ids[chat_id] = []
+        message_ids[chat_id].append(sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(message_ids.get(chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=chat_id, message_id=message_ids[chat_id][0])
+            message_ids[chat_id].pop(0)
 
     return PH_AIRDROP_STAKE
 
@@ -404,7 +444,8 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
     await query.answer()
 
     global current_index_ph_unstake, first_time_loop_ph_unstake
-
+    global chat_id
+    
     print(f"Current index: {current_index_ph_unstake}")
 
     # Check if query.data is a digit
@@ -436,11 +477,11 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
     if current_index_ph_unstake == 0:
         buttons = [
                 [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_unstake + 1))],
-                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu")]
+                [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu_over")]
     ]
     elif current_index_ph_unstake == len(os.listdir(img_add)) - 1:
         buttons = [
-                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu")],
+                [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu_over")],
                 [InlineKeyboardButton("قبلی ⬅️", callback_data=str(current_index_ph_unstake - 1))]
     ]
     else:
@@ -452,12 +493,27 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
     reply_markup = InlineKeyboardMarkup(buttons)
 
     # Send the current photo with caption and navigation buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=caption,
-        reply_markup=reply_markup
-    )
+    chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup
+        )
+
+        # Store the message ID
+        if chat_id not in message_ids:
+            # initialize a list to store further information
+            message_ids[chat_id] = []
+        message_ids[chat_id].append(sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(message_ids.get(chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=chat_id, message_id=message_ids[chat_id][0])
+            message_ids[chat_id].pop(0)
 
     return PH_AIRDROP_UNSTAKE
 
@@ -517,6 +573,14 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     await query.answer()
 
+    global chat_id
+
+    # Delete the previous photo if it exists
+    if len(message_ids.get(chat_id, [])) == 1: # Use.get() method to avoid KeyError if chat_id not found
+        await context.bot.delete_message(chat_id=chat_id, message_id=message_ids[chat_id][0])
+        message_ids[chat_id].pop(0)
+
+
     global current_index_ph_swap, first_time_loop_ph_swap
     current_index_ph_swap = 0
     first_time_loop_ph_swap = True
@@ -529,11 +593,11 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     current_index_ph_unstake = 0
     first_time_loop_ph_unstake = True
 
+
     keyboard = [
         [InlineKeyboardButton("1. سواپ کردن (Swap) 💵🔄", callback_data="phantom_swap")],
         [InlineKeyboardButton("2. استیک کردن (Stake) 💵💰", callback_data="phantom_stake")],
         [InlineKeyboardButton("3. آن‌استیک کردن (Unstake) 💵🧾", callback_data="phantom_unstake")],
-        # [InlineKeyboardButton('Blank', callback_data="phantom_blank")],
         [InlineKeyboardButton("بازگشت ⬅️", callback_data="back_to_air_drop_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
@@ -559,9 +623,7 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
 
     # Select an image to send
     # Replace with the actual path to your image
-    # image_filename = 'phantom_wallet_img.jpg'
     image_filename = os.path.join('img', 'phantom_wallet', 'phantom_wallet_img.jpg')
-
 
     # Send the image along with the text and buttons
     await context.bot.send_photo(
@@ -573,6 +635,22 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
     return PH_AIRDROP
+
+
+async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    global chat_id
+
+    # Delete the previous photo if it exists
+    if len(message_ids.get(chat_id, [])) == 1: # Use.get() method to avoid KeyError if chat_id not found
+        await context.bot.delete_message(chat_id=chat_id, message_id=message_ids[chat_id][0])
+        message_ids[chat_id].pop(0)
+
+    return PH_AIRDROP
+
+
 
 ### <<<------------------------------------------------------------------------------------------------------->>> ###
 ### <<<------------------------------------------------------------------------------------------------------->>> ###
@@ -610,15 +688,15 @@ def main() -> None:
             ],
             PH_AIRDROP_SWAP: [ 
                 CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
+                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
             ],
             PH_AIRDROP_STAKE: [ 
                 CallbackQueryHandler(air_drop_phantom_stake, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
+                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
             ],
             PH_AIRDROP_UNSTAKE: [ 
                 CallbackQueryHandler(air_drop_phantom_unstake, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$")
+                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
             ],
 
             EMAIL: [
