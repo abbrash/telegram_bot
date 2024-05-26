@@ -81,7 +81,6 @@ def is_email(input_str):
 def gen_uniq_channel_id(existing_ids):
     """
     Generate a unique 10-digit channel ID.
-    
     :param existing_ids: A set of existing channel IDs
     :return: A unique 10-digit channel ID
     """
@@ -91,7 +90,6 @@ def gen_uniq_channel_id(existing_ids):
         # Check if this ID is unique
         if channel_id not in existing_ids:
             return channel_id
-
 
 
 ### <<<--------------------------------------------------------------------------------------------------------->>> ###
@@ -112,7 +110,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     if tel_user_id in data_base['tel_user_id'].values:
         tel_user_name = data_base[data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
-        print_txt = f"Hello my Fren, {tel_user_name}"
+        print_txt = f"{tel_user_name} " + "👋🏻🥰 !سلام دوست من"
 
         keyboard = [
             [InlineKeyboardButton("صرافی‌های ایرانی  💱🇮🇷", callback_data="local_exchange")],
@@ -629,7 +627,7 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
 <b>ایردراپ فانتوم (Phantom) </b>
 
 🔄 نحوه فعالیت: 
-هفتگی یا ماهیانه
+سواپ (بصورت هفتگی یا ماهانه)، استیک و فعالیت‌های مشخص شده از سوی تیم پروژه 
 
 💵 موجودی مورد نیاز:
 30 تتر 
@@ -711,7 +709,7 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
 
     # Define your list of captions here
     captions_list = [
-        """با استفاده از این لینک وارد سایت SyncSwap شوید. 
+        """ابتدا وارد سایت <a href='https://www.syncswap.com'>SyncSwap</a> شوید. 
 1️⃣ روی گزینه Trade کلیک کنید.
 2️⃣ در این بخش آدرس کیف پول نمایش داده می‌شود. 
 ⚠️⚠️⚠️ اگر گزینه Connect Wallet را می‌بینید، روی آن کلیک کنید تا کیف پولتان به سایت وصل شود.
@@ -787,7 +785,8 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
             chat_id=chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            parse_mode='HTML'
         )
         
         # Store the message ID
@@ -840,7 +839,7 @@ async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEF
     # Define your list of captions here
     captions_list = [
         """برای برداشت پول از سایت SyncSwap این مراحل را انجام دهید.
-از نوار بالا روی گزینه Pool کلیک کنید و از منوی باز شده Positionsرا انتخاب کنید.
+ابتدا وارد سایت <a href='https://www.syncswap.com'>SyncSwap</a> شوید. از نوار بالا روی گزینه Pool کلیک کنید و از منوی باز شده Positionsرا انتخاب کنید.
 """,
 """در اینجا Position مشخص شده را انتخاب کنید.""",
 """
@@ -895,7 +894,8 @@ async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEF
             chat_id=chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            parse_mode='HTML'
         )
 
         # Store the message ID
@@ -942,22 +942,23 @@ async def air_drop_linea_surge_menu(update: Update, context: ContextTypes.DEFAUL
     key_markup = InlineKeyboardMarkup(keyboard)
 
     text = """
-<b>ایردراپ فانتوم (Phantom) </b>
+<b>ایردراپ لینیا سرج (Linea Surge) </b>
 
 🔄 نحوه فعالیت: 
-هفتگی یا ماهیانه
+تأمین نقدینگی 
 
 💵 موجودی مورد نیاز:
-30 تتر 
+حداقل: ندارد /  ایده‌آل: 100 تتر یا بیشتر
 
 📰 وضعیت ایردراپ:
-احتمالی
+قطعی
 
 📅 تاریخ توزیع: 
 نامشخص
 
 📖 توضیحات:
-برای شرکت در ایردراپ فانتوم، لطفاً موارد زیر را به ترتیب انجام دهید.
+دقت کنید متناسب با حجم سرمایه‌ای که وارد می‌کنید و مدت زمان سپرده‌گذاری شما، امتیاز دریافت خواهید کرد. 
+برای شرکت در ایردراپ لینیا سرج، لطفاً موارد زیر را به ترتیب انجام دهید.
 """
 
     # Select an image to send
