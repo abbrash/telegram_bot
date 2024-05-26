@@ -38,8 +38,6 @@ global chat_id
 chat_id = None
 
 
-
-
 ### <<<-------------------------------------------------------------------------------------------------------->>> ###
 ### <<<-------------------------------------------- Sync Functions -------------------------------------------->>> ### 
 ### <<<-------------------------------------------------------------------------------------------------------->>> ###
@@ -308,9 +306,35 @@ async def air_drop_phantom_swap(update: Update, context: CallbackContext) -> int
     # Ensure current_index stays within the bounds of available images
     current_index_ph_swap = max(
         0, min(current_index_ph_swap, len(os.listdir(img_add)) - 1))
+    
+
+    # Define your list of captions here
+    captions_list = [
+        """در بخش نشان‌داده شده، مقدار موجودی سولانا(SOL) در کیف پول شما نمایش داده شده است.
+        روی آن کلیک کنید.
+        """,
+        """روی گزینه سواپ (Swap) کلیک کنید.""",
+        """در اینجا باید توکنی که سولانا به آن تبدیل می‌شود را انتخاب کنید. 
+روی بخش مشخص شده کلیک کنید.
+        """,
+        """توکن USDC را انتخاب کنید.""",
+        """
+1️⃣  مقدار سولانایی که می‌خواهید تبدیل کنید را وارد کنید.
+2️⃣  بصورت خودکار میزان USDC دریافتی نمایش داده می‌شود.
+3️⃣  روی دکمه Review Order کلیک کنید. 
+""",
+        """
+1️⃣ میزان کارمزد تراکنش نمایش داده می‌شود.
+2️⃣ روی دکمه Swap کلیک کنید.
+"""
+        ]  
 
     # Construct caption with current index and total number of photos
-    caption = f"{current_index_ph_swap + 1} out of {len(os.listdir(img_add))}"
+    caption = captions_list[current_index_ph_swap]
+
+
+    # # Construct caption with current index and total number of photos
+    # caption = f"{current_index_ph_swap + 1} out of {len(os.listdir(img_add))}"
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
@@ -388,8 +412,35 @@ async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_T
     current_index_ph_stake = max(
         0, min(current_index_ph_stake, len(os.listdir(img_add)) - 1))
 
+
+    # Define your list of captions here
+    captions_list = [
+        """در بخش نشان‌داده شده، مقدار موجودی سولانا (SOL) در کیف پول شما نمایش داده شده است.
+روی آن کلیک کنید.
+""",
+"""برای استیک کردن سولانا، روی بخش مشخص شده کلیک کنید.""",
+"""از میان گزینه‌های نمایش داده شده، Phantom Validator را انتخاب کنید.""",
+"""
+1️⃣ مقدار سولانای مورد نظر را برای استیک کردن انتخاب کنید.
+2️⃣ روی گزینه Stake کلیک کنید.
+""",
+        """منتظر بمانید تا حساب استیک برای شما ایجاد شود.
+⚠️⚠️⚠️ اگر با پیغام خطا مواجه شدید دوباره تلاش کنید.
+""",
+"""در این حالت سولانای ارسال شده با موفقیت استیک شده است.""",
+"""اگر تمام مراحل را با موفقیت انجام داده باشید، در صحفه اول کیف پولتان، حساب استیک سولانا نمایش داده می‌شود. 
+روی آن کلیک کنید.
+""",
+"""فعال‌شدن حساب شما کمی زمان می‌برد. """,
+"""پس از اینکه حسابتان فعال شد، گزینه سبز رنگ Active برای شما نمایش داده می‌شود."""
+        ]  
+
     # Construct caption with current index and total number of photos
-    caption = f"{current_index_ph_stake + 1} out of {len(os.listdir(img_add))}"
+    caption = captions_list[current_index_ph_stake]
+
+
+    # # Construct caption with current index and total number of photos
+    # caption = f"{current_index_ph_stake + 1} out of {len(os.listdir(img_add))}"
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
@@ -445,7 +496,7 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
 
     global current_index_ph_unstake, first_time_loop_ph_unstake
     global chat_id
-    
+
     print(f"Current index: {current_index_ph_unstake}")
 
     # Check if query.data is a digit
@@ -469,8 +520,37 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
     current_index_ph_unstake = max(
         0, min(current_index_ph_unstake, len(os.listdir(img_add)) - 1))
 
+    # Define your list of captions here
+    captions_list = [
+"""پس از فعال‌سازی حساب استیک سولانا، می‌توانید برای برداشت پولی که استیک کرده‌اید اقدام کنید. 
+برای این منظور در بخش نشان‌داده شده، مقدار موجودی سولانا (SOL) در کیف پول شما نمایش داده شده است.
+روی آن کلیک کنید.
+""",
+"""روی گزینه Unstake کلیک کنید.""",
+"""در این حالت فرآیند غیرفعال‌سازی حساب استیک شما آغاز می‌شود.""",
+"""پس از نمایش این صفحه، حساب استیک شما با موفقیت غیرفعال شده است.
+روی گزینه Close کلیک کنید.
+""",
+        """در این حالت با ورود به حساب استیک سولانا، عبارت Deactivating نمایش داده می‌شود.
+⚠️⚠️⚠️ دقت کنید این مرحله ممکن است تا چند روز طول بکشید.
+""",
+"""با نمایش واژه قرمز رنگ Inactive حساب استیک سولانا شما به صورت کامل غیرفعال شده است.
+اکنون می‌توانید پول خود را برداشت کنید. 
+روی آن کلیک کنید.
+""",
+"""روی گزینه Withdraw Stake کلیک کنید.""",
+"""فرآیند برداشت پول شما آغاز شده است. 
+⚠️⚠️⚠️ اگر با پیغام خطا مواجه شدید دوباره تلاش کنید.
+""",
+"""پول شما با موفقیت برداشت شد و به موجودی سولانا در کیف پولتان اضافه گردید. """
+        ]  
+
     # Construct caption with current index and total number of photos
-    caption = f"{current_index_ph_unstake + 1} out of {len(os.listdir(img_add))}"
+    caption = captions_list[current_index_ph_unstake]
+
+
+    # # Construct caption with current index and total number of photos
+    # caption = f"{current_index_ph_unstake + 1} out of {len(os.listdir(img_add))}"
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
