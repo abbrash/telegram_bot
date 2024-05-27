@@ -5,6 +5,9 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Conv
 from main_menu import *
 from phantom_airdrop import *
 from linea_surge_airdrop import *
+from register import *
+from wallet_menu import *
+from exchange import *
 
 
 def main() -> None:
@@ -21,8 +24,12 @@ def main() -> None:
                 CallbackQueryHandler(global_exchange, pattern="^" + "global_exchange" + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$"),
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "air_drops" + "$"),
+                CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$"),
                 CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$"),
                 CallbackQueryHandler(air_drop_linea_surge_menu, pattern="^" + "air_drop_linea_surge_menu" + "$")
+            ],
+            GlobalState.getInstance().WALLET: [
+                CallbackQueryHandler(metam, pattern="^" + "back_to_air_drop_menu" + "$")
             ],
             GlobalState.getInstance().END_ROUTES: [
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
