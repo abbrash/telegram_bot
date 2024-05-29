@@ -11,7 +11,7 @@ class GlobalState:
         self.START_ROUTES, self.END_ROUTES, self.SEND_IMG, self.EMAIL = range(4)
         self.PH_AIRDROP, self.PH_AIRDROP_SWAP, self.PH_AIRDROP_STAKE, self.PH_AIRDROP_UNSTAKE = range(4,8)
         self.LINEA_SURGE_AIRDROP, self.LINEA_SURGE_AIRDROP_STAKE, self.LINEA_SURGE_AIRDROP_UNSTAKE, self.WALLET = range(8,12)
-        self.METAMASK_WALLET = 12
+        self.METAMASK_WALLET, self.METAMASK_WALLET_CREATE = range(12,14)
 
         # Initialize variables
         self.first_time_loop_ph_swap = True
@@ -25,6 +25,9 @@ class GlobalState:
         self.first_time_loop_linea_surge_unstake = True
         self.current_index_linea_surge_stake = 0
         self.current_index_linea_surge_unstake = 0
+
+        self.first_time_loop_metamask_create_wallet = True
+        self.current_index_metamask_create_wallet = 0
 
         # Initialize message IDs dictionary
         self.message_ids = {}

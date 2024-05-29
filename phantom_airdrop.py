@@ -5,6 +5,89 @@ from telegram.ext import ContextTypes, CallbackContext
 from globals import GlobalState
 
 ### <<<-------------------------------------------- Phantom AirDrop -------------------------------------------->>> ###
+
+### <<<-------------------------------------------- Phantom AirDrop Sub-Menu -------------------------------------------->>> ###
+
+async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    # Delete the previous photo if it exists
+    # Use.get() method to avoid KeyError if chat_id not found
+    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
+        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    # global GlobalState.getInstance().current_index_ph_swap, GlobalState.getInstance().first_time_loop_ph_swap
+    GlobalState.getInstance().current_index_ph_swap = 0
+    GlobalState.getInstance().first_time_loop_ph_swap = True
+
+    # global current_index_ph_stake, first_time_loop_ph_stake
+    GlobalState.getInstance().current_index_ph_stake = 0
+    GlobalState.getInstance().first_time_loop_ph_stake = True
+
+    # global current_index_ph_unstake, first_time_loop_ph_unstake
+    GlobalState.getInstance().current_index_ph_unstake = 0
+    GlobalState.getInstance().first_time_loop_ph_unstake = True
+
+    keyboard = [
+        [InlineKeyboardButton("1. سواپ کردن (Swap) 💵🔄", callback_data="phantom_swap")],
+        [InlineKeyboardButton("2. استیک کردن (Stake) 💵💰", callback_data="phantom_stake")],
+        [InlineKeyboardButton("3. آن‌استیک کردن (Unstake) 💵🧾", callback_data="phantom_unstake")],
+        [InlineKeyboardButton("بازگشت ⬅️", callback_data="back_to_air_drop_menu")]
+    ]
+    key_markup = InlineKeyboardMarkup(keyboard)
+
+    text = """
+<b>ایردراپ فانتوم (Phantom) </b>
+
+🔄 نحوه فعالیت: 
+سواپ (بصورت هفتگی یا ماهانه)، استیک و فعالیت‌های مشخص شده از سوی تیم پروژه 
+
+💵 موجودی مورد نیاز:
+30 تتر 
+
+📰 وضعیت ایردراپ:
+احتمالی
+
+📅 تاریخ توزیع: 
+نامشخص
+
+📖 توضیحات:
+برای شرکت در ایردراپ فانتوم، لطفاً موارد زیر را به ترتیب انجام دهید.
+"""
+
+    # Select an image to send
+    # Replace with the actual path to your image
+    image_filename = os.path.join(
+        'img', 'airdrop', 'phantom_wallet', 'phantom_wallet_img.jpg')
+
+    # Send the image along with the text and buttons
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=open(image_filename, 'rb'),
+        caption=text,
+        reply_markup=key_markup,
+        parse_mode="HTML"
+    )
+
+    return GlobalState.getInstance().PH_AIRDROP
+
+
+async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    # Delete the previous photo if it exists
+    # Use.get() method to avoid KeyError if chat_id not found
+    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
+        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().PH_AIRDROP
+
+
+
 ### << *** Phantom AirDrop - Swap *** >>> ###
 
 async def air_drop_phantom_swap(update: Update, context: CallbackContext) -> int:
@@ -166,17 +249,13 @@ async def air_drop_phantom_stake(update: Update, context: ContextTypes.DEFAULT_T
     buttons = []
     if current_index_ph_stake == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
-                current_index_ph_stake + 1))],
-            [InlineKeyboardButton(
-                "بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu_over")]
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(current_index_ph_stake + 1))],
+            [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="air_drop_phantom_menu_over")]
         ]
     elif current_index_ph_stake == len(os.listdir(img_add)) - 1:
         buttons = [
-            [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="air_drop_phantom_menu_over")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
-                current_index_ph_stake - 1))]
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="air_drop_phantom_menu_over")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str( current_index_ph_stake - 1))]
         ]
     else:
         buttons = [
@@ -317,92 +396,3 @@ async def air_drop_phantom_unstake(update: Update, context: ContextTypes.DEFAULT
             GlobalState.getInstance().message_ids[chat_id].pop(0)
 
     return GlobalState.getInstance().PH_AIRDROP_UNSTAKE
-
-
-### <<<-------------------------------------------- Phantom AirDrop Sub-Menu -------------------------------------------->>> ###
-
-async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    # global chat_id
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
-
-    # global GlobalState.getInstance().current_index_ph_swap, GlobalState.getInstance().first_time_loop_ph_swap
-    GlobalState.getInstance().current_index_ph_swap = 0
-    GlobalState.getInstance().first_time_loop_ph_swap = True
-
-    # global current_index_ph_stake, first_time_loop_ph_stake
-    GlobalState.getInstance().current_index_ph_stake = 0
-    GlobalState.getInstance().first_time_loop_ph_stake = True
-
-    # global current_index_ph_unstake, first_time_loop_ph_unstake
-    GlobalState.getInstance().current_index_ph_unstake = 0
-    GlobalState.getInstance().first_time_loop_ph_unstake = True
-
-    keyboard = [
-        [InlineKeyboardButton("1. سواپ کردن (Swap) 💵🔄",
-                              callback_data="phantom_swap")],
-        [InlineKeyboardButton("2. استیک کردن (Stake) 💵💰",
-                              callback_data="phantom_stake")],
-        [InlineKeyboardButton("3. آن‌استیک کردن (Unstake) 💵🧾",
-                              callback_data="phantom_unstake")],
-        [InlineKeyboardButton(
-            "بازگشت ⬅️", callback_data="back_to_air_drop_menu")]
-    ]
-    key_markup = InlineKeyboardMarkup(keyboard)
-
-    text = """
-<b>ایردراپ فانتوم (Phantom) </b>
-
-🔄 نحوه فعالیت: 
-سواپ (بصورت هفتگی یا ماهانه)، استیک و فعالیت‌های مشخص شده از سوی تیم پروژه 
-
-💵 موجودی مورد نیاز:
-30 تتر 
-
-📰 وضعیت ایردراپ:
-احتمالی
-
-📅 تاریخ توزیع: 
-نامشخص
-
-📖 توضیحات:
-برای شرکت در ایردراپ فانتوم، لطفاً موارد زیر را به ترتیب انجام دهید.
-"""
-
-    # Select an image to send
-    # Replace with the actual path to your image
-    image_filename = os.path.join(
-        'img', 'airdrop', 'phantom_wallet', 'phantom_wallet_img.jpg')
-
-    # Send the image along with the text and buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=text,
-        reply_markup=key_markup,
-        parse_mode="HTML"
-    )
-
-    return GlobalState.getInstance().PH_AIRDROP
-
-
-async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    # global chat_id
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
-
-    return GlobalState.getInstance().PH_AIRDROP

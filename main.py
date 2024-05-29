@@ -46,6 +46,10 @@ def main() -> None:
                 # CallbackQueryHandler(wallet_metamask_stake, pattern="^" + "metamask_wallet_stake" + "$"),
                 CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$")
             ],
+                GlobalState.getInstance().METAMASK_WALLET_CREATE: [  # The buttons callbacks of the ... 
+                CallbackQueryHandler(wallet_metamask_create, pattern="^(\d+)$"),
+                CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu_over" + "$")
+            ],
             GlobalState.getInstance().END_ROUTES: [  # The buttons callbacks of the ... 
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],
