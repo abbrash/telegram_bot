@@ -6,7 +6,7 @@ from telegram.ext import ContextTypes
 from globals import GlobalState
 from database import *
 from airdrop_menu import *
-from main_menu import *
+from main_menu_mod import *
 
 
 async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
