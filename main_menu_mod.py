@@ -62,7 +62,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         keyboard = [
             [InlineKeyboardButton("صرافی‌های ایرانی  💱🇮🇷", callback_data="local_exchange")],
             [InlineKeyboardButton("صرافی‌های خارجی 💱🌐", callback_data="global_exchange")],
-            [InlineKeyboardButton("ایردراپ 🚀🎁", callback_data="air_drops")]و
+            [InlineKeyboardButton("ایردراپ 🚀🎁", callback_data="air_drops")],
             [InlineKeyboardButton("کیف پول 💳💰", callback_data="wallet_menu")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)

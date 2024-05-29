@@ -1,5 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
+from telegram.error import BadRequest
 
 from globals import GlobalState
 
@@ -16,8 +17,18 @@ async def wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     key_markup = InlineKeyboardMarkup(keyboard)
     text = "لطفاً برای دسترسی به آموزش ساخت کیف پول‌های مختلف، روی گزینه مورد نظر کلیک کنید:"
 
-    await query.edit_message_text(
-        text=text,
-        reply_markup=key_markup
-    )
+    # await query.edit_message_text(
+    #     text=text,
+    #     reply_markup=key_markup
+    # )
+    # return GlobalState.getInstance().WALLET
+
+    if query.message and query.message.text:
+        try:
+            await query.edit_message_text(text=text, reply_markup=key_markup)
+        except BadRequest:
+            await query.message.reply_text(text=text, reply_markup=key_markup)
+    else:
+        await query.message.reply_text(text=text, reply_markup=key_markup)
+
     return GlobalState.getInstance().WALLET

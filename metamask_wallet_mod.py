@@ -95,8 +95,6 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     query = update.callback_query
     await query.answer()
 
-    # global chat_id
-
     # Delete the previous photo if it exists
     # Use.get() method to avoid KeyError if chat_id not found
     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
@@ -104,7 +102,6 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         GlobalState.getInstance(
         ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    # global GlobalState.getInstance().current_index_ph_swap, GlobalState.getInstance().first_time_loop_ph_swap
     GlobalState.getInstance().current_index_metamask_create_wallet = 0
     GlobalState.getInstance().first_time_loop_metamask_create_wallet = True
 
@@ -116,11 +113,11 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         [InlineKeyboardButton("5. سواپ رمزارز (Swap)", callback_data="metamask_wallet_swap")],
         [InlineKeyboardButton("6. بریج رمزارز (Bridge)", callback_data="metamask_wallet_bridge")],
         [InlineKeyboardButton("7. استیک رمزارز (Stake)", callback_data="metamask_wallet_stake")],
-        [InlineKeyboardButton("بازگشت ⬅️", callback_data="metamask_menu")]
+        [InlineKeyboardButton("بازگشت ⬅️", callback_data="wallet_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
-    text = ""
+    text = "لطفاً برای دیدن آموزش هر بخش روی دکمه مورد نظر کلیک کنید:"
 
     # Select an image to send
     # Replace with the actual path to your image
@@ -146,7 +143,6 @@ async def wallet_metamask_menu_over(update: Update, context: ContextTypes.DEFAUL
     # Use.get() method to avoid KeyError if chat_id not found
     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance(
-        ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     return GlobalState.getInstance().METAMASK_WALLET

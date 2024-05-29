@@ -14,7 +14,8 @@ from metamask_wallet_mod import *
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
-    application = Application.builder().token(Tk).build()
+    application = Application.builder().token(
+        '6264022397:AAF0AfVhD1YvP-Mqk8qwEAi_awRhC8XQxQw').build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -43,7 +44,7 @@ def main() -> None:
                 # CallbackQueryHandler(wallet_metamask_swap, pattern="^" + "metamask_wallet_swap" + "$"),
                 # CallbackQueryHandler(wallet_metamask_bridge, pattern="^" + "metamask_wallet_bridge" + "$"),
                 # CallbackQueryHandler(wallet_metamask_stake, pattern="^" + "metamask_wallet_stake" + "$"),
-                CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+                CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$")
             ],
             GlobalState.getInstance().END_ROUTES: [  # The buttons callbacks of the ... 
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
