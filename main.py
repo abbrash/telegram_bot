@@ -15,7 +15,7 @@ def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(
-        '6264022397:AAF0AfVhD1YvP-Mqk8qwEAi_awRhC8XQxQw').build()
+        '7029020592:AAGYmkIiqRPL99oGfIW0vvyTIhSJYKDbl9U').build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -28,8 +28,7 @@ def main() -> None:
                 CallbackQueryHandler(air_drop_menu, pattern="^" + "air_drops" + "$"),
                 CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$"),
                 CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$"),
-                CallbackQueryHandler(air_drop_linea_surge_menu, pattern="^" + "air_drop_linea_surge_menu" + "$"),
-                CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$")
+                CallbackQueryHandler(air_drop_linea_surge_menu, pattern="^" + "air_drop_linea_surge_menu" + "$")
             ],
             GlobalState.getInstance().WALLET: [  # The buttons callbacks of the "Wallet Menu"
                 CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$"),
@@ -64,7 +63,7 @@ def main() -> None:
             ],
             GlobalState.getInstance().PH_AIRDROP_SWAP: [
                 CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
+                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu_over" + "$")
             ],
             GlobalState.getInstance().PH_AIRDROP_STAKE: [
                 CallbackQueryHandler(air_drop_phantom_stake, pattern="^(\d+)$"),

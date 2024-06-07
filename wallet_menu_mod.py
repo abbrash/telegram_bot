@@ -31,4 +31,9 @@ async def wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     else:
         await query.message.reply_text(text=text, reply_markup=key_markup)
 
+    chat_id = GlobalState.getInstance().mess_id_prev.keys()
+    message_id = GlobalState.getInstance().mess_id_prev[chat_id]
+    await context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+
+
     return GlobalState.getInstance().WALLET

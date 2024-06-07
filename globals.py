@@ -29,6 +29,9 @@ class GlobalState:
         self.first_time_loop_metamask_create_wallet = True
         self.current_index_metamask_create_wallet = 0
 
+        # self.mess_id_prev = []          # mess_id_prev = [[chat_id, message_id]]
+        # self.mess_id_prev = {}          # mess_id_prev = {chat_id: message_id}
+
         # Initialize message IDs dictionary
         self.message_ids = {}
         self.chat_id = None

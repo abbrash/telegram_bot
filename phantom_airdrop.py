@@ -1,6 +1,7 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackContext
+from telegram.error import BadRequest
 
 from globals import GlobalState
 
@@ -13,20 +14,17 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
     await query.answer()
 
     # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
+    # Used .get() method to avoid KeyError if chat_id not found
     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
         GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    # global GlobalState.getInstance().current_index_ph_swap, GlobalState.getInstance().first_time_loop_ph_swap
     GlobalState.getInstance().current_index_ph_swap = 0
     GlobalState.getInstance().first_time_loop_ph_swap = True
 
-    # global current_index_ph_stake, first_time_loop_ph_stake
     GlobalState.getInstance().current_index_ph_stake = 0
     GlobalState.getInstance().first_time_loop_ph_stake = True
 
-    # global current_index_ph_unstake, first_time_loop_ph_unstake
     GlobalState.getInstance().current_index_ph_unstake = 0
     GlobalState.getInstance().first_time_loop_ph_unstake = True
 
@@ -58,37 +56,52 @@ async def air_drop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TY
 """
 
     # Select an image to send
-    # Replace with the actual path to your image
     image_filename = os.path.join(
         'img', 'airdrop', 'phantom_wallet', 'phantom_wallet_img.jpg')
 
     # Send the image along with the text and buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=text,
-        reply_markup=key_markup,
-        parse_mode="HTML"
-    )
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML"
+            ) 
+
+        except BadRequest:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=key_markup)
+
+    else:
+        # await context.bot.delete_message()
+        # await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=key_markup)
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML"
+            )
 
     return GlobalState.getInstance().PH_AIRDROP
 
 
-async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
+# async def air_drop_phantom_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
 
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
+#     # Delete the previous photo if it exists
+#     # Used .get() method to avoid KeyError if chat_id not found
+#     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
+#         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
+#         GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    return GlobalState.getInstance().PH_AIRDROP
+#     return GlobalState.getInstance().PH_AIRDROP
 
 
-
-### << *** Phantom AirDrop - Swap *** >>> ###
+### <<<-------------------------------------------- Phantom AirDrop - Swap -------------------------------------------->>> ###
 
 async def air_drop_phantom_swap(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
@@ -99,12 +112,14 @@ async def air_drop_phantom_swap(update: Update, context: CallbackContext) -> int
     # Check if query.data is a digit
     if query.data.isdigit():
         if GlobalState.getInstance().first_time_loop_ph_swap:
+            await query.delete_message()
             GlobalState.getInstance().current_index_ph_swap = 0
             GlobalState.getInstance().first_time_loop_ph_swap = False
         else:
             GlobalState.getInstance().current_index_ph_swap = int(query.data)
     elif query.data == "phantom_swap":
         # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
         GlobalState.getInstance().current_index_ph_swap = 0
         GlobalState.getInstance().first_time_loop_ph_swap = False
 

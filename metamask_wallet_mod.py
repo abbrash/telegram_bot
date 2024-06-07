@@ -5,17 +5,9 @@ from telegram.ext import ContextTypes, CallbackContext
 from globals import GlobalState
 
 ### <<<-------------------------------------------- Metamask Wallet Menu -------------------------------------------->>> ###
-
-
 async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     GlobalState.getInstance().current_index_metamask_create_wallet = 0
     GlobalState.getInstance().first_time_loop_metamask_create_wallet = True
@@ -39,7 +31,7 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     image_filename = os.path.join('img', 'wallet', 'metamask', 'metamask_wallet_img.jpg')
 
     # Send the image along with the text and buttons
-    await context.bot.send_photo(
+    sent_message = await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=open(image_filename, 'rb'),
         caption=text,
@@ -47,19 +39,13 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         parse_mode="HTML"
     )
 
+
     return GlobalState.getInstance().METAMASK_WALLET
 
 
 async def wallet_metamask_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance(
-        ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     return GlobalState.getInstance().METAMASK_WALLET
 
@@ -166,6 +152,7 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
     # Send the current photo with caption and navigation buttons
     GlobalState.getInstance().chat_id = update.effective_chat.id
 
+
     with open(image_filename, 'rb') as photo:
         sent_photo = await context.bot.send_photo(
             chat_id=GlobalState.getInstance().chat_id,
@@ -173,21 +160,6 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
             caption=caption,
             reply_markup=reply_markup
         )
-
-        # Store the message ID
-        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
-            # initialize a list to store further information
-            GlobalState.getInstance(
-            ).message_ids[GlobalState.getInstance().chat_id] = []
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
-            sent_photo.message_id)
-
-        # Delete the previous photo if it exists
-        # Use.get() method to avoid KeyError if chat_id not found
-        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
-            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-            GlobalState.getInstance(
-            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     return GlobalState.getInstance().METAMASK_WALLET_CREATE
 
