@@ -135,9 +135,15 @@ def main() -> None:
             #     CallbackQueryHandler(wallet_metamask_stake, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
+            # GlobalState.getInstance().SUPPORT_MENU: [
+            #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
+            #     CallbackQueryHandler(submit, pattern="^" + "submit_support" + "$"),
+            # ],
             GlobalState.getInstance().SUPPORT_MENU: [
                 MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
-                CallbackQueryHandler(submit, pattern='^submit_support$'),
+                CallbackQueryHandler(submit, pattern="^" + "submit_support" + "$"),
+                CallbackQueryHandler(confirm_support, pattern="^" + "confirm_support" + "$"),
+                CallbackQueryHandler(cancel_support, pattern='^cancel_support:')
             ],
             GlobalState.getInstance().END_ROUTES: [  
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")

@@ -1,3 +1,5 @@
+import time
+from admins_mod import admin_dict, is_admin, get_admin_name
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ConversationHandler, ContextTypes
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.error import BadRequest
@@ -89,6 +91,89 @@ admin_id = 107998330
 
 ####################################################################################################
 
+# async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
+
+#     protect_content = not is_admin(update._effective_user.id)
+
+#     # Initialize an empty list to store user messages
+#     context.user_data['support_messages'] = []
+
+#     keyboard = [
+#         [InlineKeyboardButton("ارسال به پشتیبانی", callback_data="submit_support")],
+#         [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
+#     ]
+#     key_markup = InlineKeyboardMarkup(keyboard)
+
+#     text = "لطفا پیام یا عکس خود را ارسال کنید. شما می توانید چندین پیام و عکس ارسال کنید. وقتی تمام شد، روی «ارسال به پشتیبانی» کلیک کنید تا همه پیام ها به تیم پشتیبانی ارسال شوند."
+
+#     if query.message and query.message.text:
+#         try:
+#             await query.delete_message()
+#             await context.bot.send_message(chat_id=update._effective_user.id,
+#                                            text=text,
+#                                            reply_markup=key_markup,
+#                                            protect_content=protect_content)
+#         except BadRequest:
+#             await context.bot.send_message(chat_id=update._effective_user.id,
+#                                            text=text,
+#                                            reply_markup=key_markup,
+#                                            protect_content=protect_content)
+#     else:
+#         await query.delete_message()
+#         await context.bot.send_message(chat_id=update._effective_user.id,
+#                                        text=text,
+#                                        reply_markup=key_markup,
+#                                        protect_content=protect_content)
+
+#     return GlobalState.getInstance().SUPPORT_MENU
+
+
+# async def receive_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     if update.message:
+#         if update.message.text:
+#             context.user_data['support_messages'].append(
+#                 f"پیام: {update.message.text}")
+#             await update.message.reply_text("پیام شما دریافت شد. می توانید پیام یا عکس دیگری ارسال کنید، یا روی «ارسال به پشتیبانی» کلیک کنید.")
+#         elif update.message.photo:
+#             file_id = update.message.photo[-1].file_id
+#             context.user_data['support_messages'].append(f"عکس: {file_id}")
+#             await update.message.reply_text("عکس شما دریافت شد. می توانید پیام یا عکس دیگری ارسال کنید، یا روی «ارسال به پشتیبانی» کلیک کنید.")
+#     return GlobalState.getInstance().SUPPORT_MENU
+
+
+# async def submit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
+
+#     protect_content = not is_admin(update._effective_user.id)
+
+#     if 'support_messages' in context.user_data and context.user_data['support_messages']:
+#         full_message = f"پیام های پشتیبانی از کاربر {update._effective_user.id}:\n\n"
+#         for msg in context.user_data['support_messages']:
+#             if msg.startswith("پیام:"):
+#                 await context.bot.send_message(chat_id=admin_id, text=full_message + msg, protect_content=protect_content)
+#                 full_message = ""
+#             elif msg.startswith("عکس:"):
+#                 file_id = msg.split(": ")[1]
+#                 await context.bot.send_photo(chat_id=admin_id, photo=file_id, caption=full_message, protect_content=protect_content)
+#                 full_message = ""
+
+#         if full_message:  # Send any remaining text messages
+#             await context.bot.send_message(chat_id=admin_id, text=full_message, protect_content=protect_content)
+
+#         del context.user_data['support_messages']
+#         await query.edit_message_text("پیام های شما به تیم پشتیبانی ارسال شد. به زودی با شما تماس خواهند گرفت.")
+#     else:
+#         await query.edit_message_text("هیچ پیامی برای ارسال وجود ندارد. لطفا ابتدا پیام یا عکس خود را ارسال کنید.")
+
+#     return ConversationHandler.END
+#########################################################################################################
+
+
+### <<<-------------------------------------------- Support Menu -------------------------------------------->>> ###
+
 async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -127,6 +212,92 @@ async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     return GlobalState.getInstance().SUPPORT_MENU
 
+# async def submit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
+
+#     protect_content = not is_admin(update._effective_user.id)
+
+#     if 'support_messages' in context.user_data and context.user_data['support_messages']:
+#         full_message = f"پیام های پشتیبانی از کاربر {update._effective_user.id}:\n\n"
+#         for msg in context.user_data['support_messages']:
+#             full_message += msg + "\n"
+
+#         # Store user_id in context for use in confirm and cancel
+#         context.user_data['support_user_id'] = update._effective_user.id
+
+#         # Send to all admins with confirm/cancel buttons
+#         for admin_name, admin_id in admin_dict.items():
+#             keyboard = [
+#                 [InlineKeyboardButton("تأیید پاسخگویی", callback_data="confirm_support")],
+#                 [InlineKeyboardButton("کنسل", callback_data="cancel_support")]
+#             ]
+#             key_markup = InlineKeyboardMarkup(keyboard)
+
+#             # Check if there's a photo in the messages
+#             last_photo = None
+#             for msg in reversed(context.user_data['support_messages']):
+#                 if msg.startswith("عکس:"):
+#                     last_photo = msg.split(": ")[1]
+#                     break
+
+#             if last_photo:
+#                 await context.bot.send_photo(chat_id=admin_id, photo=last_photo, caption=full_message, reply_markup=key_markup, protect_content=protect_content)
+#             else:
+#                 await context.bot.send_message(chat_id=admin_id, text=full_message, reply_markup=key_markup, protect_content=protect_content)
+
+#         del context.user_data['support_messages']
+#         await query.edit_message_text("پیام های شما به تیم پشتیبانی ارسال شد. به زودی با شما تماس خواهند گرفت.")
+#     else:
+#         await query.edit_message_text("هیچ پیامی برای ارسال وجود ندارد. لطفا ابتدا پیام یا عکس خود را ارسال کنید.")
+
+#     return ConversationHandler.END
+
+
+async def submit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    if 'support_messages' in context.user_data and context.user_data['support_messages']:
+        full_message = f"پیام های پشتیبانی از کاربر {update._effective_user.id}:\n\n"
+        for msg in context.user_data['support_messages']:
+            full_message += msg + "\n"
+
+        # Generate a unique message ID
+        message_id = f"support_{update._effective_user.id}_{int(time.time())}"
+        context.bot_data[message_id] = {
+            "user_id": update._effective_user.id, "handled_by": None}
+
+        # Send to all admins with confirm/cancel buttons
+        for admin_name, admin_id in admin_dict.items():
+            keyboard = [
+                [InlineKeyboardButton(
+                    "تأیید پاسخگویی", callback_data=f"confirm_support:{message_id}")],
+                [InlineKeyboardButton(
+                    "کنسل", callback_data=f"cancel_support:{message_id}")]
+            ]
+            key_markup = InlineKeyboardMarkup(keyboard)
+
+            # Check if there's a photo in the messages
+            last_photo = None
+            for msg in reversed(context.user_data['support_messages']):
+                if msg.startswith("عکس:"):
+                    last_photo = msg.split(": ")[1]
+                    break
+
+            if last_photo:
+                await context.bot.send_photo(chat_id=admin_id, photo=last_photo, caption=full_message, reply_markup=key_markup, protect_content=protect_content)
+            else:
+                await context.bot.send_message(chat_id=admin_id, text=full_message, reply_markup=key_markup, protect_content=protect_content)
+
+        del context.user_data['support_messages']
+        await query.edit_message_text("پیام های شما به تیم پشتیبانی ارسال شد. به زودی با شما تماس خواهند گرفت.")
+    else:
+        await query.edit_message_text("هیچ پیامی برای ارسال وجود ندارد. لطفا ابتدا پیام یا عکس خود را ارسال کنید.")
+
+    return ConversationHandler.END
 
 async def receive_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
@@ -140,39 +311,87 @@ async def receive_support_message(update: Update, context: ContextTypes.DEFAULT_
             await update.message.reply_text("عکس شما دریافت شد. می توانید پیام یا عکس دیگری ارسال کنید، یا روی «ارسال به پشتیبانی» کلیک کنید.")
     return GlobalState.getInstance().SUPPORT_MENU
 
+# async def confirm_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
 
-async def submit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     print('confirm executed!')
+
+#     user_id = context.user_data.get('support_user_id')
+#     print(f"user id: {user_id}")
+#     admin_id = update._effective_user.id
+#     admin_name = get_admin_name(admin_id)
+
+#     # Check if this message is already handled
+#     if user_id and not context.bot_data.get(f"support_handled_{user_id}", False):
+#         context.bot_data[f"support_handled_{user_id}"] = True
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(f"پیام کاربر {user_id} توسط ادمین {admin_name} در حال رسیدگی است.")
+
+#         # Notify other admins
+#         for other_admin_name, other_admin_id in admin_dict.items():
+#             if other_admin_id != admin_id:
+#                 await context.bot.send_message(chat_id=other_admin_id, text=f"پیام کاربر {user_id} توسط ادمین {admin_name} در حال رسیدگی است.")
+#     else:
+#         await query.answer("این پیام قبلاً توسط ادمین دیگری در حال رسیدگی است.", show_alert=True)
+
+#     return GlobalState.getInstance().SUPPORT_MENU
+
+
+# async def cancel_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
+
+#     user_id = context.user_data.get('support_user_id')
+#     admin_id = update._effective_user.id
+#     admin_name = get_admin_name(admin_id)
+
+#     if user_id:
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(f"ادمین {admin_name} به این پیام رسیدگی نخواهد کرد.")
+#     else:
+#         await query.answer("خطا: شناسه کاربر پیدا نشد.", show_alert=True)
+
+#     return GlobalState.getInstance().SUPPORT_MENU
+
+
+async def confirm_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    protect_content = not is_admin(update._effective_user.id)
+    print('confirm executed!')
 
-    if 'support_messages' in context.user_data and context.user_data['support_messages']:
-        full_message = f"پیام های پشتیبانی از کاربر {update._effective_user.id}:\n\n"
-        for msg in context.user_data['support_messages']:
-            if msg.startswith("پیام:"):
-                await context.bot.send_message(chat_id=admin_id, text=full_message + msg, protect_content=protect_content)
-                full_message = ""
-            elif msg.startswith("عکس:"):
-                file_id = msg.split(": ")[1]
-                await context.bot.send_photo(chat_id=admin_id, photo=file_id, caption=full_message, protect_content=protect_content)
-                full_message = ""
+    message_id = query.data.split(":")[1]
+    message_info = context.bot_data.get(message_id)
 
-        if full_message:  # Send any remaining text messages
-            await context.bot.send_message(chat_id=admin_id, text=full_message, protect_content=protect_content)
+    if message_info and message_info['handled_by'] is None:
+        message_info['handled_by'] = update._effective_user.id
+        admin_name = get_admin_name(update._effective_user.id)
 
-        del context.user_data['support_messages']
-        await query.edit_message_text("پیام های شما به تیم پشتیبانی ارسال شد. به زودی با شما تماس خواهند گرفت.")
+        await query.edit_message_reply_markup(reply_markup=None)
+        await query.edit_message_text(f"پیام کاربر {message_info['user_id']} توسط ادمین {admin_name} در حال رسیدگی است.")
+
+        # Notify other admins
+        for other_admin_name, other_admin_id in admin_dict.items():
+            if other_admin_id != update._effective_user.id:
+                await context.bot.send_message(chat_id=other_admin_id, text=f"پیام کاربر {message_info['user_id']} توسط ادمین {admin_name} در حال رسیدگی است.")
     else:
-        await query.edit_message_text("هیچ پیامی برای ارسال وجود ندارد. لطفا ابتدا پیام یا عکس خود را ارسال کنید.")
+        await query.answer("این پیام قبلاً توسط ادمین دیگری در حال رسیدگی است.", show_alert=True)
 
-    return ConversationHandler.END
-
-
+    return GlobalState.getInstance().SUPPORT_MENU
 
 
+async def cancel_support(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
+    message_id = query.data.split(":")[1]
+    admin_name = get_admin_name(update._effective_user.id)
 
+    await query.edit_message_reply_markup(reply_markup=None)
+    await query.edit_message_text(f"ادمین {admin_name} به این پیام رسیدگی نخواهد کرد.")
+
+    return GlobalState.getInstance().SUPPORT_MENU
 
 
 
