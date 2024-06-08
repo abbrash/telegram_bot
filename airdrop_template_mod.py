@@ -6,7 +6,6 @@ from telegram.error import BadRequest
 from globals_mod import GlobalState
 
 ### <<<-------------------------------------------- AirDrop Template Sub-Menu -------------------------------------------->>> ###
-
 async def air_drop_template_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -71,7 +70,6 @@ async def air_drop_template_menu(update: Update, context: ContextTypes.DEFAULT_T
 
 
 ### <<<-------------------------------------------- AirDrop Template - Swap -------------------------------------------->>> ###
-
 async def airdrop_template(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()

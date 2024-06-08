@@ -36,39 +36,12 @@ async def airdrops_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             await query.delete_message()
             await context.bot.send_message(chat_id=tel_user_id, text=text, reply_markup=key_markup)
-            print('1')
 
-            # await query.edit_message_text(text=text, reply_markup=key_markup)
         except BadRequest:
-            # await query.message.reply_text(text=text, reply_markup=key_markup)
             await context.bot.send_message(chat_id=tel_user_id, text=text, reply_markup=key_markup)
-            print('2')
 
     else:
-        # await query.message.reply_text(text=text, reply_markup=key_markup)
         await query.delete_message()
         await context.bot.send_message(chat_id=tel_user_id, text=text, reply_markup=key_markup)
-        print('3')
 
-
-    return GlobalState.getInstance().START_ROUTES
-
-
-    # if query.message and query.message.text:
-    #     try:
-    #         # await query.edit_message_text(text=text, reply_markup=key_markup)
-    #         await query.delete_message()
-    #         await context.bot.send_photo(chat_id=update.effective_chat.id,
-    #                                      photo=open(image_filename, 'rb'),
-    #                                      caption=text,
-    #                                      reply_markup=key_markup,
-    #                                      parse_mode="HTML")
-
-    #         print("context.bot.sendMessage: try")
-
-    #     except BadRequest:
-    #         sent_message = await context.bot.sendMessage(chat_id=tel_user_id, text=text, reply_markup=key_markup)
-    #         print("context.bot.sendMessage: except")
-    # else:
-    #     sent_message = await context.bot.sendMessage(chat_id=tel_user_id, text=text, reply_markup=key_markup)
-    #     print("context.bot.sendMessage: else")
+    return GlobalState.getInstance().AIRDROPS_MENU

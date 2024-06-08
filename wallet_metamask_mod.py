@@ -4,7 +4,7 @@ from telegram.ext import ContextTypes, CallbackContext
 
 from globals_mod import GlobalState
 
-### <<<-------------------------------------------- Metamask Wallet Menu -------------------------------------------->>> ###
+### <<<-------------------------------------------- MetaMask Wallet Menu -------------------------------------------->>> ###
 async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -13,14 +13,14 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     GlobalState.getInstance().first_time_loop_metamask_create_wallet = True
 
     keyboard = [
-        [InlineKeyboardButton("1. ساخت کیف پول متامسک (MetaMask) ", callback_data="metamask_wallet_create")],
-        [InlineKeyboardButton("2. بازیابی کیف پول متامسک (MetaMask)", callback_data="metamask_wallet_restore")],
-        [InlineKeyboardButton("3. ارسال رمزارز (Send)", callback_data="metamask_wallet_send")],
-        [InlineKeyboardButton("4. دریافت رمزارز (Receive)", callback_data="metamask_wallet_receive")],
-        [InlineKeyboardButton("5. سواپ رمزارز (Swap)", callback_data="metamask_wallet_swap")],
-        [InlineKeyboardButton("6. بریج رمزارز (Bridge)", callback_data="metamask_wallet_bridge")],
-        [InlineKeyboardButton("7. استیک رمزارز (Stake)", callback_data="metamask_wallet_stake")],
-        [InlineKeyboardButton("بازگشت ⬅️", callback_data="wallet_menu")]
+        [InlineKeyboardButton("1. ساخت کیف پول متامسک (MetaMask) ", callback_data="wallet_metamask_create")],
+        [InlineKeyboardButton("2. بازیابی کیف پول متامسک (MetaMask)", callback_data="wallet_metamask_restore")],
+        [InlineKeyboardButton("3. ارسال رمزارز (Send)", callback_data="wallet_metamask_send")],
+        [InlineKeyboardButton("4. دریافت رمزارز (Receive)", callback_data="wallet_metamask_receive")],
+        [InlineKeyboardButton("5. سواپ رمزارز (Swap)", callback_data="wallet_metamask_swap")],
+        [InlineKeyboardButton("6. بریج رمزارز (Bridge)", callback_data="wallet_metamask_bridge")],
+        [InlineKeyboardButton("7. استیک رمزارز (Stake)", callback_data="wallet_metamask_stake")],
+        [InlineKeyboardButton("بازگشت ⬅️", callback_data="wallets_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
@@ -39,34 +39,32 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         parse_mode="HTML"
     )
 
-
-    return GlobalState.getInstance().METAMASK_WALLET
-
-
-async def wallet_metamask_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    return GlobalState.getInstance().METAMASK_WALLET
+    return GlobalState.getInstance().WALLET_METAMASK_MENU
 
 
-### <<<-------------------------------------------- Metamask - Create -------------------------------------------->>> ###
+# async def wallet_metamask_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
 
+#     return GlobalState.getInstance().METAMASK_WALLET
+
+
+### <<<-------------------------------------------- MetaMask Wallet - Create -------------------------------------------->>> ###
 async def wallet_metamask_create(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()
 
-    print(f"Current index: {GlobalState.getInstance().current_index_metamask_create_wallet}")
-
     # Check if query.data is a digit
     if query.data.isdigit():
         if GlobalState.getInstance().first_time_loop_metamask_create_wallet:
+            await query.delete_message()
             GlobalState.getInstance().current_index_metamask_create_wallet = 0
             GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
         else:
             GlobalState.getInstance().current_index_metamask_create_wallet = int(query.data)
-    elif query.data == "metamask_wallet":
+    elif query.data == "wallet_metamask_create":
         # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
         GlobalState.getInstance().current_index_metamask_create_wallet = 0
         GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
 
@@ -134,11 +132,11 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
     if GlobalState.getInstance().current_index_metamask_create_wallet == 0:
         buttons = [
             [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet + 1))],
-            [InlineKeyboardButton("بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="metamask_menu_over")]
+            [InlineKeyboardButton("بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="wallet_metamask_menu")]
         ]
     elif GlobalState.getInstance().current_index_metamask_create_wallet == len(os.listdir(img_add)) - 1:
         buttons = [
-            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="metamask_menu_over")],
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="wallet_metamask_menu")],
             [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet - 1))]
         ]
     else:
@@ -160,11 +158,116 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
             caption=caption,
             reply_markup=reply_markup
         )
+    
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
 
-    return GlobalState.getInstance().METAMASK_WALLET_CREATE
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().WALLET_METAMASK_CREATE
 
 
 ### <<<-------------------------------------------- Metamask - Restore  -------------------------------------------->>> ###
+async def wallet_metamask_restore(update: Update, context: CallbackContext) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_metamask_create_wallet:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_metamask_create_wallet = 0
+            GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
+        else:
+            GlobalState.getInstance().current_index_metamask_create_wallet = int(query.data)
+    elif query.data == "wallet_metamask_restore":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_metamask_restore_wallet = 0
+        GlobalState.getInstance().first_time_loop_metamask_restore_wallet = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/wallet/metamask/restore'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_metamask_restore_wallet + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_metamask_restore_wallet = max(
+        0, min(GlobalState.getInstance().current_index_metamask_restore_wallet, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+
+    ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_metamask_restore_wallet]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_metamask_restore_wallet == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_metamask_restore_wallet + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="wallet_metamask_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_metamask_restore_wallet == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="wallet_metamask_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_metamask_restore_wallet - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_metamask_restore_wallet - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_metamask_restore_wallet + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().WALLET_METAMASK_RESTORE
+
 ### <<<-------------------------------------------- Metamask - Send -------------------------------------------->>> ###
 ### <<<-------------------------------------------- Metamask - Receive -------------------------------------------->>> ###
 ### <<<-------------------------------------------- Metamask - Swap -------------------------------------------->>> ###

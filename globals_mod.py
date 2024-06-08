@@ -10,8 +10,8 @@ class GlobalState:
         # Initialize constants
         self.START_ROUTES, self.END_ROUTES, self.SEND_IMG, self.EMAIL = range(4)
         self.AIRDROP_PHANTOM_MENU, self.AIRDROP_PHANTOM_SWAP, self.AIRDROP_PHANTOM_STAKE, self.AIRDROP_PHANTOM_UNSTAKE = range(4,8)
-        self.LINEA_SURGE_AIRDROP, self.LINEA_SURGE_AIRDROP_STAKE, self.LINEA_SURGE_AIRDROP_UNSTAKE, self.WALLET = range(8,12)
-        self.METAMASK_WALLET, self.METAMASK_WALLET_CREATE = range(12,14)
+        self.AIRDROP_LINEA_SURGE_MENU, self.AIRDROP_LINEA_SURGE_STAKE, self.AIRDROP_LINEA_SURGE_UNSTAKE, self.WALLETS_MENU = range(8, 12)
+        self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE = range(12,14)
         self.EXCHANGES_MENU = 14
         self.AIRDROPS_MENU = 15
 

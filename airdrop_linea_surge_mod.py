@@ -1,31 +1,131 @@
-import os 
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackContext
+from telegram.error import BadRequest
 
 from globals_mod import GlobalState
 
-
-### <<<-------------------------------------------- Linea Surge AirDrop -------------------------------------------->>> ###
-
-async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -> int:
+### <<<-------------------------------------------- Linea Surge AirDrop - Menu -------------------------------------------->>> ###
+async def airdrop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    # global current_index_linea_surge_stake, first_time_loop_linea_surge_stake, message_ids
-    # global chat_id
+    # Delete the previous photo if it exists
+    # Used .get() method to avoid KeyError if chat_id not found
+    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
+        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
+        GlobalState.getInstance(
+        ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    print(
-        f"Current index: {GlobalState.getInstance().current_index_linea_surge_stake}")
+    # global current_index_linea_surge_stake, first_time_loop_linea_surge_stake
+    GlobalState.getInstance().current_index_linea_surge_stake = 0
+    GlobalState.getInstance().first_time_loop_linea_surge_stake = True
+
+    # global current_index_linea_surge_unstake, first_time_loop_linea_surge_unstake
+    GlobalState.getInstance().current_index_linea_surge_unstake = 0
+    GlobalState.getInstance().first_time_loop_linea_surge_unstake = True
+
+    keyboard = [
+        [InlineKeyboardButton("1. واریز کردن (Stake) 💵💰",
+                              callback_data="airdrop_linea_surge_stake")],
+        [InlineKeyboardButton("2. برداشت کردن (Unstake) 💵💰",
+                              callback_data="airdrop_linea_surge_unstake")],
+        [InlineKeyboardButton("بازگشت ⬅️", callback_data="airdrops_menu")]
+    ]
+    key_markup = InlineKeyboardMarkup(keyboard)
+
+    text = """
+<b>ایردراپ لینیا سرج (Linea Surge) </b>
+
+🔄 نحوه فعالیت: 
+تأمین نقدینگی 
+
+💵 موجودی مورد نیاز:
+حداقل: ندارد /  ایده‌آل: 100 تتر یا بیشتر
+
+📰 وضعیت ایردراپ:
+قطعی
+
+📅 تاریخ توزیع: 
+نامشخص
+
+📖 توضیحات:
+دقت کنید متناسب با حجم سرمایه‌ای که وارد می‌کنید و مدت زمان سپرده‌گذاری شما، امتیاز دریافت خواهید کرد. 
+برای شرکت در ایردراپ لینیا سرج، لطفاً موارد زیر را به ترتیب انجام دهید.
+"""
+
+    # Select an image to send
+    image_filename = os.path.join(
+        'img', 'airdrop', 'linea_surge', 'linea_surge.png')
+
+    # # Send the image along with the text and buttons
+    # await context.bot.send_photo(
+    #     chat_id=update.effective_chat.id,
+    #     photo=open(image_filename, 'rb'),
+    #     caption=text,
+    #     reply_markup=key_markup,
+    #     parse_mode="HTML"
+    # )
+
+    # Send the image along with the text and buttons
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML"
+            )
+
+        except BadRequest:
+            await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=key_markup)
+
+    else:
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=open(image_filename, 'rb'),
+            caption=text,
+            reply_markup=key_markup,
+            parse_mode="HTML"
+        )
+
+    return GlobalState.getInstance().AIRDROP_LINEA_SURGE_MENU
+
+
+# async def air_drop_linea_surge_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
+#     query = update.callback_query
+#     await query.answer()
+
+#     # global chat_id
+
+#     # Delete the previous photo if it exists
+#     # Use.get() method to avoid KeyError if chat_id not found
+#     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
+#         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
+#         GlobalState.getInstance(
+#         ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+#     return GlobalState.getInstance().LINEA_SURGE_AIRDROP
+
+
+### <<<-------------------------------------------- Linea Surge AirDrop - Stake -------------------------------------------->>> ###
+async def airdrop_linea_surge_stake(update: Update, context: CallbackContext) -> int:
+    query = update.callback_query
+    await query.answer()
 
     # Check if query.data is a digit
     if query.data.isdigit():
         if GlobalState.getInstance().first_time_loop_linea_surge_stake:
+            await query.delete_message()
             GlobalState.getInstance().current_index_linea_surge_stake = 0
             GlobalState.getInstance().first_time_loop_linea_surge_stake = False
         else:
             GlobalState.getInstance().current_index_linea_surge_stake = int(query.data)
-    elif query.data == "linea_surge_stake":
+    elif query.data == "airdrop_linea_surge_stake":
         # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
         GlobalState.getInstance().current_index_linea_surge_stake = 0
         GlobalState.getInstance().first_time_loop_linea_surge_stake = False
 
@@ -86,7 +186,8 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_linea_surge_stake]
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_linea_surge_stake]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
@@ -94,13 +195,13 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
         buttons = [
             [InlineKeyboardButton("➡️ بعدی", callback_data=str(
                 GlobalState.getInstance().current_index_linea_surge_stake + 1))],
-            [InlineKeyboardButton("بازگشت به منوی ایردراپ لینیا 🏠⬅️ ",
-                                  callback_data="air_drop_linea_surge_menu_over")]
+            [InlineKeyboardButton(
+                "بازگشت به منوی ایردراپ لینیا 🏠⬅️ ", callback_data="airdrop_linea_surge_menu")]
         ]
     elif GlobalState.getInstance().current_index_linea_surge_stake == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="air_drop_linea_surge_menu_over")],
+                "🎉🥳 تامام!", callback_data="airdrop_linea_surge_menu")],
             [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
                 GlobalState.getInstance().current_index_linea_surge_stake - 1))]
         ]
@@ -127,8 +228,10 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
         # Store the message ID
         if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
             # initialize a list to store further information
-            GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id] = []
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(sent_photo.message_id)
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
 
         # Delete the previous photo if it exists
         # Use.get() method to avoid KeyError if chat_id not found
@@ -137,29 +240,25 @@ async def air_drop_linea_surge_stake(update: Update, context: CallbackContext) -
             GlobalState.getInstance(
             ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    return GlobalState.getInstance().LINEA_SURGE_AIRDROP_STAKE
+    return GlobalState.getInstance().AIRDROP_LINEA_SURGE_STAKE
 
 
-### << *** Phantom AirDrop - Stake *** >>> ###
-
-async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+### <<<-------------------------------------------- Linea Surge AirDrop - Unstake -------------------------------------------->>> ###
+async def airdrop_linea_surge_unstake(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
-
-    # global current_index_linea_surge_unstake, first_time_loop_linea_surge_unstake
-    # global chat_id
-
-    print(f"Current index: {GlobalState.getInstance().current_index_linea_surge_unstake}")
 
     # Check if query.data is a digit
     if query.data.isdigit():
         if GlobalState.getInstance().first_time_loop_linea_surge_unstake:
+            await query.delete_message()
             GlobalState.getInstance().current_index_linea_surge_unstake = 0
             GlobalState.getInstance().first_time_loop_linea_surge_unstake = False
         else:
             GlobalState.getInstance().current_index_linea_surge_unstake = int(query.data)
-    elif query.data == "linea_surge_unstake":
+    elif query.data == "airdrop_linea_surge_unstake":
         # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
         GlobalState.getInstance().current_index_linea_surge_unstake = 0
         GlobalState.getInstance().first_time_loop_linea_surge_unstake = False
 
@@ -200,7 +299,8 @@ async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEF
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_linea_surge_unstake]
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_linea_surge_unstake]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
@@ -208,13 +308,13 @@ async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEF
         buttons = [
             [InlineKeyboardButton("➡️ بعدی", callback_data=str(
                 GlobalState.getInstance().current_index_linea_surge_unstake + 1))],
-            [InlineKeyboardButton("بازگشت به منوی ایردراپ لینیا 🏠⬅️ ",
-                                  callback_data="air_drop_linea_surge_menu_over")]
+            [InlineKeyboardButton(
+                "بازگشت به منوی ایردراپ لینیا 🏠⬅️ ", callback_data="airdrop_linea_surge_menu")]
         ]
     elif GlobalState.getInstance().current_index_linea_surge_unstake == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="air_drop_linea_surge_menu_over")],
+                "🎉🥳 تامام!", callback_data="airdrop_linea_surge_menu")],
             [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
                 GlobalState.getInstance().current_index_linea_surge_unstake - 1))]
         ]
@@ -251,88 +351,7 @@ async def air_drop_linea_surge_unstake(update: Update, context: ContextTypes.DEF
         # Use.get() method to avoid KeyError if chat_id not found
         if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
             await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-            GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    return GlobalState.getInstance().LINEA_SURGE_AIRDROP_UNSTAKE
-
-
-async def air_drop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    # global chat_id
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
-
-    # global current_index_linea_surge_stake, first_time_loop_linea_surge_stake
-    GlobalState.getInstance().current_index_linea_surge_stake = 0
-    GlobalState.getInstance().first_time_loop_linea_surge_stake = True
-
-    # global current_index_linea_surge_unstake, first_time_loop_linea_surge_unstake
-    GlobalState.getInstance().current_index_linea_surge_unstake = 0
-    GlobalState.getInstance().first_time_loop_linea_surge_unstake = True
-
-    keyboard = [
-        [InlineKeyboardButton("1. واریز کردن (Stake) 💵💰",
-                              callback_data="linea_surge_stake")],
-        [InlineKeyboardButton("2. برداشت کردن (Unstake) 💵💰",
-                              callback_data="linea_surge_unstake")],
-        [InlineKeyboardButton(
-            "بازگشت ⬅️", callback_data="back_to_air_drop_menu")]
-    ]
-    key_markup = InlineKeyboardMarkup(keyboard)
-
-    text = """
-<b>ایردراپ لینیا سرج (Linea Surge) </b>
-
-🔄 نحوه فعالیت: 
-تأمین نقدینگی 
-
-💵 موجودی مورد نیاز:
-حداقل: ندارد /  ایده‌آل: 100 تتر یا بیشتر
-
-📰 وضعیت ایردراپ:
-قطعی
-
-📅 تاریخ توزیع: 
-نامشخص
-
-📖 توضیحات:
-دقت کنید متناسب با حجم سرمایه‌ای که وارد می‌کنید و مدت زمان سپرده‌گذاری شما، امتیاز دریافت خواهید کرد. 
-برای شرکت در ایردراپ لینیا سرج، لطفاً موارد زیر را به ترتیب انجام دهید.
-"""
-
-    # Select an image to send
-    # Replace with the actual path to your image
-    image_filename = os.path.join(
-        'img', 'airdrop', 'linea_surge', 'linea_surge.png')
-
-    # Send the image along with the text and buttons
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=open(image_filename, 'rb'),
-        caption=text,
-        reply_markup=key_markup,
-        parse_mode="HTML"
-    )
-
-    return GlobalState.getInstance().LINEA_SURGE_AIRDROP
-
-
-async def air_drop_linea_surge_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    # global chat_id
-
-    # Delete the previous photo if it exists
-    # Use.get() method to avoid KeyError if chat_id not found
-    if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-        await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
-
-    return GlobalState.getInstance().LINEA_SURGE_AIRDROP
+    return GlobalState.getInstance().AIRDROP_LINEA_SURGE_UNSTAKE
