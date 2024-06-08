@@ -2,7 +2,7 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CallbackContext
 
-from globals import GlobalState
+from globals_mod import GlobalState
 
 
 ### <<<-------------------------------------------- Linea Surge AirDrop -------------------------------------------->>> ###

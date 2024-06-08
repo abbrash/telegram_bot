@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from telegram.error import BadRequest
 
-from globals import GlobalState
+from globals_mod import GlobalState
 
 
 async def wallet_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

@@ -3,14 +3,15 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
 
 from main_menu_mod import *
-from phantom_airdrop import *
-from linea_surge_airdrop import *
-from register import *
+from airdrop_phantom_mod import *
+from airdrop_linea_surge_mod import *
+from register_mod import *
 from wallet_menu_mod import *
-from exchange import *
-from metamask_wallet_mod import *
+from exchanges_menu_mod import *
+from wallet_metamask_mod import *
+from support_menu_mod import *
 
-
+### <<<-------------------------------------------- Main Function -------------------------------------------->>> ###
 def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -20,16 +21,40 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
-            GlobalState.getInstance().START_ROUTES: [   # The buttons callbacks of the "Main Menu"
+            GlobalState.getInstance().START_ROUTES: [   
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$"),
+                CallbackQueryHandler(airdrops_menu, pattern="^" + "airdrops_menu" + "$"),
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$"),
+                CallbackQueryHandler(support_menu, pattern="^" + "support_menu" + "$"),
                 CallbackQueryHandler(submit_email, pattern="^" + "submit_email" + "$"),
-                CallbackQueryHandler(local_exchange, pattern="^" + "local_exchange" + "$"),
-                CallbackQueryHandler(global_exchange, pattern="^" + "global_exchange" + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$"),
-                CallbackQueryHandler(air_drop_menu, pattern="^" + "air_drops" + "$"),
                 CallbackQueryHandler(wallet_menu, pattern="^" + "wallet_menu" + "$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu" + "$"),
+                CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$"),
                 CallbackQueryHandler(air_drop_linea_surge_menu, pattern="^" + "air_drop_linea_surge_menu" + "$")
             ],
+            GlobalState.getInstance().EXCHANGES_MENU: [  
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$"),
+                CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$"),
+                CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$"),
+                CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$"),
+                CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
+            ],
+            # GlobalState.getInstance().EXCHANGE_NOBITEX_MENU: [  
+            #     CallbackQueryHandler(exchange_nobitex_reg_tutorial, pattern="^" + "exchange_nobitex_reg_tutorial" + "$"),
+            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
+            #     CallbackQueryHandler(exchange_bitpin_reg_tutorial, pattern="^" + "exchange_bitpin_reg_tutorial" + "$"),
+            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
+            #     CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
+            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_COINEX_MENU: [  
+            #     CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^" + "exchange_coinex_reg_tutorial" + "$"),
+            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            # ],
             GlobalState.getInstance().WALLET: [  # The buttons callbacks of the "Wallet Menu"
                 CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$"),
                 # CallbackQueryHandler(wallet_phantom_menu, pattern="^" + "phantom_menu" + "$"),
@@ -52,31 +77,35 @@ def main() -> None:
             GlobalState.getInstance().END_ROUTES: [  # The buttons callbacks of the ... 
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],
-            GlobalState.getInstance().SEND_IMG: [
-                CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
+            # GlobalState.getInstance().SEND_IMG: [
+            #     CallbackQueryHandler(airdrop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
+            # ],
+            GlobalState.getInstance().AIRDROPS_MENU: [
+                CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$"),
+                CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
-            GlobalState.getInstance().PH_AIRDROP: [  # The buttons callbacks of the "Phantom Airdrop Menu"
-                CallbackQueryHandler(air_drop_phantom_swap, pattern="^" + "phantom_swap" + "$"),
-                CallbackQueryHandler(air_drop_phantom_stake, pattern="^" + "phantom_stake" + "$"),
-                CallbackQueryHandler(air_drop_phantom_unstake, pattern="^" + "phantom_unstake" + "$"),
-                CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
+            GlobalState.getInstance().AIRDROP_PHANTOM_MENU: [  # The buttons callbacks of the "Phantom Airdrop Menu"
+                CallbackQueryHandler(airdrop_phantom_swap, pattern="^" + "airdrop_phantom_swap" + "$"),
+                CallbackQueryHandler(airdrop_phantom_stake, pattern="^" + "airdrop_phantom_stake" + "$"),
+                CallbackQueryHandler(airdrop_phantom_unstake, pattern="^" + "airdrop_phantom_unstake" + "$"),
+                CallbackQueryHandler(airdrops_menu, pattern="^" + "airdrops_menu" + "$")
             ],
-            GlobalState.getInstance().PH_AIRDROP_SWAP: [
-                CallbackQueryHandler(air_drop_phantom_swap, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu, pattern="^" + "air_drop_phantom_menu_over" + "$")
+            GlobalState.getInstance().AIRDROP_PHANTOM_SWAP: [
+                CallbackQueryHandler(airdrop_phantom_swap, pattern="^(\d+)$"),
+                CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$")
             ],
-            GlobalState.getInstance().PH_AIRDROP_STAKE: [
-                CallbackQueryHandler(air_drop_phantom_stake, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
+            GlobalState.getInstance().AIRDROP_PHANTOM_STAKE: [
+                CallbackQueryHandler(airdrop_phantom_stake, pattern="^(\d+)$"),
+                CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$")
             ],
-            GlobalState.getInstance().PH_AIRDROP_UNSTAKE: [
-                CallbackQueryHandler(air_drop_phantom_unstake, pattern="^(\d+)$"),
-                CallbackQueryHandler(air_drop_phantom_menu_over, pattern="^" + "air_drop_phantom_menu_over" + "$")
+            GlobalState.getInstance().AIRDROP_PHANTOM_UNSTAKE: [
+                CallbackQueryHandler(airdrop_phantom_unstake, pattern="^(\d+)$"),
+                CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$")
             ],
             GlobalState.getInstance().LINEA_SURGE_AIRDROP: [
                 CallbackQueryHandler(air_drop_linea_surge_stake, pattern="^" + "linea_surge_stake" + "$"),
                 CallbackQueryHandler(air_drop_linea_surge_unstake, pattern="^" + "linea_surge_unstake" + "$"),
-                CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
+                # CallbackQueryHandler(air_drop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
             ],
             GlobalState.getInstance().LINEA_SURGE_AIRDROP_STAKE: [
                 CallbackQueryHandler(air_drop_linea_surge_stake, pattern="^(\d+)$"),

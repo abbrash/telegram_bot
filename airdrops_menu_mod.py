@@ -2,9 +2,10 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from telegram.error import BadRequest
 
-from globals import GlobalState
+from globals_mod import GlobalState
 
-async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+### <<<-------------------------------------------- Airdrops Menu -------------------------------------------->>> ###
+async def airdrops_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
@@ -20,8 +21,8 @@ async def air_drop_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     GlobalState.getInstance().first_time_loop_ph_unstake = True
 
     keyboard = [
-        [InlineKeyboardButton("ایردراپ فانتوم (Phantom)", callback_data="air_drop_phantom_menu"),
-         InlineKeyboardButton("ایردراپ لینیا سرج (Linea Surge)", callback_data="air_drop_linea_surge_menu")],
+        [InlineKeyboardButton("ایردراپ فانتوم (Phantom)", callback_data="airdrop_phantom_menu"),
+         InlineKeyboardButton("ایردراپ لینیا سرج (Linea Surge)", callback_data="airdrop_linea_surge_menu")],
         [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)

@@ -3,9 +3,9 @@ import pandas as pd
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from globals import GlobalState
-from database import *
-from airdrop_menu import *
+from globals_mod import GlobalState
+from database_mod import *
+from airdrops_menu_mod import *
 from main_menu_mod import *
 
 
