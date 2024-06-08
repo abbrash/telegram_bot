@@ -3,11 +3,14 @@ from telegram.ext import ContextTypes
 from telegram.error import BadRequest
 
 from globals_mod import GlobalState
+from admins_mod import *
 
 ### <<<-------------------------------------------- Wallets Menu -------------------------------------------->>> ###
 async def wallets_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     keyboard = [
         [InlineKeyboardButton("کیف پول متامسک (MetaMask)", callback_data="wallet_metamask_menu")],
@@ -20,13 +23,25 @@ async def wallets_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     if query.message and query.message.text:
         try:
             await query.delete_message()
-            await context.bot.send_message(chat_id=update._effective_user.id, text=text, reply_markup=key_markup)
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text, 
+                                           reply_markup=key_markup, 
+                                           protect_content=protect_content
+                                           )
 
         except BadRequest:
-            await context.bot.send_message(chat_id=update._effective_user.id, text=text, reply_markup=key_markup)
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text, 
+                                           reply_markup=key_markup, 
+                                           protect_content=protect_content
+                                           )
 
     else:
         await query.delete_message()
-        await context.bot.send_message(chat_id=update._effective_user.id, text=text, reply_markup=key_markup)
+        await context.bot.send_message(chat_id=update._effective_user.id,
+                                       text=text, 
+                                       reply_markup=key_markup, 
+                                       protect_content=protect_content
+                                       )
 
     return GlobalState.getInstance().WALLETS_MENU

@@ -5,10 +5,14 @@ from telegram.error import BadRequest
 
 from globals_mod import GlobalState
 
+from admins_mod import *
+
 ### <<<-------------------------------------------- AirDrop Template Sub-Menu -------------------------------------------->>> ###
 async def air_drop_template_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     # Delete the previous photo if it exists
     # Used .get() method to avoid KeyError if chat_id not found
@@ -50,7 +54,8 @@ async def air_drop_template_menu(update: Update, context: ContextTypes.DEFAULT_T
                 photo=open(image_filename, 'rb'),
                 caption=text,
                 reply_markup=key_markup,
-                parse_mode="HTML"
+                parse_mode="HTML",
+                protect_content=protect_content
             )
 
         except BadRequest:
@@ -62,7 +67,8 @@ async def air_drop_template_menu(update: Update, context: ContextTypes.DEFAULT_T
             photo=open(image_filename, 'rb'),
             caption=text,
             reply_markup=key_markup,
-            parse_mode="HTML"
+            parse_mode="HTML",
+            protect_content=protect_content
         )
 
     return GlobalState.getInstance().AIRDROP_TEMPLATE
@@ -74,7 +80,7 @@ async def airdrop_template(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()
 
-    print(f"Current index: {GlobalState.getInstance().current_index_template_swap}")
+    protect_content = not is_admin(update._effective_user.id)
 
     # Check if query.data is a digit
     if query.data.isdigit():
@@ -134,7 +140,8 @@ async def airdrop_template(update: Update, context: CallbackContext) -> int:
             chat_id=GlobalState.getInstance().chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            protect_content=protect_content
         )
 
         # Store the message ID

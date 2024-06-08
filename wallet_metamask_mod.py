@@ -9,8 +9,8 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     query = update.callback_query
     await query.answer()
 
-    GlobalState.getInstance().current_index_metamask_create_wallet = 0
-    GlobalState.getInstance().first_time_loop_metamask_create_wallet = True
+    GlobalState.getInstance().current_index_wallet_metamask_create = 0
+    GlobalState.getInstance().first_time_loop_wallet_metamask_create = True
 
     keyboard = [
         [InlineKeyboardButton("1. ساخت کیف پول متامسک (MetaMask) ", callback_data="wallet_metamask_create")],
@@ -31,7 +31,7 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     image_filename = os.path.join('img', 'wallet', 'metamask', 'metamask_wallet_img.jpg')
 
     # Send the image along with the text and buttons
-    sent_message = await context.bot.send_photo(
+    await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=open(image_filename, 'rb'),
         caption=text,
@@ -42,13 +42,6 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     return GlobalState.getInstance().WALLET_METAMASK_MENU
 
 
-# async def wallet_metamask_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-#     query = update.callback_query
-#     await query.answer()
-
-#     return GlobalState.getInstance().METAMASK_WALLET
-
-
 ### <<<-------------------------------------------- MetaMask Wallet - Create -------------------------------------------->>> ###
 async def wallet_metamask_create(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
@@ -56,26 +49,26 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
 
     # Check if query.data is a digit
     if query.data.isdigit():
-        if GlobalState.getInstance().first_time_loop_metamask_create_wallet:
+        if GlobalState.getInstance().first_time_loop_wallet_metamask_create:
             await query.delete_message()
-            GlobalState.getInstance().current_index_metamask_create_wallet = 0
-            GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
+            GlobalState.getInstance().current_index_wallet_metamask_create = 0
+            GlobalState.getInstance().first_time_loop_wallet_metamask_create = False
         else:
-            GlobalState.getInstance().current_index_metamask_create_wallet = int(query.data)
+            GlobalState.getInstance().current_index_wallet_metamask_create = int(query.data)
     elif query.data == "wallet_metamask_create":
         # Reset current_index when "air_drop_01" is clicked
         await query.delete_message()
-        GlobalState.getInstance().current_index_metamask_create_wallet = 0
-        GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
+        GlobalState.getInstance().current_index_wallet_metamask_create = 0
+        GlobalState.getInstance().first_time_loop_wallet_metamask_create = False
 
     # Use img_add to dynamically generate the image filename based on the current index
     image_directory = 'img/wallet/metamask/create'
     img_add = image_directory
-    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_metamask_create_wallet + 1).zfill(2)}.png'
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_wallet_metamask_create + 1).zfill(2)}.png'
 
     # Ensure current_index stays within the bounds of available images
-    GlobalState.getInstance().current_index_metamask_create_wallet = max(
-        0, min(GlobalState.getInstance().current_index_metamask_create_wallet, len(os.listdir(img_add)) - 1))
+    GlobalState.getInstance().current_index_wallet_metamask_create = max(
+        0, min(GlobalState.getInstance().current_index_wallet_metamask_create, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
     captions_list = [
@@ -125,24 +118,24 @@ async def wallet_metamask_create(update: Update, context: CallbackContext) -> in
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_metamask_create_wallet]
+    caption = captions_list[GlobalState.getInstance().current_index_wallet_metamask_create]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
-    if GlobalState.getInstance().current_index_metamask_create_wallet == 0:
+    if GlobalState.getInstance().current_index_wallet_metamask_create == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet + 1))],
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_create + 1))],
             [InlineKeyboardButton("بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="wallet_metamask_menu")]
         ]
-    elif GlobalState.getInstance().current_index_metamask_create_wallet == len(os.listdir(img_add)) - 1:
+    elif GlobalState.getInstance().current_index_wallet_metamask_create == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton("🎉🥳 تامام!", callback_data="wallet_metamask_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet - 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_create - 1))]
         ]
     else:
         buttons = [
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet - 1)),
-             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_metamask_create_wallet + 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_create - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_create + 1))]
         ]
 
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -185,12 +178,12 @@ async def wallet_metamask_restore(update: Update, context: CallbackContext) -> i
 
     # Check if query.data is a digit
     if query.data.isdigit():
-        if GlobalState.getInstance().first_time_loop_metamask_create_wallet:
+        if GlobalState.getInstance().first_time_loop_wallet_metamask_create:
             await query.delete_message()
-            GlobalState.getInstance().current_index_metamask_create_wallet = 0
-            GlobalState.getInstance().first_time_loop_metamask_create_wallet = False
+            GlobalState.getInstance().current_index_wallet_metamask_create = 0
+            GlobalState.getInstance().first_time_loop_wallet_metamask_create = False
         else:
-            GlobalState.getInstance().current_index_metamask_create_wallet = int(query.data)
+            GlobalState.getInstance().current_index_metamask_restore_wallet = int(query.data)
     elif query.data == "wallet_metamask_restore":
         # Reset current_index when "air_drop_01" is clicked
         await query.delete_message()

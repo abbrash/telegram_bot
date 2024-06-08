@@ -8,16 +8,21 @@ from globals_mod import GlobalState
 from database_mod import *
 from airdrops_menu_mod import * 
 
+from admins_mod import *
+
+
 ### <<<-------------------------------------------- Log Errors -------------------------------------------->>> ###
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
 ### <<<-------------------------------------------- Start -------------------------------------------->>> ###
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    tel_user_id = update.effective_user.id
-    if tel_user_id in GlobalState.getInstance().data_base['tel_user_id'].values:
+    
+    protect_content = not is_admin(update.effective_user.id)
+
+    if update.effective_user.id in GlobalState.getInstance().data_base['tel_user_id'].values:
         tel_user_name = GlobalState.getInstance().data_base[GlobalState.getInstance(
-        ).data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
+        ).data_base['tel_user_id'] == update.effective_user.id]['tel_user_name'].values[0]
         text = f"{tel_user_name} " + "👋🏻🥰 !سلام دوست من"
         keyboard = [
             [InlineKeyboardButton("صرافی‌های پیشنهادی 💱🌐🇮🇷", callback_data="exchanges_menu")],
@@ -32,7 +37,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         text = "به کانال کریپتیک خوش آمدید:"
 
     if update.message:
-        await update.message.reply_text(text=text, reply_markup=reply_markup)
+        await update.message.reply_text(text=text, 
+                                        reply_markup=reply_markup, 
+                                        protect_content=protect_content
+                                        )
 
     return GlobalState.getInstance().START_ROUTES
 
@@ -41,9 +49,10 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Prompt same text & keyboard as `start` does but not as new message"""
     query = update.callback_query
     await query.answer()
-    tel_user_id = update.effective_user.id
 
-    if tel_user_id in GlobalState.getInstance().data_base['tel_user_id'].values:
+    protect_content = not is_admin(update.effective_user.id)
+
+    if update.effective_user.id in GlobalState.getInstance().data_base['tel_user_id'].values:
         keyboard = [
                 [InlineKeyboardButton("صرافی‌های پیشنهادی 💱🌐🇮🇷", callback_data="exchanges_menu")],
                 [InlineKeyboardButton("ایردراپ 🚀🎁", callback_data="airdrops_menu")],
@@ -52,7 +61,7 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         tel_user_name = GlobalState.getInstance().data_base[GlobalState.getInstance(
-            ).data_base['tel_user_id'] == tel_user_id]['tel_user_name'].values[0]
+        ).data_base['tel_user_id'] == update.effective_user.id]['tel_user_name'].values[0]
 
         text = f"{tel_user_name} " + "👋🏻🥰 !سلام دوست من"
 
@@ -63,13 +72,21 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
     if update.message:
-        await update.message.reply_text(text=text, reply_markup=reply_markup)
+        await update.message.reply_text(text=text, 
+                                        reply_markup=reply_markup, 
+                                        protect_content=protect_content
+                                        )
     try:
         # Try to edit the message text
-        await query.edit_message_text(text=text, reply_markup=reply_markup)
+        await query.edit_message_text(text=text, 
+                                      reply_markup=reply_markup
+                                      )
     except BadRequest:
         # If the message doesn't have text content, send a new message
-        await query.message.reply_text(text=text, reply_markup=reply_markup)
+        await query.message.reply_text(text=text, 
+                                       reply_markup=reply_markup, 
+                                       protect_content=protect_content
+                                       )
 
     return GlobalState.getInstance().START_ROUTES
 

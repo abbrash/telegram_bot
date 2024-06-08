@@ -5,10 +5,14 @@ from telegram.error import BadRequest
 
 from globals_mod import GlobalState
 
+from admins_mod import *
+
 ### <<<-------------------------------------------- Linea Surge AirDrop - Menu -------------------------------------------->>> ###
 async def airdrop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     # Delete the previous photo if it exists
     # Used .get() method to avoid KeyError if chat_id not found
@@ -58,15 +62,6 @@ async def airdrop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT
     image_filename = os.path.join(
         'img', 'airdrop', 'linea_surge', 'linea_surge.png')
 
-    # # Send the image along with the text and buttons
-    # await context.bot.send_photo(
-    #     chat_id=update.effective_chat.id,
-    #     photo=open(image_filename, 'rb'),
-    #     caption=text,
-    #     reply_markup=key_markup,
-    #     parse_mode="HTML"
-    # )
-
     # Send the image along with the text and buttons
     if query.message and query.message.text:
         try:
@@ -76,7 +71,8 @@ async def airdrop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT
                 photo=open(image_filename, 'rb'),
                 caption=text,
                 reply_markup=key_markup,
-                parse_mode="HTML"
+                parse_mode="HTML",
+                protect_content=protect_content
             )
 
         except BadRequest:
@@ -88,32 +84,19 @@ async def airdrop_linea_surge_menu(update: Update, context: ContextTypes.DEFAULT
             photo=open(image_filename, 'rb'),
             caption=text,
             reply_markup=key_markup,
-            parse_mode="HTML"
+            parse_mode="HTML",
+            protect_content=protect_content
         )
 
     return GlobalState.getInstance().AIRDROP_LINEA_SURGE_MENU
-
-
-# async def air_drop_linea_surge_menu_over(update: Update, context: ContextTypes.DEFAULT_TYPE):
-#     query = update.callback_query
-#     await query.answer()
-
-#     # global chat_id
-
-#     # Delete the previous photo if it exists
-#     # Use.get() method to avoid KeyError if chat_id not found
-#     if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) == 1:
-#         await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id][0])
-#         GlobalState.getInstance(
-#         ).message_ids[GlobalState.getInstance().chat_id].pop(0)
-
-#     return GlobalState.getInstance().LINEA_SURGE_AIRDROP
 
 
 ### <<<-------------------------------------------- Linea Surge AirDrop - Stake -------------------------------------------->>> ###
 async def airdrop_linea_surge_stake(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     # Check if query.data is a digit
     if query.data.isdigit():
@@ -193,17 +176,13 @@ async def airdrop_linea_surge_stake(update: Update, context: CallbackContext) ->
     buttons = []
     if GlobalState.getInstance().current_index_linea_surge_stake == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
-                GlobalState.getInstance().current_index_linea_surge_stake + 1))],
-            [InlineKeyboardButton(
-                "بازگشت به منوی ایردراپ لینیا 🏠⬅️ ", callback_data="airdrop_linea_surge_menu")]
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_linea_surge_stake + 1))],
+            [InlineKeyboardButton("بازگشت به منوی ایردراپ لینیا 🏠⬅️ ", callback_data="airdrop_linea_surge_menu")]
         ]
     elif GlobalState.getInstance().current_index_linea_surge_stake == len(os.listdir(img_add)) - 1:
         buttons = [
-            [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="airdrop_linea_surge_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
-                GlobalState.getInstance().current_index_linea_surge_stake - 1))]
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="airdrop_linea_surge_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_linea_surge_stake - 1))]
         ]
     else:
         buttons = [
@@ -222,7 +201,8 @@ async def airdrop_linea_surge_stake(update: Update, context: CallbackContext) ->
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            parse_mode='HTML'
+            parse_mode='HTML',
+            protect_content=protect_content
         )
 
         # Store the message ID
@@ -247,6 +227,8 @@ async def airdrop_linea_surge_stake(update: Update, context: CallbackContext) ->
 async def airdrop_linea_surge_unstake(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     # Check if query.data is a digit
     if query.data.isdigit():
@@ -335,7 +317,8 @@ async def airdrop_linea_surge_unstake(update: Update, context: ContextTypes.DEFA
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            parse_mode='HTML'
+            parse_mode='HTML',
+            protect_content=protect_content
         )
 
         # Store the message ID

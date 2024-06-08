@@ -8,20 +8,20 @@ class GlobalState:
             GlobalState._instance = self
 
         # Initialize constants
-        self.START_ROUTES, self.END_ROUTES, self.SEND_IMG, self.EMAIL = range(4)
-        self.AIRDROP_PHANTOM_MENU, self.AIRDROP_PHANTOM_SWAP, self.AIRDROP_PHANTOM_STAKE, self.AIRDROP_PHANTOM_UNSTAKE = range(4,8)
-        self.AIRDROP_LINEA_SURGE_MENU, self.AIRDROP_LINEA_SURGE_STAKE, self.AIRDROP_LINEA_SURGE_UNSTAKE, self.WALLETS_MENU = range(8, 12)
-        self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE = range(12,14)
-        self.EXCHANGES_MENU = 14
-        self.AIRDROPS_MENU = 15
+        self.START_ROUTES, self.END_ROUTES, self.EMAIL, _ = range(4)
+        self.EXCHANGES_MENU, self.AIRDROPS_MENU, self.WALLETS_MENU, self.SUPPORT_MENU = range(4, 8)
+        self.AIRDROP_PHANTOM_MENU, self.AIRDROP_PHANTOM_SWAP, self.AIRDROP_PHANTOM_STAKE, self.AIRDROP_PHANTOM_UNSTAKE = range(8, 12)
+        self.AIRDROP_LINEA_SURGE_MENU, self.AIRDROP_LINEA_SURGE_STAKE, self.AIRDROP_LINEA_SURGE_UNSTAKE, _ = range(12, 16)
+        self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE, _, _ = range(16, 20)
+
 
         # Initialize variables
-        self.first_time_loop_ph_swap = True
-        self.first_time_loop_ph_stake = True
-        self.first_time_loop_ph_unstake = True
-        self.current_index_ph_swap = 0
-        self.current_index_ph_stake = 0
-        self.current_index_ph_unstake = 0
+        self.first_time_loop_phantom_swap = True
+        self.first_time_loop_phantom_stake = True
+        self.first_time_loop_phantom_unstake = True
+        self.current_index_phantom_swap = 0
+        self.current_index_phantom_stake = 0
+        self.current_index_phantom_unstake = 0
 
         self.first_time_loop_linea_surge_stake = True
         self.first_time_loop_linea_surge_unstake = True
@@ -30,9 +30,6 @@ class GlobalState:
 
         self.first_time_loop_metamask_create_wallet = True
         self.current_index_metamask_create_wallet = 0
-
-        # self.mess_id_prev = []          # mess_id_prev = [[chat_id, message_id]]
-        # self.mess_id_prev = {}          # mess_id_prev = {chat_id: message_id}
 
         # Initialize message IDs dictionary
         self.message_ids = {}

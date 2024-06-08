@@ -7,12 +7,13 @@ from globals_mod import GlobalState
 from database_mod import *
 from airdrops_menu_mod import *
 from main_menu_mod import *
-
+from admins_mod import *
 
 async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     # global data_base
 
-    tel_user_id = update.effective_user.id
+    protect_content = not is_admin(update._effective_user.id)
+
     message_text = update.effective_message.text.lower()
 
     if update.effective_user.name:
@@ -24,15 +25,18 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 
     if is_email(message_text):
         if message_text in GlobalState.getInstance().data_base['email_id'].values:
-            await context.bot.send_message(chat_id=update.effective_chat.id,
-                                           text="آدرس ایمیل وارد شده توسط شخص دیگری ثبت شده است، لطفاً آدرس ایمیل خودتان را وارد کنید:")
+            text = "آدرس ایمیل وارد شده توسط شخص دیگری ثبت شده است، لطفاً آدرس ایمیل خودتان را وارد کنید:"
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text,
+                                           protect_content=protect_content
+                                           )
         else:
             ch_user_id = gen_uniq_channel_id(
                 GlobalState.getInstance().data_base['ch_user_id'].values)
             new_user = {
                 'ch_user_id': ch_user_id,
                 'tel_user_name': tel_user_name,
-                'tel_user_id': tel_user_id,
+                'tel_user_id': update._effective_user.id,
                 'email_id': message_text,
                 'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
@@ -47,8 +51,11 @@ async def confirm_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
             # Show the main menu instead of sending a message
             return await main_menu(update, context)
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="آدرس ایمیل وارد شده نادرست است، لطفاً دوباره تلاش کنید:")
+        text = "آدرس ایمیل وارد شده نادرست است، لطفاً دوباره تلاش کنید:"
+        await context.bot.send_message(chat_id=update._effective_user.id,
+                                       text=text, 
+                                       protect_content=protect_content
+                                       )
 
 
 async def submit_email(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

@@ -17,7 +17,7 @@ def main() -> None:
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(
         '7029020592:AAGYmkIiqRPL99oGfIW0vvyTIhSJYKDbl9U').build()
-
+    
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={
@@ -57,7 +57,7 @@ def main() -> None:
                 CallbackQueryHandler(airdrop_linea_surge_menu, pattern="^" + "airdrop_linea_surge_menu" + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
-            GlobalState.getInstance().AIRDROP_PHANTOM_MENU: [  # The buttons callbacks of the "Phantom Airdrop Menu"
+            GlobalState.getInstance().AIRDROP_PHANTOM_MENU: [  
                 CallbackQueryHandler(airdrop_phantom_swap, pattern="^" + "airdrop_phantom_swap" + "$"),
                 CallbackQueryHandler(airdrop_phantom_stake, pattern="^" + "airdrop_phantom_stake" + "$"),
                 CallbackQueryHandler(airdrop_phantom_unstake, pattern="^" + "airdrop_phantom_unstake" + "$"),
@@ -97,7 +97,7 @@ def main() -> None:
                 # CallbackQueryHandler(wallet_trust_menu, pattern="^" + "wallet_trust_menu" + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
-            GlobalState.getInstance().WALLET_METAMASK_MENU: [  # The buttons callbacks of the "MetaMask Menu"
+            GlobalState.getInstance().WALLET_METAMASK_MENU: [  
                 CallbackQueryHandler(wallet_metamask_create, pattern="^" + "wallet_metamask_create" + "$"),
                 # CallbackQueryHandler(wallet_metamask_restore, pattern="^" + "wallet_metamask_restore" + "$"),
                 # CallbackQueryHandler(wallet_metamask_send, pattern="^" + "wallet_metamask_send" + "$"),
@@ -107,40 +107,41 @@ def main() -> None:
                 # CallbackQueryHandler(wallet_metamask_stake, pattern="^" + "wallet_metamask_stake" + "$"),
                 CallbackQueryHandler(wallets_menu, pattern="^" + "wallets_menu" + "$")
             ],
-            GlobalState.getInstance().WALLET_METAMASK_CREATE: [  # The buttons callbacks of the ...
+            GlobalState.getInstance().WALLET_METAMASK_CREATE: [  
                 CallbackQueryHandler(wallet_metamask_create, pattern="^(\d+)$"),
                 CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             ],
-            # GlobalState.getInstance().WALLET_METAMASK_RESTORE: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_RESTORE: [  
             #     CallbackQueryHandler(wallet_metamask_restore, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            # GlobalState.getInstance().WALLET_METAMASK_SEND: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_SEND: [  
             #     CallbackQueryHandler(wallet_metamask_send, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            # GlobalState.getInstance().WALLET_METAMASK_RECEIVE: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_RECEIVE: [  
             #     CallbackQueryHandler(wallet_metamask_receive, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            # GlobalState.getInstance().WALLET_METAMASK_SWAP: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_SWAP: [  
             #     CallbackQueryHandler(wallet_metamask_swap, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            # GlobalState.getInstance().WALLET_METAMASK_BRIDGE: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_BRIDGE: [  
             #     CallbackQueryHandler(wallet_metamask_bridge, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            # GlobalState.getInstance().WALLET_METAMASK_STAKE: [  # The buttons callbacks of the ...
+            # GlobalState.getInstance().WALLET_METAMASK_STAKE: [  
             #     CallbackQueryHandler(wallet_metamask_stake, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            GlobalState.getInstance().END_ROUTES: [  # The buttons callbacks of the ...
+            GlobalState.getInstance().SUPPORT_MENU: [
+                MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
+                CallbackQueryHandler(submit, pattern='^submit_support$'),
+            ],
+            GlobalState.getInstance().END_ROUTES: [  
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],
-            # GlobalState.getInstance().SEND_IMG: [
-            #     CallbackQueryHandler(airdrop_menu, pattern="^" + "back_to_air_drop_menu" + "$")
-            # ],
             GlobalState.getInstance().EMAIL: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_email)
             ]

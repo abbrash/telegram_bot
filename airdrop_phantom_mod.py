@@ -5,10 +5,14 @@ from telegram.error import BadRequest
 
 from globals_mod import GlobalState
 
+from admins_mod import *
+
 ### <<<-------------------------------------------- Phantom AirDrop - Menu -------------------------------------------->>> ###
 async def airdrop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
 
     # Delete the previous photo if it exists
     # Used .get() method to avoid KeyError if chat_id not found
@@ -17,14 +21,14 @@ async def airdrop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYP
             ).message_ids[GlobalState.getInstance().chat_id][0])
         GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
-    GlobalState.getInstance().current_index_ph_swap = 0
-    GlobalState.getInstance().first_time_loop_ph_swap = True
+    GlobalState.getInstance().current_index_phantom_swap = 0
+    GlobalState.getInstance().first_time_loop_phantom_swap = True
 
-    GlobalState.getInstance().current_index_ph_stake = 0
-    GlobalState.getInstance().first_time_loop_ph_stake = True
+    GlobalState.getInstance().current_index_phantom_stake = 0
+    GlobalState.getInstance().first_time_loop_phantom_stake = True
 
-    GlobalState.getInstance().current_index_ph_unstake = 0
-    GlobalState.getInstance().first_time_loop_ph_unstake = True
+    GlobalState.getInstance().current_index_phantom_unstake = 0
+    GlobalState.getInstance().first_time_loop_phantom_unstake = True
 
     keyboard = [
         [InlineKeyboardButton("1. سواپ کردن (Swap) 💵🔄", callback_data="airdrop_phantom_swap")],
@@ -54,32 +58,36 @@ async def airdrop_phantom_menu(update: Update, context: ContextTypes.DEFAULT_TYP
 """
 
     # Select an image to send
-    image_filename = os.path.join(
-        'img', 'airdrop', 'phantom_wallet', 'phantom_wallet_img.jpg')
+    image_filename = os.path.join('img', 'airdrop', 'phantom_wallet', 'phantom_wallet_img.jpg')
 
     # Send the image along with the text and buttons
     if query.message and query.message.text:
         try:
             await query.delete_message()
             await context.bot.send_photo(
-                chat_id=update.effective_chat.id,
+                chat_id=update._effective_user.id,
                 photo=open(image_filename, 'rb'),
                 caption=text,
                 reply_markup=key_markup,
-                parse_mode="HTML"
+                parse_mode="HTML",
+                protect_content=protect_content
             ) 
 
         except BadRequest:
-            await context.bot.send_message(chat_id=update.effective_chat.id, text=text, reply_markup=key_markup)
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text, 
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
 
     else:
-            # await context.bot.delete_message()
             await context.bot.send_photo(
-                chat_id=update.effective_chat.id,
+                chat_id=update._effective_user.id,
                 photo=open(image_filename, 'rb'),
                 caption=text,
                 reply_markup=key_markup,
-                parse_mode="HTML"
+                parse_mode="HTML",
+                protect_content=protect_content
             )
 
     return GlobalState.getInstance().AIRDROP_PHANTOM_MENU
@@ -89,30 +97,32 @@ async def airdrop_phantom_swap(update: Update, context: CallbackContext) -> int:
     query = update.callback_query
     await query.answer()
 
-    print(f"Current index: {GlobalState.getInstance().current_index_ph_swap}")
+    protect_content = not is_admin(update._effective_user.id)
+
+    print(f"Current index: {GlobalState.getInstance().current_index_phantom_swap}")
 
     # Check if query.data is a digit
     if query.data.isdigit():
-        if GlobalState.getInstance().first_time_loop_ph_swap:
+        if GlobalState.getInstance().first_time_loop_phantom_swap:
             await query.delete_message()
-            GlobalState.getInstance().current_index_ph_swap = 0
-            GlobalState.getInstance().first_time_loop_ph_swap = False
+            GlobalState.getInstance().current_index_phantom_swap = 0
+            GlobalState.getInstance().first_time_loop_phantom_swap = False
         else:
-            GlobalState.getInstance().current_index_ph_swap = int(query.data)
+            GlobalState.getInstance().current_index_phantom_swap = int(query.data)
     elif query.data == "airdrop_phantom_swap":
         # Reset current_index when "air_drop_01" is clicked
         await query.delete_message()
-        GlobalState.getInstance().current_index_ph_swap = 0
-        GlobalState.getInstance().first_time_loop_ph_swap = False
+        GlobalState.getInstance().current_index_phantom_swap = 0
+        GlobalState.getInstance().first_time_loop_phantom_swap = False
 
     # Use img_add to dynamically generate the image filename based on the current index
     image_directory = 'img/airdrop/phantom_wallet/swap'
     img_add = image_directory
-    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_ph_swap + 1).zfill(2)}.png'
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_phantom_swap + 1).zfill(2)}.png'
 
     # Ensure current_index stays within the bounds of available images
-    GlobalState.getInstance().current_index_ph_swap = max(
-        0, min(GlobalState.getInstance().current_index_ph_swap, len(os.listdir(img_add)) - 1))
+    GlobalState.getInstance().current_index_phantom_swap = max(
+        0, min(GlobalState.getInstance().current_index_phantom_swap, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
     captions_list = [
@@ -136,24 +146,24 @@ async def airdrop_phantom_swap(update: Update, context: CallbackContext) -> int:
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_ph_swap]
+    caption = captions_list[GlobalState.getInstance().current_index_phantom_swap]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
-    if GlobalState.getInstance().current_index_ph_swap == 0:
+    if GlobalState.getInstance().current_index_phantom_swap == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_swap + 1))],
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_swap + 1))],
             [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="airdrop_phantom_menu")]
         ]
-    elif GlobalState.getInstance().current_index_ph_swap == len(os.listdir(img_add)) - 1:
+    elif GlobalState.getInstance().current_index_phantom_swap == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton("🎉🥳 تامام!", callback_data="airdrop_phantom_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_swap - 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_swap - 1))]
         ]
     else:
         buttons = [
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_swap - 1)),
-             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_swap + 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_swap - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_swap + 1))]
         ]
 
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -166,7 +176,8 @@ async def airdrop_phantom_swap(update: Update, context: CallbackContext) -> int:
             chat_id=GlobalState.getInstance().chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            protect_content=protect_content
         )
 
         # Store the message ID
@@ -179,7 +190,7 @@ async def airdrop_phantom_swap(update: Update, context: CallbackContext) -> int:
         # Delete the previous photo if it exists
         # Use.get() method to avoid KeyError if chat_id not found
         if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
-            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            await context.bot.delete_message(chat_id=update._effective_user.id, message_id=GlobalState.getInstance(
                 ).message_ids[GlobalState.getInstance().chat_id][0])
             GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].pop(0)
 
@@ -190,54 +201,54 @@ async def airdrop_phantom_stake(update: Update, context: CallbackContext) -> int
     query = update.callback_query
     await query.answer()
 
-    print(f"Current index: {GlobalState.getInstance().current_index_ph_stake}")
+    protect_content = not is_admin(update._effective_user.id)
 
     # Check if query.data is a digit
     if query.data.isdigit():
-        if GlobalState.getInstance().first_time_loop_ph_stake:
+        if GlobalState.getInstance().first_time_loop_phantom_stake:
             await query.delete_message()
-            GlobalState.getInstance().current_index_ph_stake = 0
-            GlobalState.getInstance().first_time_loop_ph_stake = False
+            GlobalState.getInstance().current_index_phantom_stake = 0
+            GlobalState.getInstance().first_time_loop_phantom_stake = False
         else:
-            GlobalState.getInstance().current_index_ph_stake = int(query.data)
+            GlobalState.getInstance().current_index_phantom_stake = int(query.data)
     elif query.data == "airdrop_phantom_stake":
         # Reset current_index when "air_drop_01" is clicked
         await query.delete_message()
-        GlobalState.getInstance().current_index_ph_stake = 0
-        GlobalState.getInstance().first_time_loop_ph_stake = False
+        GlobalState.getInstance().current_index_phantom_stake = 0
+        GlobalState.getInstance().first_time_loop_phantom_stake = False
 
     # Use img_add to dynamically generate the image filename based on the current index
     image_directory = 'img/airdrop/phantom_wallet/stake'
     img_add = image_directory
-    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_ph_stake + 1).zfill(2)}.png'
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_phantom_stake + 1).zfill(2)}.png'
 
     # Ensure current_index stays within the bounds of available images
-    GlobalState.getInstance().current_index_ph_stake = max(
-        0, min(GlobalState.getInstance().current_index_ph_stake, len(os.listdir(img_add)) - 1))
+    GlobalState.getInstance().current_index_phantom_stake = max(
+        0, min(GlobalState.getInstance().current_index_phantom_stake, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
     captions_list = ["""template"""
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_ph_stake]
+    caption = captions_list[GlobalState.getInstance().current_index_phantom_stake]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
-    if GlobalState.getInstance().current_index_ph_stake == 0:
+    if GlobalState.getInstance().current_index_phantom_stake == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_stake + 1))],
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_stake + 1))],
             [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="airdrop_phantom_menu")]
         ]
-    elif GlobalState.getInstance().current_index_ph_stake == len(os.listdir(img_add)) - 1:
+    elif GlobalState.getInstance().current_index_phantom_stake == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton("🎉🥳 تامام!", callback_data="airdrop_phantom_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_stake - 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_stake - 1))]
         ]
     else:
         buttons = [
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_stake - 1)),
-             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_stake + 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_stake - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_stake + 1))]
         ]
 
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -250,7 +261,8 @@ async def airdrop_phantom_stake(update: Update, context: CallbackContext) -> int
             chat_id=GlobalState.getInstance().chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            protect_content=protect_content
         )
 
         # Store the message ID
@@ -276,54 +288,54 @@ async def airdrop_phantom_unstake(update: Update, context: CallbackContext) -> i
     query = update.callback_query
     await query.answer()
 
-    print(f"Current index: {GlobalState.getInstance().current_index_ph_unstake}")
+    protect_content = not is_admin(update._effective_user.id)
 
     # Check if query.data is a digit
     if query.data.isdigit():
-        if GlobalState.getInstance().first_time_loop_ph_unstake:
+        if GlobalState.getInstance().first_time_loop_phantom_unstake:
             await query.delete_message()
-            GlobalState.getInstance().current_index_ph_unstake = 0
-            GlobalState.getInstance().first_time_loop_ph_unstake = False
+            GlobalState.getInstance().current_index_phantom_unstake = 0
+            GlobalState.getInstance().first_time_loop_phantom_unstake = False
         else:
-            GlobalState.getInstance().current_index_ph_unstake = int(query.data)
+            GlobalState.getInstance().current_index_phantom_unstake = int(query.data)
     elif query.data == "airdrop_phantom_unstake":
         # Reset current_index when "air_drop_01" is clicked
         await query.delete_message()
-        GlobalState.getInstance().current_index_ph_unstake = 0
-        GlobalState.getInstance().first_time_loop_ph_unstake = False
+        GlobalState.getInstance().current_index_phantom_unstake = 0
+        GlobalState.getInstance().first_time_loop_phantom_unstake = False
 
     # Use img_add to dynamically generate the image filename based on the current index
     image_directory = 'img/airdrop/phantom_wallet/unstake'
     img_add = image_directory
-    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_ph_unstake + 1).zfill(2)}.png'
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_phantom_unstake + 1).zfill(2)}.png'
 
     # Ensure current_index stays within the bounds of available images
-    GlobalState.getInstance().current_index_ph_unstake = max(
-        0, min(GlobalState.getInstance().current_index_ph_unstake, len(os.listdir(img_add)) - 1))
+    GlobalState.getInstance().current_index_phantom_unstake = max(
+        0, min(GlobalState.getInstance().current_index_phantom_unstake, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
     captions_list = ["""template"""
     ]
 
     # Construct caption with current index and total number of photos
-    caption = captions_list[GlobalState.getInstance().current_index_ph_unstake]
+    caption = captions_list[GlobalState.getInstance().current_index_phantom_unstake]
 
     # Construct InlineKeyboardMarkup based on current message index
     buttons = []
-    if GlobalState.getInstance().current_index_ph_unstake == 0:
+    if GlobalState.getInstance().current_index_phantom_unstake == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_unstake + 1))],
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_unstake + 1))],
             [InlineKeyboardButton("بازگشت به منوی ایردراپ فانتوم 🏠⬅️ ", callback_data="airdrop_phantom_menu")]
         ]
-    elif GlobalState.getInstance().current_index_ph_unstake == len(os.listdir(img_add)) - 1:
+    elif GlobalState.getInstance().current_index_phantom_unstake == len(os.listdir(img_add)) - 1:
         buttons = [
             [InlineKeyboardButton("🎉🥳 تامام!", callback_data="airdrop_phantom_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_unstake - 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_unstake - 1))]
         ]
     else:
         buttons = [
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_ph_unstake - 1)),
-             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_ph_unstake + 1))]
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_phantom_unstake - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_phantom_unstake + 1))]
         ]
 
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -336,7 +348,8 @@ async def airdrop_phantom_unstake(update: Update, context: CallbackContext) -> i
             chat_id=GlobalState.getInstance().chat_id,
             photo=photo,
             caption=caption,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
+            protect_content=protect_content
         )
 
         # Store the message ID
