@@ -135,15 +135,23 @@ def main() -> None:
             #     CallbackQueryHandler(wallet_metamask_stake, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
+            GlobalState.getInstance().SUPPORT_MENU: [
+                CallbackQueryHandler(support_callback, pattern='^support$'),
+            ],
             # GlobalState.getInstance().SUPPORT_MENU: [
             #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
-            #     CallbackQueryHandler(submit, pattern="^" + "submit_support" + "$"),
+            #     CallbackQueryHandler(submit_support, pattern="^" + "submit_support" + "$"),
+            #     CallbackQueryHandler(confirm_support, pattern='^confirm_support:'),
+            #     CallbackQueryHandler(cancel_support, pattern='^cancel_support:')
             # ],
-            GlobalState.getInstance().SUPPORT_MENU: [
-                MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
-                CallbackQueryHandler(submit, pattern="^" + "submit_support" + "$"),
-                CallbackQueryHandler(confirm_support, pattern="^" + "confirm_support" + "$"),
-                CallbackQueryHandler(cancel_support, pattern='^cancel_support:')
+            # GlobalState.getInstance().SUPPORT_MENU_2: [
+            #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message)
+            # ],
+            GlobalState.getInstance().AWAITING_SUPPORT_MESSAGE: [
+                MessageHandler(filters.TEXT | filters.PHOTO, handle_support_message)
+            ],
+            GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
             ],
             GlobalState.getInstance().END_ROUTES: [  
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
@@ -152,11 +160,25 @@ def main() -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, confirm_email)
             ]
         },
-        fallbacks=[CommandHandler("start", start)],
+        fallbacks=[CommandHandler("start", start),
+                   CommandHandler('cancel', cancel)
+                   ]
+        # per_message=True
     )
 
     # Add ConversationHandler to application that will be used for handling updates
     application.add_handler(conv_handler)
+
+
+
+
+
+    application.add_handler(CallbackQueryHandler(admin_response, pattern='^(accept|reject)_'))
+
+
+
+
+
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(
