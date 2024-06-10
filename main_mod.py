@@ -135,9 +135,13 @@ def main() -> None:
             #     CallbackQueryHandler(wallet_metamask_stake, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
-            GlobalState.getInstance().SUPPORT_MENU: [
-                CallbackQueryHandler(support_callback, pattern='^support$'),
-            ],
+            # GlobalState.getInstance().SUPPORT_MENU: [
+            #     CallbackQueryHandler(support_callback, pattern='^support$'),
+            # ],
+            # GlobalState.getInstance().SUPPORT_MENU: [
+            #     CallbackQueryHandler(collect_messages, pattern='^collect_messages$'),
+            #     CallbackQueryHandler(handle_support_message, pattern='^submit_support$'),
+            # ],
             # GlobalState.getInstance().SUPPORT_MENU: [
             #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message),
             #     CallbackQueryHandler(submit_support, pattern="^" + "submit_support" + "$"),
@@ -147,15 +151,25 @@ def main() -> None:
             # GlobalState.getInstance().SUPPORT_MENU_2: [
             #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message)
             # ],
+            GlobalState.getInstance().SUPPORT_MENU: [
+                CallbackQueryHandler(collect_messages, pattern='^collect_messages$'),
+            ],
+            GlobalState.getInstance().COLLECTING_SUPPORT_MESSAGES: [
+                MessageHandler(filters.TEXT | filters.PHOTO, collect_support_message),
+                CallbackQueryHandler(handle_support_message, pattern='^submit_support$'),
+            ],
+            # GlobalState.getInstance().COLLECTING_SUPPORT_MESSAGES: [
+            #     MessageHandler(filters.TEXT | filters.PHOTO, collect_support_message),
+            # ],
             GlobalState.getInstance().AWAITING_SUPPORT_MESSAGE: [
                 MessageHandler(filters.TEXT | filters.PHOTO, handle_support_message)
             ],
             GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
             ],
-            GlobalState.getInstance().HANDLE: [
-                CallbackQueryHandler(admin_response, pattern='^accept')
-            ],
+            # GlobalState.getInstance().HANDLE: [
+            #     CallbackQueryHandler(admin_response, pattern='^accept')
+            # ],
             GlobalState.getInstance().END_ROUTES: [  
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],
