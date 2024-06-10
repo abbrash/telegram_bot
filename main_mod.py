@@ -151,9 +151,9 @@ def main() -> None:
             # GlobalState.getInstance().SUPPORT_MENU_2: [
             #     MessageHandler(filters.TEXT | filters.PHOTO, receive_support_message)
             # ],
-            GlobalState.getInstance().SUPPORT_MENU: [
-                CallbackQueryHandler(collect_messages, pattern='^collect_messages$'),
-            ],
+            # GlobalState.getInstance().SUPPORT_MENU: [
+            #     CallbackQueryHandler(collect_messages, pattern='^collect_messages$'),
+            # ],
             GlobalState.getInstance().COLLECTING_SUPPORT_MESSAGES: [
                 MessageHandler(filters.TEXT | filters.PHOTO, collect_support_message),
                 CallbackQueryHandler(handle_support_message, pattern='^submit_support$'),
@@ -161,12 +161,25 @@ def main() -> None:
             # GlobalState.getInstance().COLLECTING_SUPPORT_MESSAGES: [
             #     MessageHandler(filters.TEXT | filters.PHOTO, collect_support_message),
             # ],
+            GlobalState.getInstance().SUPPORT_MENU: [
+                CallbackQueryHandler(collect_messages, pattern='^collect_messages$'),
+                CallbackQueryHandler(handle_support_message, pattern='^submit_support$'),
+            ],
+            # GlobalState.getInstance().COLLECTING_SUPPORT_MESSAGES: [
+            #     MessageHandler(filters.TEXT | filters.PHOTO, collect_support_message),
+            # ],
+            # GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
+            # ],
+            GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
+                MessageHandler(filters.TEXT | filters.PHOTO, handle_admin_reply)
+            ],
             GlobalState.getInstance().AWAITING_SUPPORT_MESSAGE: [
                 MessageHandler(filters.TEXT | filters.PHOTO, handle_support_message)
             ],
-            GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
-            ],
+            # GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
+            #     MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
+            # ],
             # GlobalState.getInstance().HANDLE: [
             #     CallbackQueryHandler(admin_response, pattern='^accept')
             # ],
