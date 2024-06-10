@@ -15,6 +15,7 @@ class GlobalState:
         self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE, _, _ = range(16, 20)
 
         self. AWAITING_SUPPORT_MESSAGE, self.AWAITING_ADMIN_REPLY = range(30,32)
+        self.HANDLE = 40
 
         # Initialize variables
         self.first_time_loop_phantom_swap = True

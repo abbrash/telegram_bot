@@ -153,6 +153,9 @@ def main() -> None:
             GlobalState.getInstance().AWAITING_ADMIN_REPLY: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_admin_reply)
             ],
+            GlobalState.getInstance().HANDLE: [
+                CallbackQueryHandler(admin_response, pattern='^accept')
+            ],
             GlobalState.getInstance().END_ROUTES: [  
                 CallbackQueryHandler(start_over, pattern="^" + "main_menu" + "$")
             ],

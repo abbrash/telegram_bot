@@ -1,6 +1,6 @@
 from telegram.ext import ContextTypes, ConversationHandler, filters
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ConversationHandler
+import datetime
 import random
 import time
 from admins_mod import admin_dict, is_admin, get_admin_name
@@ -15,45 +15,45 @@ from admins_mod import *
 admin_ids = [107998330, 1108290862]
 
 ### <<<-------------------------------------------- Support Menu -------------------------------------------->>> ###
-# async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-#     query = update.callback_query
-#     await query.answer()
+async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
 
-#     protect_content = not is_admin(update._effective_user.id)
+    protect_content = not is_admin(update._effective_user.id)
 
-#     keyboard = [
-#         [InlineKeyboardButton("ارسال", callback_data="support")],
-#         [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
-#     ]
-#     key_markup = InlineKeyboardMarkup(keyboard)
+    keyboard = [
+        [InlineKeyboardButton("ارسال", callback_data="support")],
+        [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
+    ]
+    key_markup = InlineKeyboardMarkup(keyboard)
 
-#     text = """asda"""
+    text = """asda"""
 
-#     if query.message and query.message.text:
-#         try:
-#             await query.delete_message()
-#             await context.bot.send_message(chat_id=update._effective_user.id, 
-#                                            text=text, 
-#                                            reply_markup=key_markup,
-#                                            protect_content=protect_content
-#                                            )
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_message(chat_id=update._effective_user.id, 
+                                           text=text, 
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
 
-#         except BadRequest:
-#             await context.bot.send_message(chat_id=update._effective_user.id, 
-#                                            text=text, 
-#                                            reply_markup=key_markup,
-#                                            protect_content=protect_content
-#                                            )
+        except BadRequest:
+            await context.bot.send_message(chat_id=update._effective_user.id, 
+                                           text=text, 
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
 
-#     else:
-#         await query.delete_message()
-#         await context.bot.send_message(chat_id=update._effective_user.id, 
-#                                        text=text, 
-#                                        reply_markup=key_markup,
-#                                        protect_content=protect_content
-#                                        )
+    else:
+        await query.delete_message()
+        await context.bot.send_message(chat_id=update._effective_user.id, 
+                                       text=text, 
+                                       reply_markup=key_markup,
+                                       protect_content=protect_content
+                                       )
 
-#     return GlobalState.getInstance().SUPPORT_MENU
+    return GlobalState.getInstance().SUPPORT_MENU
 
 
 ####################################################################################################
@@ -146,41 +146,41 @@ admin_ids = [107998330, 1108290862]
 # Import your GlobalState and other necessary modules
 
 
-async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    query = update.callback_query
-    await query.answer()
+# async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
 
-    protect_content = not is_admin(update.effective_user.id)
+#     protect_content = not is_admin(update.effective_user.id)
 
-    keyboard = [
-        [InlineKeyboardButton("ارسال", callback_data="support")],
-        [InlineKeyboardButton("بازگشت به منوی اصلی 🏠",
-                              callback_data="main_menu")]
-    ]
-    key_markup = InlineKeyboardMarkup(keyboard)
+#     keyboard = [
+#         [InlineKeyboardButton("ارسال", callback_data="support")],
+#         [InlineKeyboardButton("بازگشت به منوی اصلی 🏠",
+#                               callback_data="main_menu")]
+#     ]
+#     key_markup = InlineKeyboardMarkup(keyboard)
 
-    text = """asda"""
+#     text = """asda"""
 
-    if query.message and query.message.text:
-        try:
-            await query.delete_message()
-            await context.bot.send_message(chat_id=update.effective_user.id,
-                                           text=text,
-                                           reply_markup=key_markup,
-                                           protect_content=protect_content)
-        except BadRequest:
-            await context.bot.send_message(chat_id=update.effective_user.id,
-                                           text=text,
-                                           reply_markup=key_markup,
-                                           protect_content=protect_content)
-    else:
-        await query.delete_message()
-        await context.bot.send_message(chat_id=update.effective_user.id,
-                                       text=text,
-                                       reply_markup=key_markup,
-                                       protect_content=protect_content)
+#     if query.message and query.message.text:
+#         try:
+#             await query.delete_message()
+#             await context.bot.send_message(chat_id=update.effective_user.id,
+#                                            text=text,
+#                                            reply_markup=key_markup,
+#                                            protect_content=protect_content)
+#         except BadRequest:
+#             await context.bot.send_message(chat_id=update.effective_user.id,
+#                                            text=text,
+#                                            reply_markup=key_markup,
+#                                            protect_content=protect_content)
+#     else:
+#         await query.delete_message()
+#         await context.bot.send_message(chat_id=update.effective_user.id,
+#                                        text=text,
+#                                        reply_markup=key_markup,
+#                                        protect_content=protect_content)
 
-    return GlobalState.getInstance().SUPPORT_MENU
+#     return GlobalState.getInstance().SUPPORT_MENU
 
 
 async def support_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -192,48 +192,124 @@ async def support_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     return GlobalState.getInstance().AWAITING_SUPPORT_MESSAGE
 
 
-async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    user = update.effective_user
-    message = update.message
+# async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     user = update.effective_user
+#     message = update.message
 
-    keyboard = [
-        [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
-         InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+#     keyboard = [
+#         [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
+#          InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
+#     ]
+#     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    for admin_id in admin_ids:  # Make sure admin_ids is defined
-        if message.photo:
-            await context.bot.send_photo(chat_id=admin_id, photo=message.photo[-1].file_id,
-                                         caption=f"Support request from {user.first_name} (ID: {user.id}):",
-                                         reply_markup=reply_markup)
-        else:
-            await context.bot.send_message(chat_id=admin_id, text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
-                                           reply_markup=reply_markup)
+#     for admin_id in admin_ids:  # Make sure admin_ids is defined
+#         if message.photo:
+#             await context.bot.send_photo(chat_id=admin_id, photo=message.photo[-1].file_id,
+#                                          caption=f"Support request from {user.first_name} (ID: {user.id}):",
+#                                          reply_markup=reply_markup)
+#         else:
+#             await context.bot.send_message(chat_id=admin_id, text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
+#                                            reply_markup=reply_markup)
 
-    await update.message.reply_text(
-        "Your message has been sent to our admins. Please wait for their response.")
-    return ConversationHandler.END
+#     await update.message.reply_text(
+#         "Your message has been sent to our admins. Please wait for their response.")
+#     return ConversationHandler.END
+
+# async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     user = update.effective_user
+#     message = update.message
+
+#     keyboard = [
+#         [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
+#          InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
+#     ]
+#     reply_markup = InlineKeyboardMarkup(keyboard)
+
+#     for admin_id in admin_ids:  # Make sure admin_ids is defined
+#         if message.photo:
+#             sent_message = await context.bot.send_photo(
+#                 chat_id=admin_id, photo=message.photo[-1].file_id,
+#                 caption=f"Support request from {user.first_name} (ID: {user.id}):",
+#                 reply_markup=reply_markup
+#             )
+#         else:
+#             sent_message = await context.bot.send_message(
+#                 chat_id=admin_id,
+#                 text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
+#                 reply_markup=reply_markup
+#             )
+
+#         # Store the message ID for each admin
+#         context.user_data[f'support_message_{user.id}'] = sent_message.message_id
+
+#     await update.message.reply_text(
+#         "Your message has been sent to our admins. Please wait for their response."
+#     )
+#     return ConversationHandler.END
+
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     data = query.data.split('_')
+#     action, user_id = data[0], int(data[1])
+
+#     if action == 'accept':
+#         await query.edit_message_text(
+#             f"You've accepted the request from user {user_id}. Reply to this message to respond.")
+#         context.user_data['reply_to_user'] = user_id
+#         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+#     else:  # reject
+#         await query.edit_message_text(
+#             f"You've rejected the request from user {user_id}.")
+#         await context.bot.send_message(
+#             chat_id=user_id, text="Sorry, your request has been rejected.")
+#         return ConversationHandler.END
 
 
-async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    query = update.callback_query
-    await query.answer()
+# Import your GlobalState and other necessary modules
 
-    data = query.data.split('_')
-    action, user_id = data[0], int(data[1])
 
-    if action == 'accept':
-        await query.edit_message_text(
-            f"You've accepted the request from user {user_id}. Reply to this message to respond.")
-        context.user_data['reply_to_user'] = user_id
-        return GlobalState.getInstance().AWAITING_ADMIN_REPLY
-    else:  # reject
-        await query.edit_message_text(
-            f"You've rejected the request from user {user_id}.")
-        await context.bot.send_message(
-            chat_id=user_id, text="Sorry, your request has been rejected.")
-        return ConversationHandler.END
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     data = query.data.split('_')
+#     print(query.data)
+#     action, user_id = data[0], int(data[1])
+
+#     if action == 'accept':
+#         # Edit the message for the current admin
+#         await query.edit_message_text(
+#             f"You've accepted the request from user {user_id}. Reply to this message to respond."
+#         )
+
+#         # Edit messages for other admins
+#         for admin_id in admin_ids:
+#             if admin_id != update.effective_user.id:
+#                 try:
+#                     # Assuming the original message ID is stored in context.user_data
+#                     original_message_id = context.user_data.get(
+#                         f'support_message_{user_id}')
+#                     if original_message_id:
+#                         await context.bot.edit_message_text(
+#                             chat_id=admin_id,
+#                             message_id=original_message_id,
+#                             text=f"Support request from user {user_id} is being handled by another admin."
+#                         )
+#                 except BadRequest as e:
+#                     print(f"Failed to edit message for admin {admin_id}: {e}")
+
+#         context.user_data['reply_to_user'] = user_id
+#         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+#     else:  # reject
+#         await query.edit_message_text(
+#             f"You've rejected the request from user {user_id}."
+#         )
+#         await context.bot.send_message(
+#             chat_id=user_id, text="Sorry, your request has been rejected."
+#         )
+#         return ConversationHandler.END
 
 
 async def handle_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -251,3 +327,386 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         f"Conversation cancelled by {user.first_name}. You can start a new conversation or return to the main menu."
     )
     return ConversationHandler.END
+
+
+
+
+# async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     user = update.effective_user
+#     global message 
+#     message = update.message
+
+#     keyboard = [
+#         [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
+#          InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
+#     ]
+#     reply_markup = InlineKeyboardMarkup(keyboard)
+
+#     # Store message details in user_data
+#     context.user_data[f'support_message_{user.id}'] = {
+#         'admin_messages': {},
+#         'is_photo': bool(message.photo)
+#     }
+
+#     for admin_id in admin_ids:
+#         if message.photo:
+#             sent_message = await context.bot.send_photo(
+#                 chat_id=admin_id, photo=message.photo[-1].file_id,
+#                 caption=f"Support request from {user.first_name} (ID: {user.id}):",
+#                 reply_markup=reply_markup
+#             )
+#         else:
+#             sent_message = await context.bot.send_message(
+#                 chat_id=admin_id,
+#                 text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
+#                 reply_markup=reply_markup
+#             )
+
+#         context.user_data[f'support_message_{user.id}']['admin_messages'][admin_id] = sent_message.message_id
+
+#     await update.message.reply_text(
+#         "Your message has been sent to our admins. Please wait for their response."
+#     )
+#     return ConversationHandler.END
+
+
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     data = query.data.split('_')
+#     action, user_id = data[0], int(data[1])
+
+#     support_data = context.user_data.get(f'support_message_{user_id}', {})
+#     admin_messages = support_data.get('admin_messages', {})
+#     is_photo = support_data.get('is_photo', False)
+
+#     if action == 'accept':
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've accepted the request from user {user_id}. Reply to this message to respond."
+#         )
+
+#         # Edit messages for other admins
+#         for admin_id, msg_id in admin_messages.items():
+#             if admin_id != update.effective_user.id:
+#                 try:
+#                     # Remove inline keyboard
+#                     await context.bot.edit_message_reply_markup(chat_id=admin_id, message_id=msg_id, reply_markup=None)
+
+#                     # Edit message text or caption
+#                     edit_func = context.bot.edit_message_caption if is_photo else context.bot.edit_message_text
+#                     await edit_func(
+#                         chat_id=admin_id,
+#                         message_id=msg_id,
+#                         caption=f"Support request from user {user_id} is being handled by another admin." if is_photo else None,
+#                         text=f"Support request from user {user_id} is being handled by another admin." if not is_photo else None
+#                     )
+#                 except BadRequest as e:
+#                     print(f"Failed to edit message for admin {admin_id}: {e}")
+
+#         context.user_data['reply_to_user'] = user_id
+#         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+#     else:  # reject
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've rejected the request from user {user_id}."
+#         )
+
+#         # Remove buttons for other admins
+#         for admin_id, msg_id in admin_messages.items():
+#             if admin_id != update.effective_user.id:
+#                 try:
+#                     await context.bot.edit_message_reply_markup(chat_id=admin_id, message_id=msg_id, reply_markup=None)
+#                 except BadRequest as e:
+#                     print(
+#                         f"Failed to remove buttons for admin {admin_id}: {e}")
+
+#         await context.bot.send_message(
+#             chat_id=user_id, text="Sorry, your request has been rejected."
+#         )
+#         return ConversationHandler.END
+
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     data = query.data.split('_')
+#     action, user_id = data[0], int(data[1])
+
+#     support_data = context.user_data.get(f'support_message_{user_id}', {})
+#     admin_messages = support_data.get('admin_messages', {})
+#     is_photo = support_data.get('is_photo', False)
+
+#     if action == 'accept':
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've accepted the request from user {user_id}. Reply to this message to respond."
+#         )
+
+#         # Edit messages for other admins
+#         for admin_id, msg_id in admin_messages.items():
+#             if admin_id != update.effective_user.id:  # Ensure we don't edit the message for the admin who clicked Accept
+#                 try:
+#                     # Remove inline keyboard
+#                     await context.bot.edit_message_reply_markup(chat_id=admin_id, message_id=msg_id, reply_markup=None)
+
+#                     # Edit message text or caption
+#                     edit_func = context.bot.edit_message_caption if is_photo else context.bot.edit_message_text
+#                     await edit_func(
+#                         chat_id=admin_id,
+#                         message_id=msg_id,
+#                         caption=f"Support request from user {user_id} is being handled by another admin." if is_photo else None,
+#                         text=f"Support request from user {user_id} is being handled by another admin." if not is_photo else None
+#                     )
+#                 except BadRequest as e:
+#                     print(f"Failed to edit message for admin {admin_id}: {e}")
+
+#         context.user_data['reply_to_user'] = user_id
+#         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+#     else:  # reject
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've rejected the request from user {user_id}."
+#         )
+
+#         # Remove buttons for other admins
+#         for admin_id, msg_id in admin_messages.items():
+#             if admin_id != update.effective_user.id:  # Ensure we don't remove buttons for the admin who clicked Reject
+#                 try:
+#                     await context.bot.edit_message_reply_markup(chat_id=admin_id, message_id=msg_id, reply_markup=None)
+#                 except BadRequest as e:
+#                     print(
+#                         f"Failed to remove buttons for admin {admin_id}: {e}")
+
+#         await context.bot.send_message(
+#             chat_id=user_id, text="Sorry, your request has been rejected."
+#         )
+#         return ConversationHandler.END
+
+
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     data = query.data.split('_')
+#     action, user_id = data[0], int(data[1])
+
+#     support_data = context.user_data.get(f'support_message_{user_id}', {})
+#     admin_messages = support_data.get('admin_messages', {})
+#     is_photo = support_data.get('is_photo', False)
+#     # Ensure this is correctly set earlier
+#     original_text = support_data.get('original_text', "")
+
+#     if action == 'accept':
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've accepted the request from user {user_id}. Reply to this message to respond."
+#         )
+
+#         # Delete the original message with buttons for all admins
+#         for admin_id, msg_id in admin_messages.items():
+#             try:
+#                 await context.bot.delete_message(chat_id=admin_id, message_id=msg_id)
+#             except BadRequest as e:
+#                 print(f"Failed to delete message for admin {admin_id}: {e}")
+
+#         # Send a new message without buttons to all admins
+#         for admin_id in admin_ids:
+#             if is_photo:
+#                 sent_message = await context.bot.send_photo(
+#                     chat_id=admin_id, photo=message.photo[-1].file_id,
+#                     caption=original_text,
+#                 )
+#             else:
+#                 sent_message = await context.bot.send_message(
+#                     chat_id=admin_id,
+#                     text=original_text,
+#                 )
+
+#             # Store the new message ID
+#             context.user_data[f'support_message_{user_id}']['admin_messages'][admin_id] = sent_message.message_id
+
+#         context.user_data['reply_to_user'] = user_id
+#         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+#     else:  # reject
+#         await query.edit_message_reply_markup(reply_markup=None)
+#         await query.edit_message_text(
+#             f"You've rejected the request from user {user_id}."
+#         )
+
+
+###########################################################################################
+
+
+# Import your GlobalState and other necessary modules
+
+
+# async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     user = update.effective_user
+#     message = update.message
+
+#     keyboard = [
+#         [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
+#          InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
+#     ]
+#     reply_markup = InlineKeyboardMarkup(keyboard)
+
+#     # Store message details in user_data
+#     context.user_data[f'support_message_{user.id}'] = {
+#         'admin_messages': {},
+#         'user_message': message.text if message.text else f"[Photo]"
+#     }
+
+#     for admin_id in admin_ids:
+#         if message.photo:
+#             sent_message = await context.bot.send_photo(
+#                 chat_id=admin_id, photo=message.photo[-1].file_id,
+#                 caption=f"Support request from {user.first_name} (ID: {user.id}):",
+#                 reply_markup=reply_markup
+#             )
+#         else:
+#             sent_message = await context.bot.send_message(
+#                 chat_id=admin_id,
+#                 text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
+#                 reply_markup=reply_markup
+#             )
+
+#         context.user_data[f'support_message_{user.id}']['admin_messages'][admin_id] = sent_message.message_id
+
+#     await update.message.reply_text(
+#         "Your message has been sent to our admins. Please wait for their response."
+#     )
+#     # return ConversationHandler.END
+#     return GlobalState.getInstance().HANDLE
+
+
+# async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+#     query = update.callback_query
+#     await query.answer()
+
+#     print('admins_response executed!')
+
+#     data = query.data.split('_')
+#     print(f"query.data: {query.data}")          # query.data: accept_userid     (userid: message sender user id)
+#     action, user_id = data[0], int(data[1])
+
+#     support_data = context.user_data.get(f'support_message_{user_id}', {})
+#     print(f"context.user_data: {context.user_data}")
+#     admin_messages = support_data.get('admin_messages', {})
+#     user_message = support_data.get('user_message', 'Unknown message')
+
+
+async def admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    print('admins_response executed!')
+
+    data = query.data.split('_')
+    print(f"query.data: {query.data}")
+    action, user_id = data[0], int(data[1])
+
+    support_data = context.bot_data.get(f'support_message_{user_id}', {})
+    print(f"context.bot_data: {context.bot_data}")
+    admin_messages = support_data.get('admin_messages', {})
+    user_message = support_data.get('user_message', 'Unknown message')
+
+
+    if action == 'accept':
+        # Notify the handling admin
+        await query.edit_message_text(
+            f"You've accepted the request from user {user_id}.\n\nOriginal message: {user_message}\n\nReply to this message to respond."
+        )
+
+        # Notify other admins and delete their messages
+        for admin_id, msg_id in admin_messages.items():
+            if admin_id != update.effective_user.id:
+                try:
+                    # Delete the original message
+                    await context.bot.delete_message(chat_id=admin_id, message_id=msg_id)
+
+                    # Send a new notification
+                    await context.bot.send_message(
+                        chat_id=admin_id,
+                        text=f"Support request from user {user_id} is being handled by {update.effective_user.first_name}."
+                    )
+                except BadRequest as e:
+                    print(
+                        f"Failed to handle message for admin {admin_id}: {e}")
+
+        context.user_data['reply_to_user'] = user_id
+        return GlobalState.getInstance().AWAITING_ADMIN_REPLY
+    else:  # reject
+        await query.edit_message_text(
+            f"You've rejected the request from user {user_id}."
+        )
+
+        # Notify other admins and delete their messages
+        for admin_id, msg_id in admin_messages.items():
+            if admin_id != update.effective_user.id:
+                try:
+                    # Delete the original message
+                    await context.bot.delete_message(chat_id=admin_id, message_id=msg_id)
+
+                    # Send a new notification
+                    await context.bot.send_message(
+                        chat_id=admin_id,
+                        text=f"Support request from user {user_id} has been rejected by {update.effective_user.first_name}."
+                    )
+                except BadRequest as e:
+                    print(
+                        f"Failed to handle message for admin {admin_id}: {e}")
+
+        await context.bot.send_message(
+            chat_id=user_id, text="Sorry, your request has been rejected."
+        )
+        return ConversationHandler.END
+
+
+
+
+
+
+
+###############################################################
+async def handle_support_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    user = update.effective_user
+    message = update.message
+
+    keyboard = [
+        [InlineKeyboardButton("Accept", callback_data=f'accept_{user.id}'),
+         InlineKeyboardButton("Reject", callback_data=f'reject_{user.id}')]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    # Store message details in bot_data
+    context.bot_data[f'support_message_{user.id}'] = {
+        'admin_messages': {},
+        'user_message': message.text if message.text else f"[Photo]"
+    }
+
+    for admin_id in admin_ids:
+        if message.photo:
+            sent_message = await context.bot.send_photo(
+                chat_id=admin_id, photo=message.photo[-1].file_id,
+                caption=f"Support request from {user.first_name} (ID: {user.id}):",
+                reply_markup=reply_markup
+            )
+        else:
+            sent_message = await context.bot.send_message(
+                chat_id=admin_id,
+                text=f"Support request from {user.first_name} (ID: {user.id}):\n\n{message.text}",
+                reply_markup=reply_markup
+            )
+
+        context.bot_data[f'support_message_{user.id}']['admin_messages'][admin_id] = sent_message.message_id
+
+    await update.message.reply_text(
+        "Your message has been sent to our admins. Please wait for their response."
+    )
+    return GlobalState.getInstance().HANDLE
+
+
+
+
