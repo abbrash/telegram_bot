@@ -14,7 +14,6 @@ from admins_mod import *
 
 admin_ids = [107998330, 1108290862]
 
-
 ### <<<-------------------------------------------- Support Menu -------------------------------------------->>> ###
 async def support_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -244,31 +243,32 @@ async def handle_admin_reply(update: Update, context: ContextTypes.DEFAULT_TYPE)
     print("handle_admin_reply function called")
     user_id = context.user_data.get('reply_to_user')
     print(f"user_id from context.user_data: {user_id}")
-    print(
-        f"Current conversation state: {context._conversations.get((update.effective_chat.id, update.effective_chat.id))}")
+    print(f"Current conversation state: {context._conversations.get((update.effective_chat.id, update.effective_chat.id))}")
 
     if user_id:
         print(f"Attempting to send direct message to user {user_id}")
         try:
-            await context.bot.send_message(
-                chat_id=user_id,
-                text=f"Direct message: {update.message.text}"
-            )
-            print(f"Direct message sent to user {user_id}")
-        except Exception as e:
-            print(f"Error sending direct message to user {user_id}: {e}")
+            if update.message.text:
+                await context.bot.send_message(
+                    chat_id=user_id,
+                    text=update.message.text
+                )
+                print(f"Direct message sent to user {user_id}")
 
-        if update.message.photo:
-            print("Admin sent a photo, attempting to forward it")
-            try:
+            if update.message.photo:
+                print("Admin sent a photo, attempting to forward it")
                 await context.bot.send_photo(
                     chat_id=user_id,
                     photo=update.message.photo[-1].file_id,
                     caption="Direct photo response"
                 )
                 print(f"Direct photo sent to user {user_id}")
-            except Exception as e:
-                print(f"Error sending direct photo to user {user_id}: {e}")
+
+        except Exception as e:
+            print(f"Error sending direct message to user {user_id}: {e}")
+
+        # Save the admin's reply for later reference
+        context.user_data['admin_reply'] = update.message.text if update.message.text else None
 
         return GlobalState.getInstance().AWAITING_ADMIN_REPLY
     else:
