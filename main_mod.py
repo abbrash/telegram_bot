@@ -16,7 +16,7 @@ def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(
-        '7029020592:AAGYmkIiqRPL99oGfIW0vvyTIhSJYKDbl9U').build()
+        '6264022397:AAF0AfVhD1YvP-Mqk8qwEAi_awRhC8XQxQw').build()
     
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -44,14 +44,22 @@ def main() -> None:
             #     CallbackQueryHandler(exchange_bitpin_reg_tutorial, pattern="^" + "exchange_bitpin_reg_tutorial" + "$"),
             #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
             # ],
-            # GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
-            #     CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
-            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
-            # ],
-            # GlobalState.getInstance().EXCHANGE_COINEX_MENU: [  
-            #     CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^" + "exchange_coinex_reg_tutorial" + "$"),
-            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
-            # ],
+            GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
+                CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_BINGX_REG: [
+                CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_COINEX_MENU: [  
+                CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^" + "exchange_coinex_reg_tutorial" + "$"),
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_COINEX_REG: [
+                CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
+            ],
             GlobalState.getInstance().AIRDROPS_MENU: [
                 CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$"),
                 CallbackQueryHandler(airdrop_linea_surge_menu, pattern="^" + "airdrop_linea_surge_menu" + "$"),
