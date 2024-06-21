@@ -14,12 +14,12 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
 
     keyboard = [
         [InlineKeyboardButton("1. ساخت کیف پول متامسک (MetaMask) ", callback_data="wallet_metamask_create")],
-        [InlineKeyboardButton("2. بازیابی کیف پول متامسک (MetaMask)", callback_data="wallet_metamask_restore")],
-        [InlineKeyboardButton("3. ارسال رمزارز (Send)", callback_data="wallet_metamask_send")],
-        [InlineKeyboardButton("4. دریافت رمزارز (Receive)", callback_data="wallet_metamask_receive")],
-        [InlineKeyboardButton("5. سواپ رمزارز (Swap)", callback_data="wallet_metamask_swap")],
-        [InlineKeyboardButton("6. بریج رمزارز (Bridge)", callback_data="wallet_metamask_bridge")],
-        [InlineKeyboardButton("7. استیک رمزارز (Stake)", callback_data="wallet_metamask_stake")],
+        # [InlineKeyboardButton("2. بازیابی کیف پول متامسک (MetaMask)", callback_data="wallet_metamask_restore")],
+        # [InlineKeyboardButton("3. ارسال رمزارز (Send)", callback_data="wallet_metamask_send")],
+        # [InlineKeyboardButton("4. دریافت رمزارز (Receive)", callback_data="wallet_metamask_receive")],
+        # [InlineKeyboardButton("5. سواپ رمزارز (Swap)", callback_data="wallet_metamask_swap")],
+        # [InlineKeyboardButton("6. بریج رمزارز (Bridge)", callback_data="wallet_metamask_bridge")],
+        # [InlineKeyboardButton("7. استیک رمزارز (Stake)", callback_data="wallet_metamask_stake")],
         [InlineKeyboardButton("بازگشت ⬅️", callback_data="wallets_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)

@@ -5,7 +5,7 @@ import pandas as pd
 data_file_add = 'data_base.csv'
 
 # Define the path to save CSV file using os.getcwd() to get the current working directory
-data_file_path = os.path.join(os.getcwd(), 'data_base.csv')
+data_file_path = os.path.join(os.getcwd(), 'data_base.csv').replace('\\', '/')
 
 # Function to save email data to CSV
 def save_email_data(df):

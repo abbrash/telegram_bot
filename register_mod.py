@@ -2,6 +2,7 @@ from datetime import datetime
 import pandas as pd
 from telegram import Update
 from telegram.ext import ContextTypes
+from telegram.error import BadRequest
 
 from globals_mod import GlobalState
 from database_mod import *
