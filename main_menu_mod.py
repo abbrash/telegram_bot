@@ -37,13 +37,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         key_markup = InlineKeyboardMarkup(keyboard)
         text = "به کانال کریپتیک خوش آمدید:"
 
-    # if update.message:
-    #     await update.message.reply_text(text=text, 
-    #                                     reply_markup=reply_markup, 
-    #                                     protect_content=protect_content
-    #                                     )
-
-
     # Select an image to send
     image_filename = os.path.join('img', 'main_menu_logo.jpg').replace('\\', '/')
 
@@ -93,25 +86,6 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         keyboard = [[InlineKeyboardButton("ثبت نام", callback_data="submit_email")]]
         key_markup = InlineKeyboardMarkup(keyboard)
         text = "به کانال کریپتیک خوش آمدید:"
-
-
-    # if update.message:
-    #     await update.message.reply_text(text=text, 
-    #                                     reply_markup=reply_markup, 
-    #                                     protect_content=protect_content
-    #                                     )
-    # try:
-    #     # Try to edit the message text
-    #     await query.edit_message_text(text=text, 
-    #                                   reply_markup=reply_markup
-    #                                   )
-    # except BadRequest:
-    #     # If the message doesn't have text content, send a new message
-    #     await query.message.reply_text(text=text, 
-    #                                    reply_markup=reply_markup, 
-    #                                    protect_content=protect_content
-    #                                    )
-
 
     # Select an image to send
     image_filename = os.path.join('img', 'main_menu_logo.jpg').replace('\\', '/')

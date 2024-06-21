@@ -115,7 +115,7 @@ def main() -> None:
             ],
             GlobalState.getInstance().WALLET_METAMASK_CREATE: [  
                 CallbackQueryHandler(wallet_metamask_create, pattern="^(\d+)$"),
-                CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+                CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "wallet_metamask_menu" + "$")
             ],
             # GlobalState.getInstance().WALLET_METAMASK_RESTORE: [  
             #     CallbackQueryHandler(wallet_metamask_restore, pattern="^(\d+)$"),

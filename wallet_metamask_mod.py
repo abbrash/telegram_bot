@@ -24,7 +24,7 @@ async def wallet_metamask_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
 
-    text = "لطفاً برای دیدن آموزش هر بخش روی دکمه مورد نظر کلیک کنید:"
+    text = """لطفاً برای دیدن بخش‌های مختلف روی گزینه‌های زیر کلیک کنید."""
 
     # Select an image to send
     # Replace with the actual path to your image
