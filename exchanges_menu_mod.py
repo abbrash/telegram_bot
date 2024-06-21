@@ -22,17 +22,25 @@ async def exchanges_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
     text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+برای صرافی‌های داخلی طبق دستورالعمل وبسایت صرافی مورد نظر عمل کنید. 
+آموزش ثبت‌نام در صرافی‌های خارجی نیز بصورت جداگانه فراهم شده است. 
 """
 
+# Select an image to send
+    image_filename = os.path.join('img', 'exchange', 'exchanges_logo.jpg').replace('\\', '/')
+
+    # Send the image along with the text and buttons
     if query.message and query.message.text:
         try:
             await query.delete_message()
-            await context.bot.send_message(chat_id=update._effective_user.id,
-                                           text=text,
-                                           reply_markup=key_markup,
-                                           protect_content=protect_content
-                                           )
+            await context.bot.send_photo(
+                chat_id=update._effective_user.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML",
+                protect_content=protect_content
+            )
 
         except BadRequest:
             await context.bot.send_message(chat_id=update._effective_user.id,
@@ -42,12 +50,14 @@ async def exchanges_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                            )
 
     else:
-        await query.delete_message()
-        await context.bot.send_message(chat_id=update._effective_user.id,
-                                       text=text,
-                                       reply_markup=key_markup,
-                                       protect_content=protect_content
-                                       )
+        await context.bot.send_photo(
+            chat_id=update._effective_user.id,
+            photo=open(image_filename, 'rb'),
+            caption=text,
+            reply_markup=key_markup,
+            parse_mode="HTML",
+            protect_content=protect_content
+        )
 
     return GlobalState.getInstance().EXCHANGES_MENU
 
@@ -59,8 +69,8 @@ async def exchange_nobitex_menu(update: Update, context: ContextTypes.DEFAULT_TY
     protect_content = not is_admin(update._effective_user.id)
 
     keyboard = [
-        [[InlineKeyboardButton("لینک ثبت‌نام در صرافی نوبیتکس", url='https://nobitex.ir/signup/?refcode=1557073')],
-         [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]]
+        [InlineKeyboardButton("لینک ثبت‌نام در صرافی نوبیتکس", url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]
     ]
 
     key_markup = InlineKeyboardMarkup(keyboard)
@@ -227,7 +237,7 @@ async def exchange_coinex_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
     text = """لطفاً برای ثبت‌نام در صرافی کوینکس روی دکمه "ثبت‌نام" کلیک کنید. 
-با استفاده از این لینک می‌توانید 7/5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
+با استفاده از این لینک می‌توانید 7.5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
 با استفاده از بخش "آموزش ثبت‌نام" می‌توانید مراحل ثبت‌نام در صرافی را بصورت قدم به قدم ملاحظه بفرمایید.
 """
     
