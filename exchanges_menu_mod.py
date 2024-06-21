@@ -14,16 +14,16 @@ async def exchanges_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     protect_content = not is_admin(update._effective_user.id)
 
     keyboard = [
-        [InlineKeyboardButton("صرافی نوبیتکس (Nobitex) ", callback_data="exchange_nobitex_menu")],
-        [InlineKeyboardButton("صرافی بیت‌پین (BitPin)", callback_data="exchange_bitpin_menu")],
-        [InlineKeyboardButton("صرافی بینگ‌اکس (BingX)", callback_data="exchange_bingx_menu")],
-        [InlineKeyboardButton("صرافی کوینکس (CoinEx)", callback_data="exchange_coinex_menu")],
+        [InlineKeyboardButton("نوبیتکس (Nobitex) 🇮🇷🇮🇷", callback_data="exchange_nobitex_menu")],
+        [InlineKeyboardButton("بیت‌پین (BitPin) 🇮🇷🇮🇷", callback_data="exchange_bitpin_menu")],
+        [InlineKeyboardButton("بینگ‌اکس (BingX) 🇪🇺🇺🇸", callback_data="exchange_bingx_menu")],
+        [InlineKeyboardButton("کوینکس (CoinEx) 🇪🇺🇺🇸", callback_data="exchange_coinex_menu")],
         [InlineKeyboardButton("بازگشت به منوی اصلی 🏠 ", callback_data="main_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
     text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-برای صرافی‌های داخلی طبق دستورالعمل وبسایت صرافی مورد نظر عمل کنید. 
-آموزش ثبت‌نام در صرافی‌های خارجی نیز بصورت جداگانه فراهم شده است. 
+برای صرافی‌های داخلی (نوبیتکس و بیت‌پین) طبق دستورالعمل وبسایت صرافی مورد نظر عمل کنید. 
+آموزش ثبت‌نام در صرافی‌های خارجی (کوینکس و بینگ‌اکس) نیز بصورت جداگانه فراهم شده است.
 """
 
 # Select an image to send
