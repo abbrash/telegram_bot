@@ -16,7 +16,7 @@ def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(
-        '7029020592:AAGYmkIiqRPL99oGfIW0vvyTIhSJYKDbl9U').build()
+        '6264022397:AAF0AfVhD1YvP-Mqk8qwEAi_awRhC8XQxQw').build()
     
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -228,7 +228,7 @@ GlobalState.getInstance().data_base = load_data_base()
 
 print('Starting up bot...')
 
-Tk = config('token')
+# Tk = config('token')
 
 if __name__ == "__main__":
     main()
