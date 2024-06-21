@@ -145,7 +145,7 @@ async def exchange_bitpin_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     protect_content = not is_admin(update._effective_user.id)
 
     keyboard = [
-        [InlineKeyboardButton("لینک ثبت‌نام در صرافی بیت‌پین", url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton("لینک ثبت‌نام در صرافی بیت‌پین", url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
         [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
