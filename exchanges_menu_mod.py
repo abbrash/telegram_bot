@@ -56,19 +56,51 @@ async def exchange_nobitex_menu(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     await query.answer()
 
+    protect_content = not is_admin(update._effective_user.id)
+
     keyboard = [
-        [InlineKeyboardButton("آموزش ثبت نام", callback_data="exchange_nobitex_reg_tutorial")],
-        [InlineKeyboardButton("صرافی نوبیتکس (Nobitex) ", url='https://nobitex.ir/signup/?refcode=1557073')],
-        [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
+        [[InlineKeyboardButton("لینک ثبت‌نام در صرافی نوبیتکس", url='https://nobitex.ir/signup/?refcode=1557073')],
+         [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]]
     ]
+
     key_markup = InlineKeyboardMarkup(keyboard)
-    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+    text = """لطفاً برای ثبت‌نام در صرافی نوبیتکس روی دکمه "ثبت نام" کلیک کنید. 
+با استفاده از این لینک می‌توانید 15 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
 """
-    await query.edit_message_text(
-        text=text,
-        reply_markup=key_markup
-    )
+
+# Select an image to send
+    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'nobitex_logo.jpg').replace('\\', '/')
+
+    # Send the image along with the text and buttons
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_photo(
+                chat_id=update._effective_user.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML",
+                protect_content=protect_content
+            )
+
+        except BadRequest:
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text,
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
+
+    else:
+        await context.bot.send_photo(
+            chat_id=update._effective_user.id,
+            photo=open(image_filename, 'rb'),
+            caption=text,
+            reply_markup=key_markup,
+            parse_mode="HTML",
+            protect_content=protect_content
+        )
+
     return GlobalState.getInstance().EXCHANGE_NOBITEX_MENU
 
 ### <<<-------------------------------------------- BitPin Exchange Menu -------------------------------------------->>> ###
@@ -76,19 +108,50 @@ async def exchange_bitpin_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     query = update.callback_query
     await query.answer()
 
+    protect_content = not is_admin(update._effective_user.id)
+
     keyboard = [
-        [InlineKeyboardButton("آموزش ثبت نام", callback_data="exchange_bitpin_reg_tutorial")],
-        [InlineKeyboardButton("صرافی بیت‌پین (BitPin)", url='https://bitpin.ir/signup/?ref=aP0DtoVG')],
-        [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
+        [InlineKeyboardButton("لینک ثبت‌نام در صرافی بیت‌پین", url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
-    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+    text = """لطفاً برای ثبت‌نام در صرافی بیت‌پین روی دکمه "ثبت نام" کلیک کنید. 
+با استفاده از این لینک می‌توانید 15 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
 """
-    await query.edit_message_text(
-        text=text,
-        reply_markup=key_markup
-    )
+
+    # Select an image to send
+    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'bitpin_logo.jpg').replace('\\', '/')
+
+    # Send the image along with the text and buttons
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_photo(
+                chat_id=update._effective_user.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML",
+                protect_content=protect_content
+            )
+
+        except BadRequest:
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text,
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
+
+    else:
+        await context.bot.send_photo(
+            chat_id=update._effective_user.id,
+            photo=open(image_filename, 'rb'),
+            caption=text,
+            reply_markup=key_markup,
+            parse_mode="HTML",
+            protect_content=protect_content
+        )
+
     return GlobalState.getInstance().EXCHANGE_BITPIN_MENU
 
 ### <<<-------------------------------------------- BingX Exchange Menu -------------------------------------------->>> ###
@@ -102,18 +165,15 @@ async def exchange_bingx_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
     GlobalState.getInstance().current_index_bingx_reg = 0
 
     keyboard = [
-        [InlineKeyboardButton("آموزش ثبت نام", callback_data="exchange_bingx_reg_tutorial")],
-        [InlineKeyboardButton("صرافی بینک‌اکس (BingX)", url='https://bingx.com/invite/NLQIKZI2')],
+        [InlineKeyboardButton("آموزش ثبت‌نام", callback_data="exchange_bingx_reg_tutorial")],
+        [InlineKeyboardButton("صرافی بینگ‌اکس (BingX)", url='https://bingx.com/invite/NLQIKZI2')],
         [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
-    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+    text = """لطفاً برای ثبت‌نام در صرافی بینگ‌اکس روی دکمه "ثبت‌نام" کلیک کنید. 
+با استفاده از این لینک می‌توانید 5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
+با استفاده از بخش "آموزش ثبت‌نام" می‌توانید مراحل ثبت‌نام در صرافی را بصورت قدم به قدم ملاحظه بفرمایید.
 """
-    # await query.edit_message_text(
-    #     text=text,
-    #     reply_markup=key_markup
-    # )
 
     # Select an image to send
     image_filename = os.path.join('img', 'exchange', 'global_exchange', 'bingx_logo.png').replace('\\','/')
@@ -161,14 +221,16 @@ async def exchange_coinex_menu(update: Update, context: ContextTypes.DEFAULT_TYP
     GlobalState.getInstance().current_index_coinex_reg = 0
 
     keyboard = [
-        [InlineKeyboardButton("آموزش ثبت نام", callback_data="exchange_coinex_reg_tutorial")],
+        [InlineKeyboardButton("آموزش ثبت‌نام", callback_data="exchange_coinex_reg_tutorial")],
         [InlineKeyboardButton("صرافی کوینکس (CoinEx)", url='https://www.coinex.com/register?refer_code=s95m7')],
         [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
     ]
     key_markup = InlineKeyboardMarkup(keyboard)
-    text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
+    text = """لطفاً برای ثبت‌نام در صرافی کوینکس روی دکمه "ثبت‌نام" کلیک کنید. 
+با استفاده از این لینک می‌توانید 7/5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
+با استفاده از بخش "آموزش ثبت‌نام" می‌توانید مراحل ثبت‌نام در صرافی را بصورت قدم به قدم ملاحظه بفرمایید.
 """
+    
     # Select an image to send
     image_filename = os.path.join('img', 'exchange', 'global_exchange', 'coinex_logo.jpg').replace('\\','/')
 
@@ -203,51 +265,6 @@ async def exchange_coinex_menu(update: Update, context: ContextTypes.DEFAULT_TYP
         )
 
     return GlobalState.getInstance().EXCHANGE_COINEX_MENU
-
-### <<<-------------------------------------------- Nobitex Exchange Register Tutorial -------------------------------------------->>> ###
-# async def exchange_nobitex_reg_tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-
-#     keyboard = [
-#         [InlineKeyboardButton(
-#             "آموزش ثبت نام", callback_data="exchange_nobitex_reg_tutorial")],
-#         [InlineKeyboardButton("صرافی نوبیتکس (Nobitex) ",
-#                               url='https://nobitex.ir/signup/?refcode=1557073')],
-#         [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
-#     ]
-#     key_markup = InlineKeyboardMarkup(keyboard)
-#     text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
-# آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
-# """
-#     await query.edit_message_text(
-#         text=text,
-#         reply_markup=key_markup
-#     )
-#     return GlobalState.getInstance().EXCHANGE_NOBITEX_MENU
-
-
-### <<<-------------------------------------------- BitPin Exchange Register Tutorial -------------------------------------------->>> ###
-# async def exchange_bitpin_reg_tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-#     query = update.callback_query
-#     await query.answer()
-
-#     keyboard = [
-#         [InlineKeyboardButton(
-#             "آموزش ثبت نام", callback_data="exchange_nobitex_reg_tutorial")],
-#         [InlineKeyboardButton("صرافی نوبیتکس (Nobitex) ",
-#                               url='https://nobitex.ir/signup/?refcode=1557073')],
-#         [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
-#     ]
-#     key_markup = InlineKeyboardMarkup(keyboard)
-#     text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید.
-# آموزش ثبت‌نام در هر یک از صرافی‌ها به زودی بارگذاری خواهد شد.
-# """
-#     await query.edit_message_text(
-#         text=text,
-#         reply_markup=key_markup
-#     )
-#     return GlobalState.getInstance().EXCHANGE_NOBITEX_MENU
 
 
 ## <<<-------------------------------------------- BingX Exchange Register Tutorial -------------------------------------------->>> ###

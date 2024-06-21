@@ -36,14 +36,12 @@ def main() -> None:
                 CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$"),
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
-            # GlobalState.getInstance().EXCHANGE_NOBITEX_MENU: [  
-            #     CallbackQueryHandler(exchange_nobitex_reg_tutorial, pattern="^" + "exchange_nobitex_reg_tutorial" + "$"),
-            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
-            # ],
-            # GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
-            #     CallbackQueryHandler(exchange_bitpin_reg_tutorial, pattern="^" + "exchange_bitpin_reg_tutorial" + "$"),
-            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
-            # ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_MENU: [  
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
+                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            ],
             GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
                 CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
