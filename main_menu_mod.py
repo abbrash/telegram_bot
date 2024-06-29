@@ -32,7 +32,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     else:
         keyboard = [[InlineKeyboardButton("ثبت نام", callback_data="submit_email")]]
         key_markup = InlineKeyboardMarkup(keyboard)
-        text = "به کانال کریپتیک خوش آمدید:"
+        text = """ به کانال کریپتیک خوش آمدید.
+
+Page: Main_Menu"""
 
     if update.message:
         await update.message.reply_text(text=text,
@@ -66,7 +68,9 @@ async def start_over(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     else:
         keyboard = [[InlineKeyboardButton("ثبت نام", callback_data="submit_email")]]
         key_markup = InlineKeyboardMarkup(keyboard)
-        text = "به کانال کریپتیک خوش آمدید:"
+        text = """ به کانال کریپتیک خوش آمدید.
+
+Page: Main_Menu"""
 
     if update.message:
         await update.message.reply_text(text=text,

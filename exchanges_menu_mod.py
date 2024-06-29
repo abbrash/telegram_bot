@@ -24,7 +24,8 @@ async def exchanges_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     text = """با استفاده از لینک‌های قرارداده شده در این بخش می‌توانید در صرافی‌های پیشنهادی ثبت‌نام کنید. 
 برای صرافی‌های داخلی (نوبیتکس و بیت‌پین) طبق دستورالعمل وبسایت صرافی مورد نظر عمل کنید. 
 آموزش ثبت‌نام در صرافی‌های خارجی (کوینکس و بینگ‌اکس) نیز بصورت جداگانه فراهم شده است.
-"""
+
+Page: Exchanges_Menu"""
 
 # # Select an image to send
 #     image_filename = os.path.join('img', 'exchange', 'exchanges_logo.jpg').replace('\\', '/')
@@ -94,16 +95,22 @@ async def exchange_nobitex_menu(update: Update, context: ContextTypes.DEFAULT_TY
 
     keyboard = [
         [InlineKeyboardButton("لینک ثبت‌نام در صرافی نوبیتکس", url='https://nobitex.ir/signup/?refcode=1557073')],
+        [InlineKeyboardButton("واریز ریالی به صرافی", callback_data="exchange_nobitex_deposit_rials")],
+        [InlineKeyboardButton("برداشت ریالی از صرافی", callback_data="exchange_nobitex_withdraw_rials")],
+        [InlineKeyboardButton("واریز رمزارز به صرافی", callback_data="exchange_nobitex_deposit")],
+        [InlineKeyboardButton("برداشت رمزارز از صرافی", callback_data="exchange_nobitex_withdraw")],
+        [InlineKeyboardButton("خرید و فروش در صرافی", callback_data="exchange_nobitex_trade_spot")],
         [InlineKeyboardButton("بازگشت به منوی صرافی‌ها🏠⬅️ ", callback_data="exchanges_menu")]
     ]
 
     key_markup = InlineKeyboardMarkup(keyboard)
-    text = """لطفاً برای ثبت‌نام در صرافی نوبیتکس روی دکمه "ثبت نام" کلیک کنید. 
-با استفاده از این لینک می‌توانید 15 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
-"""
+    text = """لطفاً برای ثبت‌نام در صرافی نوبیتکس روی دکمه "ثبت نام" کلیک کنید.
+با استفاده از این لینک می‌توانید 15 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید.
+
+Page: Nobitex_Menu"""
 
 # Select an image to send
-    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'nobitex_logo.jpg').replace('\\', '/')
+    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'nobitex', 'nobitex_logo.jpg').replace('\\', '/')
 
     # Send the image along with the text and buttons
     if query.message and query.message.text:
@@ -136,6 +143,464 @@ async def exchange_nobitex_menu(update: Update, context: ContextTypes.DEFAULT_TY
         )
 
     return GlobalState.getInstance().EXCHANGE_NOBITEX_MENU
+
+### <<<-------------------------------------------- Nobitex Exchange Deposit Rials -------------------------------------------->>> ###
+async def exchange_nobitex_deposit_rials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_nobitex_deposit_rials:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_nobitex_deposit_rials = 0
+            GlobalState.getInstance().first_time_loop_nobitex_deposit_rials = False
+        else:
+            GlobalState.getInstance().current_index_nobitex_deposit_rials = int(query.data)
+    elif query.data == "exchange_nobitex_deposit_rials":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_nobitex_deposit_rials = 0
+        GlobalState.getInstance().first_time_loop_nobitex_deposit_rials = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/nobitex/nobitex_deposit_rials'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_nobitex_deposit_rials + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_nobitex_deposit_rials = max(
+        0, min(GlobalState.getInstance().current_index_nobitex_deposit_rials, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = ["""وارد سایت نوبیتکس شوید.
+روی گزینه کیف پول و سپس روی "واریز" کلیک کنید.
+
+Page: Nobitex_Deposit_Rials_01""",
+
+"""  
+از لیست کارت‌های بانکی موجود، کارتی که می‌خواهید واریز را با استفاده از آن انجام دهید را انتخاب کنید.
+مبلغ واریز را وارد کنید و سپس روی گزینه "واریز شتابی" کلیک کنید.
+ 
+⚠️ ⚠️ ⚠️ به نکاتی ذکرشده از طرف صرافی دقت کنید.
+
+Page: Nobitex_Deposit_Rials_02"""
+]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance().current_index_nobitex_deposit_rials]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_nobitex_deposit_rials == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_nobitex_deposit_rials + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی نوبیتکس  🏠⬅️ ", callback_data="exchange_nobitex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_nobitex_deposit_rials == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_nobitex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit_rials - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit_rials - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit_rials + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_NOBITEX_DEPOSIT_RIALS
+
+
+### <<<-------------------------------------------- Nobitex Exchange Withdraw Rials -------------------------------------------->>> ###
+async def exchange_nobitex_withdraw_rials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_nobitex_withdraw_rials:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_nobitex_withdraw_rials = 0
+            GlobalState.getInstance().first_time_loop_nobitex_withdraw_rials = False
+        else:
+            GlobalState.getInstance().current_index_nobitex_withdraw_rials = int(query.data)
+    elif query.data == "exchange_nobitex_withdraw_rials":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_nobitex_withdraw_rials = 0
+        GlobalState.getInstance().first_time_loop_nobitex_withdraw_rials = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/nobitex/nobitex_withdraw_rials'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_nobitex_withdraw_rials + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_nobitex_withdraw_rials = max(
+        0, min(GlobalState.getInstance().current_index_nobitex_withdraw_rials, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""  
+]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_nobitex_withdraw_rials]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_nobitex_withdraw_rials == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_nobitex_withdraw_rials + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی نوبیتکس  🏠⬅️ ", callback_data="exchange_nobitex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_nobitex_withdraw_rials == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_nobitex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw_rials - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw_rials - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw_rials + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_NOBITEX_WITHDRAW_RIALS
+
+### <<<-------------------------------------------- Nobitex Exchange Deposit -------------------------------------------->>> ###
+async def exchange_nobitex_deposit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_nobitex_deposit:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_nobitex_deposit = 0
+            GlobalState.getInstance().first_time_loop_nobitex_deposit = False
+        else:
+            GlobalState.getInstance().current_index_nobitex_deposit = int(query.data)
+    elif query.data == "exchange_nobitex_deposit":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_nobitex_deposit = 0
+        GlobalState.getInstance().first_time_loop_nobitex_deposit = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/nobitex/nobitex_deposit'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_nobitex_deposit + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_nobitex_deposit = max(
+        0, min(GlobalState.getInstance().current_index_nobitex_deposit, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""  
+]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_nobitex_deposit]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_nobitex_deposit == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_nobitex_deposit + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی نوبیتکس  🏠⬅️ ", callback_data="exchange_nobitex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_nobitex_deposit == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_nobitex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_nobitex_deposit + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_NOBITEX_DEPOSIT
+
+
+### <<<-------------------------------------------- Nobitex Exchange Withdraw -------------------------------------------->>> ###
+async def exchange_nobitex_withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_nobitex_withdraw:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_nobitex_withdraw = 0
+            GlobalState.getInstance().first_time_loop_nobitex_withdraw = False
+        else:
+            GlobalState.getInstance().current_index_nobitex_withdraw = int(query.data)
+    elif query.data == "exchange_nobitex_withdraw":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_nobitex_withdraw = 0
+        GlobalState.getInstance().first_time_loop_nobitex_withdraw = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/nobitex/nobitex_withdraw'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_nobitex_withdraw + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_nobitex_withdraw = max(
+        0, min(GlobalState.getInstance().current_index_nobitex_withdraw, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""  
+]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_nobitex_withdraw]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_nobitex_withdraw == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_nobitex_withdraw + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی نوبیتکس  🏠⬅️ ", callback_data="exchange_nobitex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_nobitex_withdraw == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_nobitex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_nobitex_withdraw + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_NOBITEX_WITHDRAW
+
+
+### <<<-------------------------------------------- Nobitex Exchange Spot Trading -------------------------------------------->>> ###
+async def exchange_nobitex_trade_spot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_nobitex_trade_spot:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_nobitex_trade_spot = 0
+            GlobalState.getInstance().first_time_loop_nobitex_trade_spot = False
+        else:
+            GlobalState.getInstance().current_index_nobitex_trade_spot = int(query.data)
+    elif query.data == "exchange_nobitex_trade_spot":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_nobitex_trade_spot = 0
+        GlobalState.getInstance().first_time_loop_nobitex_trade_spot = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/nobitex/nobitex_trade_spot'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_nobitex_trade_spot + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_nobitex_trade_spot = max(
+        0, min(GlobalState.getInstance().current_index_nobitex_trade_spot, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""  
+]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_nobitex_trade_spot]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_nobitex_trade_spot == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_nobitex_trade_spot + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی نوبیتکس  🏠⬅️ ", callback_data="exchange_nobitex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_nobitex_trade_spot == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_nobitex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_trade_spot - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_nobitex_trade_spot - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_nobitex_trade_spot + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_NOBITEX_TRADE_SPOT
 
 ### <<<-------------------------------------------- BitPin Exchange Menu -------------------------------------------->>> ###
 async def exchange_bitpin_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

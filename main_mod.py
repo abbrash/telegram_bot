@@ -37,7 +37,32 @@ def main() -> None:
                 CallbackQueryHandler(main_menu, pattern="^" + "main_menu" + "$")
             ],
             GlobalState.getInstance().EXCHANGE_NOBITEX_MENU: [  
+                CallbackQueryHandler(exchange_nobitex_deposit_rials, pattern="^" + "exchange_nobitex_deposit_rials" + "$"),
+                CallbackQueryHandler(exchange_nobitex_withdraw_rials, pattern="^" + "exchange_nobitex_withdraw_rials" + "$"),
+                CallbackQueryHandler(exchange_nobitex_deposit, pattern="^" + "exchange_nobitex_deposit" + "$"),
+                CallbackQueryHandler(exchange_nobitex_withdraw, pattern="^" + "exchange_nobitex_withdraw" + "$"),
+                CallbackQueryHandler(exchange_nobitex_trade_spot, pattern="^" + "exchange_nobitex_trade_spot" + "$"),
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_DEPOSIT_RIALS: [
+                CallbackQueryHandler(exchange_nobitex_deposit_rials, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_WITHDRAW_RIALS: [
+                CallbackQueryHandler(exchange_nobitex_withdraw_rials, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_DEPOSIT: [
+                CallbackQueryHandler(exchange_nobitex_deposit, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_WITHDRAW: [
+                CallbackQueryHandler(exchange_nobitex_withdraw, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
+            ],
+            GlobalState.getInstance().EXCHANGE_NOBITEX_TRADE_SPOT: [
+                CallbackQueryHandler(exchange_nobitex_trade_spot, pattern="^(\d+)$"),
+                CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
             ],
             GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
