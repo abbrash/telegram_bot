@@ -94,12 +94,32 @@ def main() -> None:
             # ],
             GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
                 CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
+                # CallbackQueryHandler(exchange_bingx_deposit, pattern="^" + "exchange_bingx_deposit" + "$"),
+                # CallbackQueryHandler(exchange_bingx_withdraw, pattern="^" + "exchange_bingx_withdraw" + "$"),
+                # CallbackQueryHandler(exchange_bingx_trade_spot, pattern="^" + "exchange_bingx_trade_spot" + "$"),
+                # CallbackQueryHandler(exchange_bingx_trade_futures, pattern="^" + "exchange_bingx_trade_futures" + "$"),
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
             ],
             GlobalState.getInstance().EXCHANGE_BINGX_REG: [
                 CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^(\d+)$"),
                 CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
             ],
+            # GlobalState.getInstance().EXCHANGE_BINGX_DEPOSIT: [
+            #     CallbackQueryHandler(exchange_bingx_deposit, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BINGX_WITHDRAW: [
+            #     CallbackQueryHandler(exchange_bingx_withdraw, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BINGX_TRADE_SPOT: [
+            #     CallbackQueryHandler(exchange_bingx_trade_spot, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BINGX_TRADE_FUTURES: [
+            #     CallbackQueryHandler(exchange_bingx_trade_futures, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bingx_menu, pattern="^" + "exchange_bingx_menu" + "$")
+            # ],
             GlobalState.getInstance().EXCHANGE_COINEX_MENU: [  
                 CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^" + "exchange_coinex_reg_tutorial" + "$"),
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
@@ -108,6 +128,22 @@ def main() -> None:
                 CallbackQueryHandler(exchange_coinex_reg_tutorial, pattern="^(\d+)$"),
                 CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
             ],
+            # GlobalState.getInstance().EXCHANGE_COINEX_DEPOSIT: [
+            #     CallbackQueryHandler(exchange_coinex_deposit, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_COINEX_WITHDRAW: [
+            #     CallbackQueryHandler(exchange_coinex_withdraw, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_COINEX_TRADE_SPOT: [
+            #     CallbackQueryHandler(exchange_coinex_trade_spot, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_COINEX_TRADE_FUTURES: [
+            #     CallbackQueryHandler(exchange_coinex_trade_futures, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_coinex_menu, pattern="^" + "exchange_coinex_menu" + "$")
+            # ],
             GlobalState.getInstance().AIRDROPS_MENU: [
                 CallbackQueryHandler(airdrop_phantom_menu, pattern="^" + "airdrop_phantom_menu" + "$"),
                 CallbackQueryHandler(airdrop_linea_surge_menu, pattern="^" + "airdrop_linea_surge_menu" + "$"),

@@ -717,6 +717,475 @@ async def exchange_bitpin_menu(update: Update, context: ContextTypes.DEFAULT_TYP
 
     return GlobalState.getInstance().EXCHANGE_BITPIN_MENU
 
+
+### <<<-------------------------------------------- BitPin Exchange Deposit Rials -------------------------------------------->>> ###
+async def exchange_bitpin_deposit_rials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bitpin_deposit_rials:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bitpin_deposit_rials = 0
+            GlobalState.getInstance().first_time_loop_bitpin_deposit_rials = False
+        else:
+            GlobalState.getInstance().current_index_bitpin_deposit_rials = int(query.data)
+    elif query.data == "exchange_bitpin_deposit_rials":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bitpin_deposit_rials = 0
+        GlobalState.getInstance().first_time_loop_bitpin_deposit_rials = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/bitpin/bitpin_deposit_rials'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bitpin_deposit_rials + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bitpin_deposit_rials = max(
+        0, min(GlobalState.getInstance().current_index_bitpin_deposit_rials, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bitpin_deposit_rials]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bitpin_deposit_rials == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_deposit_rials + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بیت‌پین  🏠⬅️ ", callback_data="exchange_bitpin_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bitpin_deposit_rials == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bitpin_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_deposit_rials - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bitpin_deposit_rials - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bitpin_deposit_rials + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BITPIN_DEPOSIT_RIALS
+
+
+### <<<-------------------------------------------- BitPin Exchange Withdraw Rials -------------------------------------------->>> ###
+async def exchange_bitpin_withdraw_rials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bitpin_withdraw_rials:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bitpin_withdraw_rials = 0
+            GlobalState.getInstance().first_time_loop_bitpin_withdraw_rials = False
+        else:
+            GlobalState.getInstance().current_index_bitpin_withdraw_rials = int(query.data)
+    elif query.data == "exchange_bitpin_withdraw_rials":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bitpin_withdraw_rials = 0
+        GlobalState.getInstance().first_time_loop_bitpin_withdraw_rials = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/bitpin/bitpin_withdraw_rials'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bitpin_withdraw_rials + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bitpin_withdraw_rials = max(
+        0, min(GlobalState.getInstance().current_index_bitpin_withdraw_rials, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bitpin_withdraw_rials]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bitpin_withdraw_rials == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_withdraw_rials + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بیت‌پین  🏠⬅️ ", callback_data="exchange_bitpin_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bitpin_withdraw_rials == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bitpin_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_withdraw_rials - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bitpin_withdraw_rials - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bitpin_withdraw_rials + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BITPIN_WITHDRAW_RIALS
+
+### <<<-------------------------------------------- BitPin Exchange Deposit -------------------------------------------->>> ###
+async def exchange_bitpin_deposit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bitpin_deposit:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bitpin_deposit = 0
+            GlobalState.getInstance().first_time_loop_bitpin_deposit = False
+        else:
+            GlobalState.getInstance().current_index_bitpin_deposit = int(query.data)
+    elif query.data == "exchange_bitpin_deposit":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bitpin_deposit = 0
+        GlobalState.getInstance().first_time_loop_bitpin_deposit = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/bitpin/bitpin_deposit'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bitpin_deposit + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bitpin_deposit = max(
+        0, min(GlobalState.getInstance().current_index_bitpin_deposit, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bitpin_deposit]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bitpin_deposit == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_deposit + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بیت‌پین  🏠⬅️ ", callback_data="exchange_bitpin_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bitpin_deposit == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bitpin_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_deposit - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bitpin_deposit - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bitpin_deposit + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BITPIN_DEPOSIT
+
+
+### <<<-------------------------------------------- BitPin Exchange Withdraw -------------------------------------------->>> ###
+async def exchange_bitpin_withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bitpin_withdraw:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bitpin_withdraw = 0
+            GlobalState.getInstance().first_time_loop_bitpin_withdraw = False
+        else:
+            GlobalState.getInstance().current_index_bitpin_withdraw = int(query.data)
+    elif query.data == "exchange_bitpin_withdraw":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bitpin_withdraw = 0
+        GlobalState.getInstance().first_time_loop_bitpin_withdraw = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/bitpin/bitpin_withdraw'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bitpin_withdraw + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bitpin_withdraw = max(
+        0, min(GlobalState.getInstance().current_index_bitpin_withdraw, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bitpin_withdraw]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bitpin_withdraw == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_withdraw + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بیت‌پین  🏠⬅️ ", callback_data="exchange_bitpin_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bitpin_withdraw == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bitpin_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_withdraw - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bitpin_withdraw - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bitpin_withdraw + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BITPIN_WITHDRAW
+
+
+### <<<-------------------------------------------- BitPin Exchange Spot Trading -------------------------------------------->>> ###
+async def exchange_bitpin_trade_spot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bitpin_trade_spot:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bitpin_trade_spot = 0
+            GlobalState.getInstance().first_time_loop_bitpin_trade_spot = False
+        else:
+            GlobalState.getInstance().current_index_bitpin_trade_spot = int(query.data)
+    elif query.data == "exchange_bitpin_trade_spot":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bitpin_trade_spot = 0
+        GlobalState.getInstance().first_time_loop_bitpin_trade_spot = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/local_exchange/bitpin/bitpin_trade_spot'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bitpin_trade_spot + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bitpin_trade_spot = max(
+        0, min(GlobalState.getInstance().current_index_bitpin_trade_spot, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bitpin_trade_spot]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bitpin_trade_spot == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_trade_spot + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بیت‌پین  🏠⬅️ ", callback_data="exchange_bitpin_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bitpin_trade_spot == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bitpin_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bitpin_trade_spot - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bitpin_trade_spot - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bitpin_trade_spot + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BITPIN_TRADE_SPOT
+
 ### <<<-------------------------------------------- BingX Exchange Menu -------------------------------------------->>> ###
 async def exchange_bingx_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -940,6 +1409,380 @@ async def exchange_bingx_reg_tutorial(update: Update, context: ContextTypes.DEFA
 
     return GlobalState.getInstance().EXCHANGE_BINGX_REG
 
+### <<<-------------------------------------------- BingX Exchange Deposit -------------------------------------------->>> ###
+async def exchange_bingx_deposit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bingx_deposit:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bingx_deposit = 0
+            GlobalState.getInstance().first_time_loop_bingx_deposit = False
+        else:
+            GlobalState.getInstance().current_index_bingx_deposit = int(query.data)
+    elif query.data == "exchange_bingx_deposit":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bingx_deposit = 0
+        GlobalState.getInstance().first_time_loop_bingx_deposit = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/bingx/bingx_deposit'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bingx_deposit + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bingx_deposit = max(
+        0, min(GlobalState.getInstance().current_index_bingx_deposit, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bingx_deposit]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bingx_deposit == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_deposit + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bingx_deposit == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_deposit - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bingx_deposit - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bingx_deposit + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BINGX_DEPOSIT
+
+
+### <<<-------------------------------------------- BingX Exchange Withdraw -------------------------------------------->>> ###
+async def exchange_bingx_withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bingx_withdraw:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bingx_withdraw = 0
+            GlobalState.getInstance().first_time_loop_bingx_withdraw = False
+        else:
+            GlobalState.getInstance().current_index_bingx_withdraw = int(query.data)
+    elif query.data == "exchange_bingx_withdraw":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bingx_withdraw = 0
+        GlobalState.getInstance().first_time_loop_bingx_withdraw = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/bingx/bingx_withdraw'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bingx_withdraw + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bingx_withdraw = max(
+        0, min(GlobalState.getInstance().current_index_bingx_withdraw, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bingx_withdraw]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bingx_withdraw == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_withdraw + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bingx_withdraw == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_withdraw - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bingx_withdraw - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bingx_withdraw + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BINGX_WITHDRAW
+
+
+### <<<-------------------------------------------- BingX Exchange Spot Trading -------------------------------------------->>> ###
+async def exchange_bingx_trade_spot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bingx_trade_spot:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bingx_trade_spot = 0
+            GlobalState.getInstance().first_time_loop_bingx_trade_spot = False
+        else:
+            GlobalState.getInstance().current_index_bingx_trade_spot = int(query.data)
+    elif query.data == "exchange_bingx_trade_spot":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bingx_trade_spot = 0
+        GlobalState.getInstance().first_time_loop_bingx_trade_spot = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/bingx/bingx_trade_spot'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bingx_trade_spot + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bingx_trade_spot = max(
+        0, min(GlobalState.getInstance().current_index_bingx_trade_spot, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bingx_trade_spot]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bingx_trade_spot == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_trade_spot + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bingx_trade_spot == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_trade_spot - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bingx_trade_spot - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bingx_trade_spot + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BINGX_TRADE_SPOT
+
+### <<<-------------------------------------------- BingX Exchange Futures Trading -------------------------------------------->>> ###
+async def exchange_bingx_trade_futures(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_bingx_trade_futures:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_bingx_trade_futures = 0
+            GlobalState.getInstance().first_time_loop_bingx_trade_futures = False
+        else:
+            GlobalState.getInstance().current_index_bingx_trade_futures = int(query.data)
+    elif query.data == "exchange_bingx_trade_futures":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_bingx_trade_futures = 0
+        GlobalState.getInstance().first_time_loop_bingx_trade_futures = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/bingx/bingx_trade_futures'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bingx_trade_futures + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_bingx_trade_futures = max(
+        0, min(GlobalState.getInstance().current_index_bingx_trade_futures, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_bingx_trade_futures]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_bingx_trade_futures == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_trade_futures + 1))],
+            [InlineKeyboardButton(
+                "بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_bingx_trade_futures == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton(
+                "🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
+                GlobalState.getInstance().current_index_bingx_trade_futures - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bingx_trade_futures - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bingx_trade_futures + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_BINGX_TRADE_FUTURES
+
 
 ### <<<-------------------------------------------- CoinEx Exchange Register Tutorial -------------------------------------------->>> ###
 async def exchange_coinex_reg_tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1060,3 +1903,362 @@ async def exchange_coinex_reg_tutorial(update: Update, context: ContextTypes.DEF
             ).message_ids[GlobalState.getInstance().chat_id].pop(0)
 
     return GlobalState.getInstance().EXCHANGE_COINEX_REG
+
+
+### <<<-------------------------------------------- CoinEx Exchange Deposit -------------------------------------------->>> ###
+async def exchange_coinex_deposit(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_coinex_deposit:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_coinex_deposit = 0
+            GlobalState.getInstance().first_time_loop_coinex_deposit = False
+        else:
+            GlobalState.getInstance().current_index_coinex_deposit = int(query.data)
+    elif query.data == "exchange_coinex_deposit":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_coinex_deposit = 0
+        GlobalState.getInstance().first_time_loop_coinex_deposit = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/coinex/coinex_deposit'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_coinex_deposit + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_coinex_deposit = max(
+        0, min(GlobalState.getInstance().current_index_coinex_deposit, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_coinex_deposit]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_coinex_deposit == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_deposit + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی کوینکس  🏠⬅️ ", callback_data="exchange_coinex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_coinex_deposit == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_coinex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_deposit - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_deposit - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_deposit + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_COINEX_DEPOSIT
+
+
+### <<<-------------------------------------------- CoinEx Exchange Withdraw -------------------------------------------->>> ###
+async def exchange_coinex_withdraw(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_coinex_withdraw:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_coinex_withdraw = 0
+            GlobalState.getInstance().first_time_loop_coinex_withdraw = False
+        else:
+            GlobalState.getInstance().current_index_coinex_withdraw = int(query.data)
+    elif query.data == "exchange_coinex_withdraw":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_coinex_withdraw = 0
+        GlobalState.getInstance().first_time_loop_coinex_withdraw = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/coinex/coinex_withdraw'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_coinex_withdraw + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_coinex_withdraw = max(
+        0, min(GlobalState.getInstance().current_index_coinex_withdraw, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_coinex_withdraw]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_coinex_withdraw == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_withdraw + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی کوینکس  🏠⬅️ ", callback_data="exchange_coinex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_coinex_withdraw == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_coinex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_withdraw - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_withdraw - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_withdraw + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_COINEX_WITHDRAW
+
+
+### <<<-------------------------------------------- CoinEx Exchange Spot Trading -------------------------------------------->>> ###
+async def exchange_coinex_trade_spot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_coinex_trade_spot:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_coinex_trade_spot = 0
+            GlobalState.getInstance().first_time_loop_coinex_trade_spot = False
+        else:
+            GlobalState.getInstance().current_index_coinex_trade_spot = int(query.data)
+    elif query.data == "exchange_coinex_trade_spot":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_coinex_trade_spot = 0
+        GlobalState.getInstance().first_time_loop_coinex_trade_spot = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/coinex/coinex_trade_spot'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_coinex_trade_spot + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_coinex_trade_spot = max(
+        0, min(GlobalState.getInstance().current_index_coinex_trade_spot, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_coinex_trade_spot]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_coinex_trade_spot == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_spot + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی کوینکس  🏠⬅️ ", callback_data="exchange_coinex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_coinex_trade_spot == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_coinex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_spot - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_spot - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_spot + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_COINEX_TRADE_SPOT
+
+### <<<-------------------------------------------- CoinEx Exchange Futures Trading -------------------------------------------->>> ###
+async def exchange_coinex_trade_futures(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    # Check if query.data is a digit
+    if query.data.isdigit():
+        if GlobalState.getInstance().first_time_loop_coinex_trade_futures:
+            await query.delete_message()
+            GlobalState.getInstance().current_index_coinex_trade_futures = 0
+            GlobalState.getInstance().first_time_loop_coinex_trade_futures = False
+        else:
+            GlobalState.getInstance().current_index_coinex_trade_futures = int(query.data)
+    elif query.data == "exchange_coinex_trade_futures":
+        # Reset current_index when "air_drop_01" is clicked
+        await query.delete_message()
+        GlobalState.getInstance().current_index_coinex_trade_futures = 0
+        GlobalState.getInstance().first_time_loop_coinex_trade_futures = False
+
+    # Use img_add to dynamically generate the image filename based on the current index
+    image_directory = 'img/exchange/global_exchange/coinex/coinex_trade_futures'
+    img_add = image_directory
+    image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_coinex_trade_futures + 1).zfill(2)}.png'
+
+    # Ensure current_index stays within the bounds of available images
+    GlobalState.getInstance().current_index_coinex_trade_futures = max(
+        0, min(GlobalState.getInstance().current_index_coinex_trade_futures, len(os.listdir(img_add)) - 1))
+
+    # Define your list of captions here
+    captions_list = [""""""
+                     ]
+
+    # Construct caption with current index and total number of photos
+    caption = captions_list[GlobalState.getInstance(
+    ).current_index_coinex_trade_futures]
+
+    # Construct InlineKeyboardMarkup based on current message index
+    buttons = []
+    if GlobalState.getInstance().current_index_coinex_trade_futures == 0:
+        buttons = [
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_futures + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی کوینکس  🏠⬅️ ", callback_data="exchange_coinex_menu")]
+        ]
+    elif GlobalState.getInstance().current_index_coinex_trade_futures == len(os.listdir(img_add)) - 1:
+        buttons = [
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_coinex_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_futures - 1))]
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_futures - 1)),
+             InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_coinex_trade_futures + 1))]
+        ]
+
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    # Send the current photo with caption and navigation buttons
+    GlobalState.getInstance().chat_id = update.effective_chat.id
+
+    with open(image_filename, 'rb') as photo:
+        sent_photo = await context.bot.send_photo(
+            chat_id=GlobalState.getInstance().chat_id,
+            photo=photo,
+            caption=caption,
+            reply_markup=reply_markup,
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
+        )
+
+        # Store the message ID
+        if GlobalState.getInstance().chat_id not in GlobalState.getInstance().message_ids:
+            # initialize a list to store further information
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id] = []
+        GlobalState.getInstance().message_ids[GlobalState.getInstance().chat_id].append(
+            sent_photo.message_id)
+
+        # Delete the previous photo if it exists
+        # Use.get() method to avoid KeyError if chat_id not found
+        if len(GlobalState.getInstance().message_ids.get(GlobalState.getInstance().chat_id, [])) > 1:
+            await context.bot.delete_message(chat_id=GlobalState.getInstance().chat_id, message_id=GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id][0])
+            GlobalState.getInstance(
+            ).message_ids[GlobalState.getInstance().chat_id].pop(0)
+
+    return GlobalState.getInstance().EXCHANGE_COINEX_TRADE_FUTURES

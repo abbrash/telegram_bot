@@ -91,7 +91,6 @@ class GlobalState:
         return cls._instance
 
 
-
 ### Accessing Constants and Variables
 ### from globals import GlobalState
 ### def some_function():
