@@ -13,13 +13,14 @@ class GlobalState:
         self.AIRDROP_PHANTOM_MENU, self.AIRDROP_PHANTOM_SWAP, self.AIRDROP_PHANTOM_STAKE, self.AIRDROP_PHANTOM_UNSTAKE = range(8, 12)
         self.AIRDROP_LINEA_SURGE_MENU, self.AIRDROP_LINEA_SURGE_STAKE, self.AIRDROP_LINEA_SURGE_UNSTAKE, _ = range(12, 16)
         self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE, _, _ = range(16, 20)
-        self.EXCHANGE_BINGX_MENU, self.EXCHANGE_COINEX_MENU, self.EXCHANGE_BINGX_REG, self.EXCHANGE_COINEX_REG = range(20, 24)
-        self.EXCHANGE_NOBITEX_MENU, self.EXCHANGE_BITPIN_MENU, _, _ = range(24, 28)
-        self.EXCHANGE_NOBITEX_DEPOSIT_RIALS, self.EXCHANGE_NOBITEX_WITHDRAW_RIALS, self.EXCHANGE_NOBITEX_DEPOSIT, self.EXCHANGE_NOBITEX_WITHDRAW = range(28, 32)
-        self.EXCHANGE_NOBITEX_TRADE_SPOT, _, _, _ = range(32, 36)
+        self.EXCHANGE_BINGX_MENU, self.EXCHANGE_COINEX_MENU, self.EXCHANGE_NOBITEX_MENU, self.EXCHANGE_BITPIN_MENU = range(20, 24)
+        self.EXCHANGE_NOBITEX_DEPOSIT_RIALS, self.EXCHANGE_NOBITEX_WITHDRAW_RIALS, self.EXCHANGE_NOBITEX_DEPOSIT, self.EXCHANGE_NOBITEX_WITHDRAW, self.EXCHANGE_NOBITEX_TRADE_SPOT = range(24, 29)
+        self.EXCHANGE_BITPIN_DEPOSIT_RIALS, self.EXCHANGE_BITPIN_WITHDRAW_RIALS, self.EXCHANGE_BITPIN_DEPOSIT, self.EXCHANGE_BITPIN_WITHDRAW, self.EXCHANGE_BITPIN_TRADE_SPOT = range(29, 34)
+        self.EXCHANGE_BINGX_REG, self.EXCHANGE_BINGX_DEPOSIT, self.EXCHANGE_BINGX_WITHDRAW,  self.EXCHANGE_BINGX_TRADE_SPOT, self.EXCHANGE_BINGX_TRADE_FUTURES = range(34, 38)
+        self.EXCHANGE_COINEX_REG, self.EXCHANGE_COINEX_DEPOSIT, self.EXCHANGE_COINEX_WITHDRAW,  self.EXCHANGE_COINEX_TRADE_SPOT, self.EXCHANGE_COINEX_TRADE_FUTURES = range(38, 42)
 
-        self. AWAITING_SUPPORT_MESSAGE, self.AWAITING_ADMIN_REPLY = range(30,32)
-        self.COLLECTING_SUPPORT_MESSAGES = 40
+        self. AWAITING_SUPPORT_MESSAGE, self.AWAITING_ADMIN_REPLY = range(80,82)
+        self.COLLECTING_SUPPORT_MESSAGES = 90
 
         # Initialize variables
         self.first_time_loop_phantom_swap = True
@@ -42,15 +43,41 @@ class GlobalState:
         self.first_time_loop_nobitex_deposit = True
         self.first_time_loop_nobitex_withdraw = True
         self.first_time_loop_nobitex_trade_spot = True
+        self.first_time_loop_bitpin_deposit_rials = True
+        self.first_time_loop_bitpin_withdraw_rials = True
+        self.first_time_loop_bitpin_deposit = True
+        self.first_time_loop_bitpin_withdraw = True
+        self.first_time_loop_bitpin_trade_spot = True
         self.first_time_loop_bingx_reg = True
+        self.first_time_loop_bingx_deposit = True
+        self.first_time_loop_bingx_withdraw = True
+        self.first_time_loop_bingx_trade_spot = True
+        self.first_time_loop_bingx_trade_futures = True
         self.first_time_loop_coinex_reg = True
+        self.first_time_loop_coinex_deposit = True
+        self.first_time_loop_coinex_withdraw = True
+        self.first_time_loop_coinex_trade_spot = True
+        self.first_time_loop_coinex_trade_futures = True
         self.current_index_nobitex_deposit_rials = 0
         self.current_index_nobitex_withdraw_rials = 0
         self.current_index_nobitex_deposit = 0
         self.current_index_nobitex_withdraw = 0
         self.current_index_nobitex_trade_spot = 0
+        self.current_index_bitpin_deposit_rials = 0
+        self.current_index_bitpin_withdraw_rials = 0
+        self.current_index_bitpin_deposit = 0
+        self.current_index_bitpin_withdraw = 0
+        self.current_index_bitpin_trade_spot = 0
         self.current_index_bingx_reg = 0 
+        self.current_index_bingx_deposit = 0
+        self.current_index_bingx_withdraw = 0
+        self.current_index_bingx_trade_spot = 0
+        self.current_index_bingx_trade_futures = 0
         self.current_index_coinex_reg = 0
+        self.current_index_coinex_deposit = 0
+        self.current_index_coinex_withdraw = 0
+        self.current_index_coinex_trade_spot = 0
+        self.current_index_coinex_trade_futures = 0
 
         # Initialize message IDs dictionary
         self.message_ids = {}

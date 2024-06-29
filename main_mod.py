@@ -64,9 +64,34 @@ def main() -> None:
                 CallbackQueryHandler(exchange_nobitex_trade_spot, pattern="^(\d+)$"),
                 CallbackQueryHandler(exchange_nobitex_menu, pattern="^" + "exchange_nobitex_menu" + "$")
             ],
-            GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
-                CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
-            ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_MENU: [  
+            #     CallbackQueryHandler(exchange_bitpin_deposit_rials, pattern="^" + "exchange_bitpin_deposit_rials" + "$"),
+            #     CallbackQueryHandler(exchange_bitpin_withdraw_rials, pattern="^" + "exchange_bitpin_withdraw_rials" + "$"),
+            #     CallbackQueryHandler(exchange_bitpin_deposit, pattern="^" + "exchange_bitpin_deposit" + "$"),
+            #     CallbackQueryHandler(exchange_bitpin_withdraw, pattern="^" + "exchange_bitpin_withdraw" + "$"),
+            #     CallbackQueryHandler(exchange_bitpin_trade_spot, pattern="^" + "exchange_bitpin_trade_spot" + "$"),
+            #     CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_DEPOSIT_RIALS: [
+            #     CallbackQueryHandler(exchange_bitpin_deposit_rials, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_WITHDRAW_RIALS: [
+            #     CallbackQueryHandler(exchange_bitpin_withdraw_rials, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_DEPOSIT: [
+            #     CallbackQueryHandler(exchange_bitpin_deposit, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_WITHDRAW: [
+            #     CallbackQueryHandler(exchange_bitpin_withdraw, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$")
+            # ],
+            # GlobalState.getInstance().EXCHANGE_BITPIN_TRADE_SPOT: [
+            #     CallbackQueryHandler(exchange_bitpin_trade_spot, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(exchange_bitpin_menu, pattern="^" + "exchange_bitpin_menu" + "$")
+            # ],
             GlobalState.getInstance().EXCHANGE_BINGX_MENU: [  
                 CallbackQueryHandler(exchange_bingx_reg_tutorial, pattern="^" + "exchange_bingx_reg_tutorial" + "$"),
                 CallbackQueryHandler(exchanges_menu, pattern="^" + "exchanges_menu" + "$")
@@ -243,7 +268,7 @@ def main() -> None:
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(
-        allowed_updates=Update.ALL_TYPES, poll_interval=3, timeout=60
+        allowed_updates=Update.ALL_TYPES, poll_interval=3, timeout=180
     )
 
 ### <<<-------------------------------------------- Initiation The Bot -------------------------------------------->>> ###

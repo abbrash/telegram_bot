@@ -175,7 +175,7 @@ async def exchange_nobitex_deposit_rials(update: Update, context: ContextTypes.D
         0, min(GlobalState.getInstance().current_index_nobitex_deposit_rials, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
-    captions_list = ["""وارد سایت نوبیتکس شوید.
+    captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
 روی گزینه کیف پول و سپس روی "واریز" کلیک کنید.
 
 Page: Nobitex_Deposit_Rials_01""",
@@ -222,7 +222,8 @@ Page: Nobitex_Deposit_Rials_02"""
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            protect_content=protect_content
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
         )
 
         # Store the message ID
@@ -275,7 +276,19 @@ async def exchange_nobitex_withdraw_rials(update: Update, context: ContextTypes.
         0, min(GlobalState.getInstance().current_index_nobitex_withdraw_rials, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
-    captions_list = [""""""  
+    captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
+روی گزینه "کیف پول" و سپس روی "برداشت" کلیک کنید.
+
+Page: Nobitex_Withdraw_Rials_01
+""",
+"""
+از لیست شماره شباهای موجود، شماره‌ای که می‌خواهید وجه برداشت شده به آن واریز شود را انتخاب کنید.
+مبلغ برداشت را وارد کنید.
+کد شناسایی دو عاملی تولید شده توسط برنامه Google Authenticator گوشی را وارد کرده و سپس روی گزینه "برداشت" کلیک کنید.
+ 
+⚠️ ⚠️ ⚠️ به نکاتی ذکرشده از طرف صرافی دقت کنید.
+
+Page: Nobitex_Withdraw_Rials_02"""
 ]
 
     # Construct caption with current index and total number of photos
@@ -312,7 +325,8 @@ async def exchange_nobitex_withdraw_rials(update: Update, context: ContextTypes.
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            protect_content=protect_content
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
         )
 
         # Store the message ID
@@ -364,7 +378,18 @@ async def exchange_nobitex_deposit(update: Update, context: ContextTypes.DEFAULT
         0, min(GlobalState.getInstance().current_index_nobitex_deposit, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
-    captions_list = [""""""  
+    captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
+روی گزینه کیف پول و سپس روی "واریز" کلیک کنید.
+
+Page: Nobitex_Deposit_Rials_01
+                     """,
+                     """
+از لیست کارت‌های بانکی موجود، کارتی که می‌خواهید واریز را با استفاده از آن انجام دهید انتخاب کنید.
+مبلغ واریز را وارد کنید و سپس روی گزینه "واریز شتابی" کلیک کنید.
+ 
+⚠️ ⚠️ ⚠️ به نکاتی ذکرشده از طرف صرافی دقت کنید.
+
+Page: Nobitex_Deposit_Rials_02"""
 ]
 
     # Construct caption with current index and total number of photos
@@ -401,7 +426,8 @@ async def exchange_nobitex_deposit(update: Update, context: ContextTypes.DEFAULT
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            protect_content=protect_content
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
         )
 
         # Store the message ID
@@ -454,7 +480,23 @@ async def exchange_nobitex_withdraw(update: Update, context: ContextTypes.DEFAUL
         0, min(GlobalState.getInstance().current_index_nobitex_withdraw, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
-    captions_list = [""""""  
+    captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
+روی گزینه "کیف پول" و سپس روی "برداشت" کلیک کنید.
+
+Page: Nobitex_Withdraw_01
+""",
+"""                    
+رمزارز مورد نظرتان را انتخاب کنید.
+شبکه‌ای که می‌خواهد رمزارز انتخاب شده روی آن منتقل شود را انتخاب کنید.
+آدرس کیف‌پول مقصد روی شبکه انتخاب شده (در این مثال: شبکه پالیگان) را وارد کنید.
+مقدار ارزی که می‌خواهید برداشت کنید مشخص کنید.
+کد شناسایی دو عاملی تولید شده توسط برنامه Google Authenticator گوشی را وارد کرده و سپس روی گزینه "برداشت" کلیک کنید.
+ 
+⚠️ ⚠️ ⚠️مقدار کارمزد برداشت و مقدار خالص دارایی انتقال داده شده برای شما نمایش داده می‌شود.
+ 
+⚠️ ⚠️ ⚠️ به نکاتی ذکرشده از طرف صرافی دقت کنید.
+
+Page: Nobitex_Withdraw_02"""
 ]
 
     # Construct caption with current index and total number of photos
@@ -491,7 +533,8 @@ async def exchange_nobitex_withdraw(update: Update, context: ContextTypes.DEFAUL
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            protect_content=protect_content
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
         )
 
         # Store the message ID
@@ -544,7 +587,27 @@ async def exchange_nobitex_trade_spot(update: Update, context: ContextTypes.DEFA
         0, min(GlobalState.getInstance().current_index_nobitex_trade_spot, len(os.listdir(img_add)) - 1))
 
     # Define your list of captions here
-    captions_list = [""""""  
+    captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
+روی گزینه "معامله" و سپس روی "اسپات" کلیک کنید.
+
+Page: Nobitex_SpotTrading_01
+                     """,
+                     """
+مطابق با شکل، جفت ارز مورد نظرتان را انتخاب کنید.
+ 
+گزینه "با تعیین قیمت" را انتخاب کنید.
+برای خرید گزینه "خرید" و برای فروش گزینه "فروش" باید فعال باشد.
+قیمت مورد نظرتان برای معامله را با توجه به لیست "سفارش‌های بازار" و قیمت کنونی مشخص کنید.
+مقدار ارزی که می‌خواهید بخرید یا بفروشید را مشخص کنید.
+روی دکمه خرید (در این مثال: خرید پالیگان) و یا فروش (در این مثال: فروش پالیگان) کلیک کنید.
+سفارش شما در لیست "سفارش‌های بازار" قرار گرفته است. با توجه به قیمت تعیین‌شده از سوی شما، سفارش‌تان به صورت آنی یا با تأخیر انجام می‌شود.
+ 
+قیمت مشخص شده در میانه لیست "سفارش‌های بازار" که با کادر خط‌چین مشخص شده است، قیمت کنونی رمزارز انتخابی را بر حسب "تومان" نمایش می‌دهد.
+پس از انجام معامله، ارز مورد نظر به کیف پولتان واریز خواهد شد.
+ 
+⚠️ ⚠️ ⚠️ درنظر داشته باشید که به جای واحد "ریال" از واحد "تومان" (IRT) در صرافی نوبیتکس استفاده می‌شود.
+
+Page: Nobitex_SpotTrading_02"""
 ]
 
     # Construct caption with current index and total number of photos
@@ -581,7 +644,8 @@ async def exchange_nobitex_trade_spot(update: Update, context: ContextTypes.DEFA
             photo=photo,
             caption=caption,
             reply_markup=reply_markup,
-            protect_content=protect_content
+            protect_content=protect_content,
+            parse_mode='HTML'  # Add this line
         )
 
         # Store the message ID
