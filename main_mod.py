@@ -191,7 +191,12 @@ def main() -> None:
             ],
             GlobalState.getInstance().WALLET_METAMASK_MENU: [  
                 CallbackQueryHandler(wallet_metamask_create, pattern="^" + "wallet_metamask_create" + "$"),
-                # CallbackQueryHandler(wallet_metamask_restore, pattern="^" + "wallet_metamask_restore" + "$"),
+                # CallbackQueryHandler(wallet_metamask_import, pattern="^" + "wallet_metamask_import" + "$"),
+                # CallbackQueryHandler(wallet_metamask_add_acc, pattern="^" + "wallet_metamask_add_acc" + "$"),
+                # CallbackQueryHandler(wallet_metamask_import_acc, pattern="^" + "wallet_metamask_import_acc" + "$"),
+                # CallbackQueryHandler(wallet_metamask_save_srp, pattern="^" + "wallet_metamask_save_srp" + "$"),
+                # CallbackQueryHandler(wallet_metamask_save_pk, pattern="^" + "wallet_metamask_save_pk" + "$"),
+                # CallbackQueryHandler(wallet_metamask_add_network, pattern="^" + "wallet_metamask_add_network" + "$"),
                 # CallbackQueryHandler(wallet_metamask_send, pattern="^" + "wallet_metamask_send" + "$"),
                 # CallbackQueryHandler(wallet_metamask_receive, pattern="^" + "wallet_metamask_receive" + "$"),
                 # CallbackQueryHandler(wallet_metamask_swap, pattern="^" + "wallet_metamask_swap" + "$"),
@@ -203,8 +208,28 @@ def main() -> None:
                 CallbackQueryHandler(wallet_metamask_create, pattern="^(\d+)$"),
                 CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "wallet_metamask_menu" + "$")
             ],
-            # GlobalState.getInstance().WALLET_METAMASK_RESTORE: [  
-            #     CallbackQueryHandler(wallet_metamask_restore, pattern="^(\d+)$"),
+            # GlobalState.getInstance().WALLET_METAMASK_IMPORT: [  
+            #     CallbackQueryHandler(wallet_metamask_import, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+            # ],
+            # GlobalState.getInstance().WALLET_METAMASK_ADD_ACC: [
+            #     CallbackQueryHandler(wallet_metamask_add_acc, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+            # ],
+            # GlobalState.getInstance().WALLET_METAMASK_IMPORT_ACC: [
+            #     CallbackQueryHandler(wallet_metamask_import_acc, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+            # ],
+            # GlobalState.getInstance().WALLET_METAMASK_SAVE_SRP: [
+            #     CallbackQueryHandler(wallet_metamask_save_srp, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+            # ],
+            # GlobalState.getInstance().WALLET_METAMASK_SAVE_PK: [
+            #     CallbackQueryHandler(wallet_metamask_save_pk, pattern="^(\d+)$"),
+            #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
+            # ],
+            # GlobalState.getInstance().WALLET_METAMASK_ADD_NETWORK: [
+            #     CallbackQueryHandler(wallet_metamask_add_network, pattern="^(\d+)$"),
             #     CallbackQueryHandler(wallet_metamask_menu, pattern="^" + "metamask_menu" + "$")
             # ],
             # GlobalState.getInstance().WALLET_METAMASK_SEND: [  

@@ -19,7 +19,10 @@ class GlobalState:
 
         self.AIRDROP_PHANTOM_MENU, self.AIRDROP_PHANTOM_SWAP, self.AIRDROP_PHANTOM_STAKE, self.AIRDROP_PHANTOM_UNSTAKE = range(100, 104)
         self.AIRDROP_LINEA_SURGE_MENU, self.AIRDROP_LINEA_SURGE_STAKE, self.AIRDROP_LINEA_SURGE_UNSTAKE, _ = range(104, 108)
-        self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE, _, _ = range(108, 112)
+        self.WALLET_METAMASK_MENU, self.WALLET_METAMASK_CREATE, self.WALLET_METAMASK_IMPORT, self.WALLET_METAMASK_ADD_ACC = range(108, 112)
+        self.WALLET_METAMASK_IMPORT_ACC, self.WALLET_METAMASK_SAVE_SRP, self.WALLET_METAMASK_SAVE_PK, self.WALLET_METAMASK_ADD_NETWORK = range(112, 116)
+        self.WALLET_METAMASK_IMPORT_TOKEN, self.WALLET_METAMASK_SEND, self.WALLET_METAMASK_RECEIVE, self.WALLET_METAMASK_SWAP = range(116, 120)
+        self.WALLET_METAMASK_BRIDGE, self.WALLET_METAMASK_STAKE, _, _ = range(120, 124)
 
         self. AWAITING_SUPPORT_MESSAGE, self.AWAITING_ADMIN_REPLY = range(800,802)
         self.COLLECTING_SUPPORT_MESSAGES = 900
@@ -36,9 +39,6 @@ class GlobalState:
         self.first_time_loop_linea_surge_unstake = True
         self.current_index_linea_surge_stake = 0
         self.current_index_linea_surge_unstake = 0
-
-        self.first_time_loop_metamask_create_wallet = True
-        self.current_index_metamask_create_wallet = 0
 
         self.first_time_loop_nobitex_deposit_rials = True
         self.first_time_loop_nobitex_withdraw_rials = True
@@ -80,6 +80,34 @@ class GlobalState:
         self.current_index_coinex_withdraw = 0
         self.current_index_coinex_trade_spot = 0
         self.current_index_coinex_trade_futures = 0
+
+        self.first_time_loop_wallet_metamask_create = True
+        self.first_time_loop_wallet_metamask_import = True
+        self.first_time_loop_wallet_metamask_add_acc = True
+        self.first_time_loop_wallet_metamask_import_acc = True
+        self.first_time_loop_wallet_metamask_save_srp = True
+        self.first_time_loop_wallet_metamask_save_pk = True
+        self.first_time_loop_wallet_metamask_add_network = True
+        self.first_time_loop_wallet_metamask_import_token = True
+        self.first_time_loop_wallet_metamask_send = True
+        self.first_time_loop_wallet_metamask_receive = True
+        self.first_time_loop_wallet_metamask_swap = True
+        self.first_time_loop_wallet_metamask_bridge = True
+        self.first_time_loop_wallet_metamask_stake = True
+        self.current_index_wallet_metamask_create = 0
+        self.current_index_wallet_metamask_import = 0
+        self.current_index_wallet_metamask_add_acc = 0
+        self.current_index_wallet_metamask_import_acc = 0
+        self.current_index_wallet_metamask_save_srp = 0
+        self.current_index_wallet_metamask_save_pk = 0
+        self.current_index_wallet_metamask_add_network = 0
+        self.current_index_wallet_metamask_import_token = 0
+        self.current_index_wallet_metamask_send = 0
+        self.current_index_wallet_metamask_receive = 0
+        self.current_index_wallet_metamask_swap = 0
+        self.current_index_wallet_metamask_bridge = 0
+        self.current_index_wallet_metamask_stake = 0
+
 
         # Initialize message IDs dictionary
         self.message_ids = {}
