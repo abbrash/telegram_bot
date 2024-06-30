@@ -508,17 +508,13 @@ async def wallet_metamask_import_acc(update: Update, context: CallbackContext) -
     buttons = []
     if GlobalState.getInstance().current_index_wallet_metamask_import_acc == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
-                GlobalState.getInstance().current_index_wallet_metamask_import_acc + 1))],
-            [InlineKeyboardButton(
-                "بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="wallet_metamask_menu")]
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_import_acc + 1))],
+            [InlineKeyboardButton("بازگشت به منوی کیف پول متامسک 🏠⬅️ ", callback_data="wallet_metamask_menu")]
         ]
     elif GlobalState.getInstance().current_index_wallet_metamask_import_acc == len(os.listdir(img_add)) - 1:
         buttons = [
-            [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="wallet_metamask_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
-                GlobalState.getInstance().current_index_wallet_metamask_import_acc - 1))]
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="wallet_metamask_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_wallet_metamask_import_acc - 1))]
         ]
     else:
         buttons = [

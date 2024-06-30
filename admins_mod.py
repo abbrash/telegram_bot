@@ -1,4 +1,7 @@
-admin_dict = {'Arash': 107998330, 'Art': 1108290862}
+admin_dict = {'Arash': 107998330, 
+              'Art': 1108290862, 
+              'Akram': 567038670
+              }
 
 def is_admin(user_id: int) -> bool:
     return user_id in admin_dict.values()

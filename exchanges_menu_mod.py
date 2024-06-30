@@ -381,15 +381,20 @@ async def exchange_nobitex_deposit(update: Update, context: ContextTypes.DEFAULT
     captions_list = ["""وارد سایت <a href="https://nobitex.ir">نوبیتکس</a> شوید.
 روی گزینه کیف پول و سپس روی "واریز" کلیک کنید.
 
-Page: Nobitex_Deposit_Rials_01
+Page: Nobitex_Deposit_01
                      """,
-                     """
-از لیست کارت‌های بانکی موجود، کارتی که می‌خواهید واریز را با استفاده از آن انجام دهید انتخاب کنید.
-مبلغ واریز را وارد کنید و سپس روی گزینه "واریز شتابی" کلیک کنید.
+                     """از بخش بالا گزینه "رمزارز" را انتخاب کنید.
+در کادر مشخص شده، رمزارز خود را انتخاب کنید. (به عنوان نمونه در اینجا پالیگان (MATIC) انتخاب شده است.)
+شبکه واریز را انتخاب کنید. (به عنوان نمونه در اینجا Polygon انتخاب شده است.)
+دقت کنید انتقال موفق دارایی شما نیازمند تعداد مشخصی تأیید در شبکه است که این تعداد با توجه به شبکه انتخاب شده متفاوت است. (برای شبکه Polygon به حداقل 128 تأیید در شبکه نیاز است.)
+آدرس واریز ارز انتخاب شده روی شبکه مورد نظر برای شما تولید شده است. آن را کپی کرده و به عنوان آدرس کیف پول مقصد استفاده کنید.
  
-⚠️ ⚠️ ⚠️ به نکاتی ذکرشده از طرف صرافی دقت کنید.
-
-Page: Nobitex_Deposit_Rials_02"""
+❌❌❌دقت کنید این آدرس تنها برای ارز و شبکه انتخاب شده قابل استفاده است. (در این مثال، فقط رمزارز پالیگان بر روی شبکه Polygon به این آدرس واریز می‌شود.) در صورتی که رمزارزی دیگر یا همین رمزارز ولی روی شبکه‌ای دیگر به این آدرس ارسال شود، دارایی ارسال شده برای همیشه از دست خواهد رفت.
+ 
+ 
+⚠️ ⚠️ ⚠️به نکاتی ذکرشده از طرف صرافی دقت کنید.
+ 
+ Page: Nobitex_Deposit_02"""
 ]
 
     # Construct caption with current index and total number of photos
@@ -683,7 +688,7 @@ async def exchange_bitpin_menu(update: Update, context: ContextTypes.DEFAULT_TYP
 """
 
     # Select an image to send
-    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'bitpin_logo.jpg').replace('\\', '/')
+    image_filename = os.path.join('img', 'exchange', 'local_exchange', 'bitpin','bitpin_logo.jpg').replace('\\', '/')
 
     # Send the image along with the text and buttons
     if query.message and query.message.text:
@@ -1208,7 +1213,7 @@ async def exchange_bingx_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
 """
 
     # Select an image to send
-    image_filename = os.path.join('img', 'exchange', 'global_exchange', 'bingx_logo.png').replace('\\','/')
+    image_filename = os.path.join('img', 'exchange', 'global_exchange', 'bingx', 'bingx_logo.png').replace('\\','/')
 
     # Send the image along with the text and buttons
     if query.message and query.message.text:
@@ -1242,62 +1247,6 @@ async def exchange_bingx_menu(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     return GlobalState.getInstance().EXCHANGE_BINGX_MENU
 
-### <<<-------------------------------------------- Coinex Exchange Menu -------------------------------------------->>> ###
-async def exchange_coinex_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    query = update.callback_query
-    await query.answer()
-
-    protect_content = not is_admin(update._effective_user.id)
-
-    GlobalState.getInstance().first_time_loop_coinex_reg = True
-    GlobalState.getInstance().current_index_coinex_reg = 0
-
-    keyboard = [
-        [InlineKeyboardButton("آموزش ثبت‌نام", callback_data="exchange_coinex_reg_tutorial")],
-        [InlineKeyboardButton("صرافی کوینکس (CoinEx)", url='https://www.coinex.com/register?refer_code=s95m7')],
-        [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
-    ]
-    key_markup = InlineKeyboardMarkup(keyboard)
-    text = """لطفاً برای ثبت‌نام در صرافی کوینکس روی دکمه "ثبت‌نام" کلیک کنید. 
-با استفاده از این لینک می‌توانید 7.5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
-با استفاده از بخش "آموزش ثبت‌نام" می‌توانید مراحل ثبت‌نام در صرافی را بصورت قدم به قدم ملاحظه بفرمایید.
-"""
-    
-    # Select an image to send
-    image_filename = os.path.join('img', 'exchange', 'global_exchange', 'coinex_logo.jpg').replace('\\','/')
-
-    # Send the image along with the text and buttons
-    if query.message and query.message.text:
-        try:
-            await query.delete_message()
-            await context.bot.send_photo(
-                chat_id=update._effective_user.id,
-                photo=open(image_filename, 'rb'),
-                caption=text,
-                reply_markup=key_markup,
-                parse_mode="HTML",
-                protect_content=protect_content
-            )
-
-        except BadRequest:
-            await context.bot.send_message(chat_id=update._effective_user.id,
-                                           text=text,
-                                           reply_markup=key_markup,
-                                           protect_content=protect_content
-                                           )
-
-    else:
-        await context.bot.send_photo(
-            chat_id=update._effective_user.id,
-            photo=open(image_filename, 'rb'),
-            caption=text,
-            reply_markup=key_markup,
-            parse_mode="HTML",
-            protect_content=protect_content
-        )
-
-    return GlobalState.getInstance().EXCHANGE_COINEX_MENU
-
 
 ## <<<-------------------------------------------- BingX Exchange Register Tutorial -------------------------------------------->>> ###
 async def exchange_bingx_reg_tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -1321,7 +1270,7 @@ async def exchange_bingx_reg_tutorial(update: Update, context: ContextTypes.DEFA
         GlobalState.getInstance().first_time_loop_bingx_reg = False
 
     # Use img_add to dynamically generate the image filename based on the current index
-    image_directory = 'img/exchange/global_exchange/bingx_reg_tutorial'
+    image_directory = 'img/exchange/global_exchange/bingx/bingx_reg_tutorial'
     img_add = image_directory
     image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_bingx_reg + 1).zfill(2)}.jpg'
 
@@ -1451,17 +1400,13 @@ async def exchange_bingx_deposit(update: Update, context: ContextTypes.DEFAULT_T
     buttons = []
     if GlobalState.getInstance().current_index_bingx_deposit == 0:
         buttons = [
-            [InlineKeyboardButton("➡️ بعدی", callback_data=str(
-                GlobalState.getInstance().current_index_bingx_deposit + 1))],
-            [InlineKeyboardButton(
-                "بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
+            [InlineKeyboardButton("➡️ بعدی", callback_data=str(GlobalState.getInstance().current_index_bingx_deposit + 1))],
+            [InlineKeyboardButton("بازگشت به منوی صرافی بینگ‌اکس  🏠⬅️ ", callback_data="exchange_bingx_menu")]
         ]
     elif GlobalState.getInstance().current_index_bingx_deposit == len(os.listdir(img_add)) - 1:
         buttons = [
-            [InlineKeyboardButton(
-                "🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
-            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(
-                GlobalState.getInstance().current_index_bingx_deposit - 1))]
+            [InlineKeyboardButton("🎉🥳 تامام!", callback_data="exchange_bingx_menu")],
+            [InlineKeyboardButton("قبلی ⬅️", callback_data=str(GlobalState.getInstance().current_index_bingx_deposit - 1))]
         ]
     else:
         buttons = [
@@ -1784,6 +1729,62 @@ async def exchange_bingx_trade_futures(update: Update, context: ContextTypes.DEF
     return GlobalState.getInstance().EXCHANGE_BINGX_TRADE_FUTURES
 
 
+### <<<-------------------------------------------- Coinex Exchange Menu -------------------------------------------->>> ###
+async def exchange_coinex_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+
+    protect_content = not is_admin(update._effective_user.id)
+
+    GlobalState.getInstance().first_time_loop_coinex_reg = True
+    GlobalState.getInstance().current_index_coinex_reg = 0
+
+    keyboard = [
+        [InlineKeyboardButton("آموزش ثبت‌نام", callback_data="exchange_coinex_reg_tutorial")],
+        [InlineKeyboardButton("صرافی کوینکس (CoinEx)", url='https://www.coinex.com/register?refer_code=s95m7')],
+        [InlineKeyboardButton("بازگشت  🏠 ", callback_data="exchanges_menu")]
+    ]
+    key_markup = InlineKeyboardMarkup(keyboard)
+    text = """لطفاً برای ثبت‌نام در صرافی کوینکس روی دکمه "ثبت‌نام" کلیک کنید. 
+با استفاده از این لینک می‌توانید 7.5 درصد از کارمزد معاملات خود را به حسابتان در صرافی بازگردانید. 
+با استفاده از بخش "آموزش ثبت‌نام" می‌توانید مراحل ثبت‌نام در صرافی را بصورت قدم به قدم ملاحظه بفرمایید.
+"""
+    
+    # Select an image to send
+    image_filename = os.path.join('img', 'exchange', 'global_exchange', 'coinex', 'coinex_logo.jpg').replace('\\','/')
+
+    # Send the image along with the text and buttons
+    if query.message and query.message.text:
+        try:
+            await query.delete_message()
+            await context.bot.send_photo(
+                chat_id=update._effective_user.id,
+                photo=open(image_filename, 'rb'),
+                caption=text,
+                reply_markup=key_markup,
+                parse_mode="HTML",
+                protect_content=protect_content
+            )
+
+        except BadRequest:
+            await context.bot.send_message(chat_id=update._effective_user.id,
+                                           text=text,
+                                           reply_markup=key_markup,
+                                           protect_content=protect_content
+                                           )
+
+    else:
+        await context.bot.send_photo(
+            chat_id=update._effective_user.id,
+            photo=open(image_filename, 'rb'),
+            caption=text,
+            reply_markup=key_markup,
+            parse_mode="HTML",
+            protect_content=protect_content
+        )
+
+    return GlobalState.getInstance().EXCHANGE_COINEX_MENU
+
 ### <<<-------------------------------------------- CoinEx Exchange Register Tutorial -------------------------------------------->>> ###
 async def exchange_coinex_reg_tutorial(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -1806,7 +1807,7 @@ async def exchange_coinex_reg_tutorial(update: Update, context: ContextTypes.DEF
         GlobalState.getInstance().first_time_loop_coinex_reg = False
 
     # Use img_add to dynamically generate the image filename based on the current index
-    image_directory = 'img/exchange/global_exchange/coinex_reg_tutorial'
+    image_directory = 'img/exchange/global_exchange/coinex/coinex_reg_tutorial'
     img_add = image_directory
     image_filename = f'{image_directory}/{str(GlobalState.getInstance().current_index_coinex_reg + 1).zfill(2)}.jpg'
 
